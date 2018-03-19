@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Expert Expense</string>
+
+    <string name="nav_overview">Overview</string>
+    <string name="nav_accounts">Accounts</string>
+    <string name="nav_transactions">Transactions</string>
+    <string name="nav_reports">Reports</string>
+
 </resources>
