@@ -6,6 +6,11 @@
     <string name="nav_transactions">Transactions</string>
     <string name="nav_reports">Reports</string>
 
+    <string name="reports_tab_expense">Expense</string>
+    <string name="reports_tab_income">Income</string>
+    <string name="reports_tab_cashflow">Cash Flow</string>
+    <string name="reports_tab_balance">Balance</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
