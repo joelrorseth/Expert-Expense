@@ -1,6 +1,8 @@
 package com.rorsethj.expertexpense;
 
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
+        // Start app on the Overview fragment
+        switchToFragment(new OverviewFragment());
+
+        // Assign a navigation item selected listener to the NavigationView
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -36,10 +43,28 @@ public class MainActivity extends AppCompatActivity {
 
                         // Select menu item and leave selected
                         menuItem.setChecked(true);
-
                         mDrawerLayout.closeDrawers();
 
-                        // TODO: Change to new Activity / Fragment
+                        // Switch to the selected / desired fragment
+                        switch (menuItem.getItemId()) {
+
+                            case R.id.nav_overview:
+                                switchToFragment(new OverviewFragment());
+                                break;
+
+                            case R.id.nav_accounts:
+                                switchToFragment(new AccountsFragment());
+                                break;
+
+                            case R.id.nav_transactions:
+                                switchToFragment(new TransactionsFragment());
+                                break;
+
+                            case R.id.nav_reports:
+                                switchToFragment(new ReportsFragment());
+                                break;
+
+                        }
 
                         return true;
                     }
@@ -54,5 +79,14 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    // Perform a FragmentTransaction to replace current hosted fragment with new one
+    private void switchToFragment(Fragment destFragment) {
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainer, destFragment);
+        transaction.commit();
     }
 }
