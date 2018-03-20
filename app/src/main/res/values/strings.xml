@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Expert Expense</string>
 
+    <string name="auth_username_field">Username</string>
+    <string name="auth_password_field">Password</string>
+    <string name="login_button_title">Login</string>
+    <string name="exit_button_title">Exit</string>
+
     <string name="nav_overview">Overview</string>
     <string name="nav_accounts">Accounts</string>
     <string name="nav_transactions">Transactions</string>
