@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/recentTransactionItemIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/wallet"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/recentTransactionItemTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TRANS NAME"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/recentTransactionItemDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trans Description"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/recentTransactionItemAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-$20.00"
+        android:textColor="@color/colorErrorRed"
+        android:textSize="20sp"/>
+
+</LinearLayout>
