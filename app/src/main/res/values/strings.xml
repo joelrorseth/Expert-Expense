@@ -6,6 +6,9 @@
     <string name="login_button_title">Login</string>
     <string name="exit_button_title">Exit</string>
 
+    <string name="setup_cash_hint">Cash (Optional)</string>
+    <string name="setup_bank_hint">Bank (Optional)</string>
+
     <string name="nav_overview">Overview</string>
     <string name="nav_accounts">Accounts</string>
     <string name="nav_transactions">Transactions</string>

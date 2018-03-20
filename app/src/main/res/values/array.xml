@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="currency_array">
+        <item>CAD</item>
+        <item>USD</item>
+        <item>GBP</item>
+        <item>EUR</item>
+    </string-array>
+
+    <string-array name="language_array">
+        <item>English</item>
+        <item>French</item>
+        <item>Spanish</item>
+        <item>Russian</item>
+    </string-array>
+</resources>

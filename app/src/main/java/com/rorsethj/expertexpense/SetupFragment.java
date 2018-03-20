@@ -11,9 +11,21 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 public class SetupFragment extends Fragment {
+
+    // Allow parent activity to implement functionality and manage this fragment
+    public interface SetupInterface {
+        public void didConfirmDone();
+    }
+
+    private SetupInterface setupDelegate;
+
+    public void setSetupDelegate(SetupInterface conformer) {
+        setupDelegate = conformer;
+    }
 
 
     @Override
@@ -31,6 +43,15 @@ public class SetupFragment extends Fragment {
 
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.setupTabLayout);
         tabLayout.setupWithViewPager(pager, true);
+
+        Button button = (Button) view.findViewById(R.id.setupDoneButton);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                setupDelegate.didConfirmDone();
+            }
+        });
 
 
         return view;
