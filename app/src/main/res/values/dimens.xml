@@ -6,6 +6,13 @@
     <dimen name="divider_margin">16dp</dimen>
 
 
+    <dimen name="title_margin_top">8dp</dimen>
     <dimen name="recycler_top_margin">14dp</dimen>
     <dimen name="icon_regular_size">40dp</dimen>
+
+    <dimen name="more_vert_width">20dp</dimen>
+    <dimen name="more_vert_height">24dp</dimen>
+    <dimen name="button_margin">8dp</dimen>
+
+
 </resources>
