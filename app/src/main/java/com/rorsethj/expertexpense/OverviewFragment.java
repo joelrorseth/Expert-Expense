@@ -107,13 +107,18 @@ public class OverviewFragment extends Fragment
         // TODO: Make transition to fragment
         // Determine which View was clicked -- Several subviews implement onItemClick
         if (tag.equals(getResources().getString(R.string.tag_accounts_view))) {
+
+            // TODO: Handle account click
             it = "accounts";
 
         } else if (tag.equals(getResources().getString(R.string.tag_transactions_view))) {
-                it = "trans";
+
+            // TODO: Handle transaction click
+            it = "trans";
 
         } else if (tag.equals(getResources().getString(R.string.tag_bills_view))) {
-                it = "bill";
+
+            it = "bill";
         }
 
         Toast.makeText(getContext(), "You clicked " +

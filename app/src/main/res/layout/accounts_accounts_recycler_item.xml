@@ -8,11 +8,11 @@
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/recentTransactionItemIcon"
+        android:id="@+id/accountsAccountsItemIcon"
         android:layout_width="@dimen/icon_regular_size"
         android:layout_height="@dimen/icon_regular_size"
         android:layout_weight="2"
-        android:src="@drawable/ic_money_sign"/>
+        android:src="@drawable/ic_accounts"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,28 +21,28 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/recentTransactionItemTitle"
+            android:id="@+id/accountsAccountsItemTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TRANS NAME"
+            android:text="ACCOUNT NAME"
             android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/recentTransactionItemDesc"
+            android:id="@+id/accountsAccountsItemDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Trans Description"
+            android:text="Account Description"
             android:textSize="14sp"/>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/recentTransactionItemAmount"
+        android:id="@+id/accountsAccountsItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:text="-$20.00"
-        android:textColor="@color/colorErrorRed"
+        android:text="$2000.00"
+        android:textColor="@color/colorValidGreen"
         android:textSize="20sp"/>
 
 </LinearLayout>

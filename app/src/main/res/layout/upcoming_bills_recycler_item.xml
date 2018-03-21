@@ -2,20 +2,22 @@
 <LinearLayout
     android:tag="@string/tag_bills_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp">
 
     <ImageView
         android:id="@+id/upcomingBillsItemIcon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/wallet"/>
+        android:layout_width="@dimen/icon_regular_size"
+        android:layout_height="@dimen/icon_regular_size"
+        android:layout_weight="2"
+        android:src="@drawable/ic_money_sign"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="4"
         android:orientation="vertical">
 
         <TextView
@@ -38,6 +40,7 @@
         android:id="@+id/upcomingBillsItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="2"
         android:text="$20.00"
         android:textColor="@color/colorErrorRed"
         android:textSize="20sp"/>
