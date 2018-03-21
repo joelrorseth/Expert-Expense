@@ -15,11 +15,13 @@ import java.util.ArrayList;
 
 public class OverviewFragment extends Fragment
         implements MyAccountsRecyclerAdapter.ItemClickListener,
-        RecentTransactionsRecyclerAdapter.ItemClickListener {
+        RecentTransactionsRecyclerAdapter.ItemClickListener,
+        UpcomingBillsRecyclerAdapter.ItemClickListener{
 
 
     private MyAccountsRecyclerAdapter myAccountsAdapter;
     private RecentTransactionsRecyclerAdapter recentTransactionsAdapter;
+    private UpcomingBillsRecyclerAdapter upcomingBillsAdapter;
 
 
     @Override
@@ -40,7 +42,11 @@ public class OverviewFragment extends Fragment
 
         ArrayList<String> tempTrans = new ArrayList<>();
         tempTrans.add("Groceries");
-        tempTrans.add("Hydro Bill");
+        tempTrans.add("Eat out");
+
+        ArrayList<String> tempBills = new ArrayList<>();
+        tempBills.add("Gas Bill");
+        tempBills.add("Hydro Bill");
 
 
         // Set up recycler views
@@ -53,17 +59,23 @@ public class OverviewFragment extends Fragment
         transRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.VERTICAL, false));
 
+        RecyclerView billsRecyclerView = (RecyclerView) view.findViewById(R.id.upcomingBillsRecycler);
+        billsRecyclerView.setLayoutManager(new LinearLayoutManager(
+                getContext(), LinearLayoutManager.VERTICAL, false));
+
 
         myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), tempAccounts);
         recentTransactionsAdapter = new RecentTransactionsRecyclerAdapter(getContext(), tempTrans);
+        upcomingBillsAdapter = new UpcomingBillsRecyclerAdapter(getContext(), tempBills);
 
         myAccountsAdapter.setClickListener(this);
         recentTransactionsAdapter.setClickListener(this);
+        upcomingBillsAdapter.setClickListener(this);
 
         // Set adapters to recycler views
         accountsRecyclerView.setAdapter(myAccountsAdapter);
         transRecyclerView.setAdapter(recentTransactionsAdapter);
-
+        billsRecyclerView.setAdapter(upcomingBillsAdapter);
 
 
 
@@ -88,8 +100,24 @@ public class OverviewFragment extends Fragment
 
     @Override
     public void onItemClick(View view, int position) {
+
+        String it = "";
+        String tag = view.getTag().toString();
+
+        // TODO: Make transition to fragment
+        // Determine which View was clicked -- Several subviews implement onItemClick
+        if (tag.equals(getResources().getString(R.string.tag_accounts_view))) {
+            it = "accounts";
+
+        } else if (tag.equals(getResources().getString(R.string.tag_transactions_view))) {
+                it = "trans";
+
+        } else if (tag.equals(getResources().getString(R.string.tag_bills_view))) {
+                it = "bill";
+        }
+
         Toast.makeText(getContext(), "You clicked " +
-                myAccountsAdapter.getItem(position) + " on item position " +
+                myAccountsAdapter.getItem(position) + " on " + it + " position " +
                 position, Toast.LENGTH_SHORT).show();
     }
 }

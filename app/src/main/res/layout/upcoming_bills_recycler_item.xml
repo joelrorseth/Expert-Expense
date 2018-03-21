@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:tag="@string/tag_transactions_view"
+    android:tag="@string/tag_bills_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
@@ -8,7 +8,7 @@
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/recentTransactionItemIcon"
+        android:id="@+id/upcomingBillsItemIcon"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/wallet"/>
@@ -19,26 +19,26 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/recentTransactionItemTitle"
+            android:id="@+id/upcomingBillsItemTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TRANS NAME"
+            android:text="BILL NAME"
             android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/recentTransactionItemDesc"
+            android:id="@+id/upcomingBillsItemDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Trans Description"
+            android:text="Bill Description"
             android:textSize="14sp"/>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/recentTransactionItemAmount"
+        android:id="@+id/upcomingBillsItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-$20.00"
+        android:text="$20.00"
         android:textColor="@color/colorErrorRed"
         android:textSize="20sp"/>
 
