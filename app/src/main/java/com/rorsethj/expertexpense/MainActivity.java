@@ -11,7 +11,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements OverviewFragment.OverviewInterface {
 
     private DrawerLayout mDrawerLayout;
 
@@ -31,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         // Start app on the Overview fragment
-        switchToFragment(new OverviewFragment());
+        OverviewFragment frag = new OverviewFragment();
+        frag.parentDelegate = MainActivity.this;
+        switchToFragment(frag);
+
 
         // Assign a navigation item selected listener to the NavigationView
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -49,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
                         switch (menuItem.getItemId()) {
 
                             case R.id.nav_overview:
-                                switchToFragment(new OverviewFragment());
+                                OverviewFragment frag = new OverviewFragment();
+                                frag.parentDelegate = MainActivity.this;
+                                switchToFragment(frag);
                                 break;
 
                             case R.id.nav_accounts:
@@ -82,11 +88,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    // OverviewFragment interface implementation
+    @Override
+    public void didSelectCustomizationIcon() {
+
+        // Customization icon should push OverviewCustomizationFragment on top of OverviewFragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainer, new OverviewCustomizationFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+
     // Perform a FragmentTransaction to replace current hosted fragment with new one
     private void switchToFragment(Fragment destFragment) {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentContainer, destFragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 }

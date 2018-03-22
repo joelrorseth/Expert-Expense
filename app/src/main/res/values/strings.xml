@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Expert Expense</string>
 
+    <string name="menuitem_customize">Customize</string>
+    <string name="menuitem_refresh">Refresh</string>
+
+
     <string name="auth_username_field">Username</string>
     <string name="auth_password_field">Password</string>
     <string name="login_button_title">Login</string>
@@ -25,7 +29,5 @@
     <string name="reports_tab_cashflow">Cash Flow</string>
     <string name="reports_tab_balance">Balance</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

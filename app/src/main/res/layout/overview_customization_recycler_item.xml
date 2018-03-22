@@ -4,20 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:background="@color/colorMainBackground">
 
     <ImageView
         android:id="@+id/overviewCustomizationItemIcon"
         android:layout_width="@dimen/icon_regular_size"
         android:layout_height="@dimen/icon_regular_size"
         android:layout_gravity="start|center_vertical"
-        android:layout_weight="2"
+        android:layout_marginRight="@dimen/button_margin"
         android:src="@drawable/ic_drag_handle"/>
 
     <TextView
         android:id="@+id/overviewCustomizationItemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:text="Example Setting"
         android:layout_gravity="start|center_vertical"
         android:textSize="20sp"/>

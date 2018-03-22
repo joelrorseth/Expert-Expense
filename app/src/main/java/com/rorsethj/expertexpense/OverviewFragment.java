@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -17,6 +20,14 @@ public class OverviewFragment extends Fragment
         implements MyAccountsRecyclerAdapter.ItemClickListener,
         RecentTransactionsRecyclerAdapter.ItemClickListener,
         UpcomingBillsRecyclerAdapter.ItemClickListener{
+
+
+    // Define interface to containing Activity to respond to events taking place here
+    public interface OverviewInterface {
+        public void didSelectCustomizationIcon();
+    }
+
+    OverviewInterface parentDelegate;
 
 
     private MyAccountsRecyclerAdapter myAccountsAdapter;
@@ -96,6 +107,33 @@ public class OverviewFragment extends Fragment
         return view;
     }
 
+
+    // Display this fragment's menu items
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_overview_menu, menu);
+    }
+
+    // Handle menu item selections
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            // Selecting the customize toolbar icon should prompt activity to push fragment
+            case R.id.action_customize:
+
+                parentDelegate.didSelectCustomizationIcon();
+                return true;
+
+            case R.id.action_refresh:
+
+                // TODO: Initiate cloud sync
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
     @Override
