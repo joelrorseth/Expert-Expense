@@ -81,7 +81,7 @@ public class OverviewFragment extends Fragment
 
 
         // Configure floating action button listener
-        FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.addButton);
+        FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.overviewAddButton);
         addButton.setOnClickListener(
 
                 new View.OnClickListener() {
@@ -106,17 +106,17 @@ public class OverviewFragment extends Fragment
 
         // TODO: Make transition to fragment
         // Determine which View was clicked -- Several subviews implement onItemClick
-        if (tag.equals(getResources().getString(R.string.tag_accounts_view))) {
+        if (tag.equals(getResources().getString(R.string.tag_overview_accounts_view))) {
 
             // TODO: Handle account click
             it = "accounts";
 
-        } else if (tag.equals(getResources().getString(R.string.tag_transactions_view))) {
+        } else if (tag.equals(getResources().getString(R.string.tag_overview_transactions_view))) {
 
             // TODO: Handle transaction click
             it = "trans";
 
-        } else if (tag.equals(getResources().getString(R.string.tag_bills_view))) {
+        } else if (tag.equals(getResources().getString(R.string.tag_overview_bills_view))) {
 
             it = "bill";
         }

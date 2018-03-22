@@ -1,181 +1,190 @@
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="0dp"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
-
-
-    <LinearLayout
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/overviewScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorWhiteBackground">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
 
-        <RelativeLayout
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/title_margin_top">
-
-            <TextView
-                android:id="@+id/overviewAccountsTextview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorTextBlack"
-                android:text="My Accounts"/>
-
-            <Button
-                android:layout_width="@dimen/more_vert_width"
-                android:layout_height="@dimen/more_vert_height"
-                android:layout_marginStart="@dimen/button_margin"
-                android:layout_marginEnd="@dimen/button_margin"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_more_vert"/>
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/newBalanceTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textSize="20sp"
-            android:textColor="@color/colorTextBlack"
-            android:gravity="center_horizontal"
-            android:text="Net Balance (CAD): $1,2345.00"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/myAccountsRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/recycler_top_margin"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
-        
-    </LinearLayout>
-
-
-
-
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorWhiteBackground">
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/title_margin_top">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorTextBlack"
-                android:text="Recent Transactions"/>
-
-
-            <Button
-                android:layout_width="@dimen/more_vert_width"
-                android:layout_height="@dimen/more_vert_height"
-                android:layout_marginStart="@dimen/button_margin"
-                android:layout_marginEnd="@dimen/button_margin"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_more_vert"/>
-
-        </RelativeLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recentTransactionsRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_marginTop="@dimen/recycler_top_margin"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
-
-    </LinearLayout>
+            android:padding="0dp">
 
 
-
-
-
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorWhiteBackground">
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/title_margin_top">
-
-            <TextView
-                android:id="@+id/upcomingBillsTextView"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorTextBlack"
-                android:text="Upcoming Bills (0)"/>
+                android:layout_marginTop="10dp"
+                android:background="@color/colorWhiteBackground"
+                android:orientation="vertical">
 
 
-            <Button
-                android:layout_width="@dimen/more_vert_width"
-                android:layout_height="@dimen/more_vert_height"
-                android:layout_marginStart="@dimen/button_margin"
-                android:layout_marginEnd="@dimen/button_margin"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_more_vert"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/title_margin_top">
 
-        </RelativeLayout>
+                    <TextView
+                        android:id="@+id/overviewAccountsTextview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="My Accounts"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/upcomingBillsRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/recycler_top_margin"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+                    <Button
+                        android:layout_width="@dimen/more_vert_width"
+                        android:layout_height="@dimen/more_vert_height"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/button_margin"
+                        android:layout_marginStart="@dimen/button_margin"
+                        android:background="@drawable/ic_more_vert"/>
 
-    </LinearLayout>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/newBalanceTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:text="Net Balance (CAD): $1,2345.00"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="20sp"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/myAccountsRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/recycler_top_margin"
+                    android:orientation="horizontal"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorWhiteBackground"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/title_margin_top">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="Recent Transactions"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+
+                    <Button
+                        android:layout_width="@dimen/more_vert_width"
+                        android:layout_height="@dimen/more_vert_height"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/button_margin"
+                        android:layout_marginStart="@dimen/button_margin"
+                        android:background="@drawable/ic_more_vert"/>
+
+                </RelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recentTransactionsRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/recycler_top_margin"
+                    android:orientation="vertical"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorWhiteBackground"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/title_margin_top">
+
+                    <TextView
+                        android:id="@+id/upcomingBillsTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="Upcoming Bills (0)"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+
+                    <Button
+                        android:layout_width="@dimen/more_vert_width"
+                        android:layout_height="@dimen/more_vert_height"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/button_margin"
+                        android:layout_marginStart="@dimen/button_margin"
+                        android:background="@drawable/ic_more_vert"/>
+
+                </RelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/upcomingBillsRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/recycler_top_margin"
+                    android:orientation="vertical"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addButton"
+        android:id="@+id/overviewAddButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add"/>
-</LinearLayout>
+        android:src="@drawable/ic_add"
+        app:layout_anchor="@id/overviewScrollView"
+        app:layout_anchorGravity="bottom|right|end"/>
+
+</android.support.design.widget.CoordinatorLayout>
