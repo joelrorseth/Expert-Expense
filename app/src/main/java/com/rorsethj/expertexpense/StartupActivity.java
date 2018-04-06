@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class StartupActivity extends AppCompatActivity
         implements AuthFragment.AuthInterface, SetupFragment.SetupInterface {
@@ -26,6 +27,13 @@ public class StartupActivity extends AppCompatActivity
         SetupFragment setupFrag = new SetupFragment();
         setupFrag.setSetupDelegate(this);
         switchToFragment(setupFrag);
+    }
+
+    @Override
+    public void didRejectLoginAttempt() {
+
+        Toast.makeText(this, "Authentication failed.",
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
