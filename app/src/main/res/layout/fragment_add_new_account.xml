@@ -1,0 +1,152 @@
+<RelativeLayout
+    android:id="@+id/newAccountRelativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMainBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<ScrollView
+    android:id="@+id/newAccountScrollView"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:background="@color/colorMainBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:fontFamily="sans-serif"
+            android:background="@android:color/white"
+            android:textStyle="bold"
+            android:text="@string/new_account_account_name"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/white"
+            android:inputType="text"
+            android:hint="@string/new_account_account_name_hint"/>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:fontFamily="sans-serif"
+            android:background="@android:color/white"
+            android:textStyle="bold"
+            android:text="@string/new_account_starting_balance"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/white"
+            android:inputType="text"
+            android:hint="@string/new_account_starting_balance_hint"/>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:fontFamily="sans-serif"
+            android:background="@android:color/white"
+            android:textStyle="bold"
+            android:text="@string/new_account_description"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/white"
+            android:inputType="text"
+            android:hint="@string/new_account_description_hint"/>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:background="@android:color/white"
+            android:text="@string/new_account_currency"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/white"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/currency_array"/>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:fontFamily="sans-serif"
+            android:background="@android:color/white"
+            android:textStyle="bold"
+            android:text="@string/new_account_icon"/>
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/white"
+            android:layout_gravity="left"
+            android:src="@drawable/ic_add"/>
+
+
+    </LinearLayout>
+
+</ScrollView>
+
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_alignParentBottom="true"
+android:background="@color/colorMainBackground"
+android:orientation="horizontal">
+
+<Button
+    android:id="@+id/new_account_cancel_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:background="@color/colorErrorRed"
+    android:fontFamily="sans-serif"
+    android:textStyle="bold"
+    android:text="@string/cancel_button"/>
+
+<Button
+    android:id="@+id/new_account_save_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:background="@color/colorValidGreen"
+    android:fontFamily="sans-serif"
+    android:textStyle="bold"
+    android:text="@string/save_button"/>
+
+</LinearLayout>
+</RelativeLayout>

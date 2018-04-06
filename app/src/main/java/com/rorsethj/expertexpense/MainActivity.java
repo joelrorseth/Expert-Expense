@@ -99,6 +99,12 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
     }
 
+    @Override
+    public void didSelectAddAccountIcon() {
+
+        switchToFragment(new AddNewAccountFragment());
+    }
+
 
     // Perform a FragmentTransaction to replace current hosted fragment with new one
     private void switchToFragment(Fragment destFragment) {

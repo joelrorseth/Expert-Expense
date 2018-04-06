@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ public class OverviewFragment extends Fragment
 
     // Define interface to containing Activity to respond to events taking place here
     public interface OverviewInterface {
-        public void didSelectCustomizationIcon();
+        void didSelectCustomizationIcon();
+        void didSelectAddAccountIcon();
     }
 
     OverviewInterface parentDelegate;
@@ -45,6 +47,17 @@ public class OverviewFragment extends Fragment
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
+
+        // Add references and set listeners to buttons inside this fragment
+        view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+
+                        parentDelegate.didSelectAddAccountIcon();
+                    }
+                }
+        );
+        ;
 
         // TODO, just temporary
         // Populate data for recycler

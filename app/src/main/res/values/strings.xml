@@ -31,4 +31,17 @@
     <string name="reports_tab_balance">Balance</string>
 
 
+    <string name="new_account_account_name">ACCOUNT NAME</string>
+    <string name="new_account_starting_balance">STARTING BALANCE</string>
+    <string name="new_account_description">DESCRIPTION</string>
+    <string name="new_account_currency">CURRENCY</string>
+    <string name="new_account_icon">ICON</string>
+
+    <string name="new_account_account_name_hint">Enter Account Name</string>
+    <string name="new_account_starting_balance_hint">0.00</string>
+    <string name="new_account_description_hint">Enter Description</string>
+
+    <string name="save_button">SAVE</string>
+    <string name="cancel_button">CANCEL</string>
+
 </resources>

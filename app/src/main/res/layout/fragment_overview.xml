@@ -36,6 +36,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/title_margin_top">
 
+                    <Button
+                        android:id="@+id/overviewMyAccountsAddButton"
+                        android:layout_width="@dimen/more_vert_width"
+                        android:layout_height="@dimen/more_vert_height"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/button_margin"
+                        android:layout_marginStart="@dimen/button_margin"
+                        android:background="@drawable/ic_add"/>
+
                     <TextView
                         android:id="@+id/overviewAccountsTextview"
                         android:layout_width="wrap_content"
@@ -48,6 +58,7 @@
                         android:textStyle="bold"/>
 
                     <Button
+                        android:id="@+id/overviewMyAccountsMoreButton"
                         android:layout_width="@dimen/more_vert_width"
                         android:layout_height="@dimen/more_vert_height"
                         android:layout_alignParentEnd="true"
