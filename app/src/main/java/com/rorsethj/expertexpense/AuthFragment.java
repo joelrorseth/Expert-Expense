@@ -97,7 +97,7 @@ public class AuthFragment extends Fragment {
     }
 
 
-    // MARK: Database Auth
+    // MARK: com.rorsethj.expertexpense.Database Auth
     // Attempt to create a new user in the database
     private void signInExistingUser(String email, String password) {
 
