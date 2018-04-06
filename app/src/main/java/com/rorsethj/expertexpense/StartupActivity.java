@@ -32,6 +32,7 @@ public class StartupActivity extends AppCompatActivity
     @Override
     public void didRejectLoginAttempt() {
 
+        System.out.println("StartupActivity: DID REJECT!");
         Toast.makeText(this, "Authentication failed.",
                 Toast.LENGTH_SHORT).show();
     }

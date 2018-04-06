@@ -1,5 +1,6 @@
 package com.rorsethj.expertexpense;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,6 +39,10 @@ public class AuthFragment extends Fragment {
     private AuthInterface authDelegate;
     private FirebaseAuth authManager;
 
+    private EditText usernameEditText;
+    private EditText passwordEditText;
+    private ProgressBar progressBar;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,13 +63,33 @@ public class AuthFragment extends Fragment {
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_auth, container, false);
 
-        // Add click listener to login
-        Button button = (Button) view.findViewById(R.id.loginButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        usernameEditText = (EditText) view.findViewById(R.id.usernameEditText);
+        passwordEditText = (EditText) view.findViewById(R.id.passwordEditText);
+        progressBar = (ProgressBar) view.findViewById(R.id.authLoadingProgressBar);
+
+        // Add click listeners to buttons
+        Button loginButton = (Button) view.findViewById(R.id.loginButton);
+        Button signupButton = (Button) view.findViewById(R.id.signupButton);
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
-                // Determine if user with this email exists
+                signInExistingUser(usernameEditText.getText().toString(),
+                        passwordEditText.getText().toString());
+
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        });
+
+        signupButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                createNewUser(usernameEditText.getText().toString(),
+                        passwordEditText.getText().toString());
+
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -75,26 +102,28 @@ public class AuthFragment extends Fragment {
     private void signInExistingUser(String email, String password) {
 
         authManager.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
+                if (task.isSuccessful()) {
 
-                        authDelegate.didAuthorizeLogin();
+                    authDelegate.didAuthorizeLogin();
 
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
-                        FirebaseUser user = authManager.getCurrentUser();
+                    // Sign in success, update UI with the signed-in user's information
+                    System.out.println("User signed in successfully");
+                    FirebaseUser user = authManager.getCurrentUser();
 
-                        // TODO: Set current user
+                    // TODO: Set current user
 
-                    } else {
+                } else {
 
-                        authDelegate.didRejectLoginAttempt();
+                    authDelegate.didRejectLoginAttempt();
 
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    }
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInExistingUserWithEmail:failure", task.getException());
+                }
+
+                    progressBar.setVisibility(View.GONE);
                 }
             });
     }
@@ -104,26 +133,28 @@ public class AuthFragment extends Fragment {
     private void createNewUser(String email, String password) {
 
         authManager.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
+                if (task.isSuccessful()) {
 
-                        authDelegate.didAuthorizeLogin();
+                    authDelegate.didAuthorizeLogin();
 
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
-                        FirebaseUser user = authManager.getCurrentUser();
+                    // Sign in success, update UI with the signed-in user's information
+                    System.out.println("User created successfully");
+                    FirebaseUser user = authManager.getCurrentUser();
 
-                        // TODO: Set current user
+                    // TODO: Set current user
 
-                    } else {
+                } else {
 
-                        authDelegate.didRejectLoginAttempt();
+                    authDelegate.didRejectLoginAttempt();
 
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    }
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                }
+
+                    progressBar.setVisibility(View.GONE);
                 }
             });
     }

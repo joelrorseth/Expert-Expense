@@ -59,7 +59,7 @@
         />
 
     <Button
-        android:id="@+id/exitButton"
+        android:id="@+id/signupButton"
         android:background="@color/colorPrimaryDark"
         android:textColor="@color/colorWhiteBackground"
         android:layout_width="match_parent"
@@ -68,7 +68,15 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="5dp"
-        android:text="@string/exit_button_title"
+        android:text="@string/signup_button_title"
         />
+
+    <ProgressBar
+        android:id="@+id/authLoadingProgressBar"
+        style="?android:attr/progressBarStyleSmall"
+        android:indeterminateTint="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"/>
 
 </LinearLayout>
