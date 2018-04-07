@@ -101,8 +101,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void didSelectAddAccountIcon() {
-
         switchToFragment(new AddNewAccountFragment());
+    }
+
+    @Override
+    public void didSelectAddBillIcon() {
+        switchToFragment(new AddNewBillFragment());
     }
 
 

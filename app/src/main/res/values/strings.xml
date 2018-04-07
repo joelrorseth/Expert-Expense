@@ -41,7 +41,24 @@
     <string name="new_account_starting_balance_hint">0.00</string>
     <string name="new_account_description_hint">Enter Description</string>
 
+    <string name="new_bill_payee">PAYEE</string>
+    <string name="new_bill_type">TYPE</string>
+    <string name="new_bill_amount">AMOUNT</string>
+    <string name="new_bill_currency">CURRENCY</string>
+    <string name="new_bill_category">CATEGORY</string>
+    <string name="new_bill_notes">NOTES</string>
+    <string name="new_bill_due_date">DUE DATE</string>
+
+    <string name="new_bill_payee_hint">Enter Payee / Item</string>
+    <string name="new_bill_amount_hint">0.00</string>
+    <string name="new_bill_notes_hint">Notes (Eg: Check #)</string>
+    <string name="new_bill_due_date_hint">25/01/2000</string>
+
     <string name="save_button">SAVE</string>
     <string name="cancel_button">CANCEL</string>
+
+    <!-- Firebase keys -->
+    <string name="firebase_key_accounts">accounts</string>
+    <string name="firebase_key_bills">bills</string>
 
 </resources>

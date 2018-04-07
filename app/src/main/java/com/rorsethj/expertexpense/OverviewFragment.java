@@ -29,6 +29,7 @@ public class OverviewFragment extends Fragment
     public interface OverviewInterface {
         void didSelectCustomizationIcon();
         void didSelectAddAccountIcon();
+        void didSelectAddBillIcon();
     }
 
     OverviewInterface parentDelegate;
@@ -57,7 +58,17 @@ public class OverviewFragment extends Fragment
                     }
                 }
         );
-        ;
+
+
+        view.findViewById(R.id.overviewBillsAddButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+
+                        parentDelegate.didSelectAddBillIcon();
+                    }
+                }
+        );
+
 
         // TODO, just temporary
         // Populate data for recycler

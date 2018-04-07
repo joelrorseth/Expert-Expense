@@ -1,0 +1,201 @@
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMainBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ScrollView
+        android:id="@+id/newBillScrollView"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_above="@id/addNewBillButtonsLayout"
+        android:background="@color/colorMainBackground"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:background="@android:color/white"
+                android:textStyle="bold"
+                android:text="@string/new_bill_payee"/>
+
+            <EditText
+                android:id="@+id/new_bill_payee_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:inputType="text"
+                android:hint="@string/new_bill_payee_hint"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:background="@android:color/white"
+                android:textStyle="bold"
+                android:text="@string/new_bill_type"/>
+
+            <Spinner
+                android:id="@+id/new_bill_type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/bill_types_array"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:background="@android:color/white"
+                android:textStyle="bold"
+                android:text="@string/new_bill_amount"/>
+
+            <EditText
+                android:id="@+id/new_bill_amount_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:inputType="text"
+                android:hint="@string/new_bill_amount_hint"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:background="@android:color/white"
+                android:text="@string/new_bill_currency"/>
+
+            <Spinner
+                android:id="@+id/new_bill_currency_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/currency_array"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:background="@android:color/white"
+                android:text="@string/new_bill_category"/>
+
+            <Spinner
+                android:id="@+id/new_bill_category_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/bill_category_array"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:background="@android:color/white"
+                android:textStyle="bold"
+                android:text="@string/new_bill_notes"/>
+
+            <EditText
+                android:id="@+id/new_bill_notes_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:inputType="text"
+                android:hint="@string/new_bill_notes_hint"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:background="@android:color/white"
+                android:textStyle="bold"
+                android:text="@string/new_bill_due_date"/>
+
+            <EditText
+                android:id="@+id/new_bill_due_date_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:hint="@string/new_bill_due_date_hint"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/addNewBillButtonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorMainBackground"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/new_bill_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorErrorRed"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:text="@string/cancel_button"/>
+
+        <Button
+            android:id="@+id/new_bill_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorValidGreen"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:text="@string/save_button"/>
+
+    </LinearLayout>
+</RelativeLayout>

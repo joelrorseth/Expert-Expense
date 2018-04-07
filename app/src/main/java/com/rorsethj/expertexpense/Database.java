@@ -51,20 +51,42 @@ public class Database {
     // by uid. Inside each document, several collections will exist, representing the set of
     // properties of this user.
 
+
+    // Save account under  users/<current_uid>/accounts/
     public void saveNewAccount(Account account) throws Exception {
 
+        try {
+            saveDocumentUnderUserCollection("accounts", account.toMap());
+
+        } catch (Exception e) { throw e; }
+    }
+
+
+    // Save bill under  users/<current_uid>/bills/
+    public void saveNewBill(Bill bill) throws Exception {
+
+        try {
+            saveDocumentUnderUserCollection("bills", bill.toMap());
+
+        } catch (Exception e) { throw e; }
+    }
+
+
+    // Generic function to save new document under  users/<current_uid>/<collection>/
+    private void saveDocumentUnderUserCollection(
+            String collection, Map<String, Object> document) throws Exception {
+
+
+        // Check current user, should be set upon login
         if (currentUser == null) {
             currentUser = FirebaseAuth.getInstance().getCurrentUser();
         }
 
-        // Create a new map representation of the account
-        Map<String, Object> accountMap = account.toMap();
-
         // Add a new document with a generated ID
         store.collection("users")
                 .document(currentUser.getUid())
-                .collection("accounts")
-                .add(accountMap)
+                .collection(collection)
+                .add(document)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
 
                     @Override
@@ -74,17 +96,16 @@ public class Database {
 
                 }).addOnFailureListener(new OnFailureListener() {
 
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error adding document", e);
 
-                        try {
-                            throw e;
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                });
+                try {
+                    throw e;
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
     }
-
 }

@@ -14,4 +14,37 @@
         <item>Spanish</item>
         <item>Russian</item>
     </string-array>
+
+    <string-array name="bill_types_array">
+        <item>Receivable</item>
+        <item>Payable</item>
+        <item>Transfer</item>
+    </string-array>
+
+    <string-array name="bill_category_array">
+        <item>Accommodation</item>
+        <item>Automobile</item>
+        <item>Child Support</item>
+        <item>Credit Cards</item>
+        <item>Donations</item>
+        <item>Entertainment</item>
+        <item>Food</item>
+        <item>Gifts</item>
+        <item>Groceries</item>
+        <item>Household</item>
+        <item>Income</item>
+        <item>Insurance</item>
+        <item>Investment</item>
+        <item>Medicare</item>
+        <item>Personal Care</item>
+        <item>Pets</item>
+        <item>Self Improvement</item>
+        <item>Shopping</item>
+        <item>Sports</item>
+        <item>Tax</item>
+        <item>Transportation</item>
+        <item>Utilities</item>
+        <item>Vacation</item>
+        <item>Other</item>
+    </string-array>
 </resources>
