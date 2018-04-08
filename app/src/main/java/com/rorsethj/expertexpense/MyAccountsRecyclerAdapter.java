@@ -14,12 +14,11 @@ import java.util.List;
 
 public class MyAccountsRecyclerAdapter extends RecyclerView.Adapter<MyAccountsRecyclerAdapter.ViewHolder> {
 
-    // TODO: Replace with <Account> class?
-    private List<String> myAccounts = Collections.emptyList();
+    private List<Account> myAccounts = Collections.emptyList();
 
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
-
+    private Context context;
 
 
     // Class to store recycled views
@@ -48,9 +47,9 @@ public class MyAccountsRecyclerAdapter extends RecyclerView.Adapter<MyAccountsRe
 
 
     // Custom constructor
-    public MyAccountsRecyclerAdapter(Context context, List<String> accounts) {
+    public MyAccountsRecyclerAdapter(Context context, List<Account> accounts) {
         this.mInflater = LayoutInflater.from(context);
-
+        this.context = context;
         this.myAccounts = accounts;
     }
 
@@ -67,12 +66,14 @@ public class MyAccountsRecyclerAdapter extends RecyclerView.Adapter<MyAccountsRe
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        String account = myAccounts.get(position);
-        holder.myImageView.setBackgroundColor(200);
+        holder.titleTextView.setText(myAccounts.get(position).getAccountName());
+        holder.amountTextView.setText(
 
-        // TODO
-        holder.titleTextView.setText(account);
-        holder.amountTextView.setText("$12.34");
+                String.format(
+                        context.getResources().getString(R.string.money_amount),
+                        myAccounts.get(position).getBalance()
+                )
+        );
     }
 
 
@@ -83,7 +84,7 @@ public class MyAccountsRecyclerAdapter extends RecyclerView.Adapter<MyAccountsRe
     }
 
     // Get item at pos
-    public String getItem(int id) {
+    public Account getItem(int id) {
         return myAccounts.get(id);
     }
 

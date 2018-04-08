@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class OverviewFragment extends Fragment
@@ -34,17 +35,24 @@ public class OverviewFragment extends Fragment
     }
 
     OverviewInterface parentDelegate;
+    Database db;
 
+    private RecyclerView accountsRecyclerView;
+    private RecyclerView transRecyclerView;
+    private RecyclerView billsRecyclerView;
 
     private MyAccountsRecyclerAdapter myAccountsAdapter;
     private RecentTransactionsRecyclerAdapter recentTransactionsAdapter;
     private UpcomingBillsRecyclerAdapter upcomingBillsAdapter;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
+
+        db = Database.getCurrentUserDatabase();
 
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
@@ -76,51 +84,23 @@ public class OverviewFragment extends Fragment
         );
 
 
-        // TODO, just temporary
-        // Populate data for recycler
-        ArrayList<String> tempAccounts = new ArrayList<>();
-        tempAccounts.add("Cash");
-        tempAccounts.add("Bank");
-        tempAccounts.add("Offshore");
-
-        ArrayList<String> tempTrans = new ArrayList<>();
-        tempTrans.add("Groceries");
-        tempTrans.add("Eat out");
-
-        ArrayList<String> tempBills = new ArrayList<>();
-        tempBills.add("Gas Bill");
-        tempBills.add("Hydro Bill");
-
-
         // Set up recycler views
-        RecyclerView accountsRecyclerView = (RecyclerView) view.findViewById(R.id.myAccountsRecycler);
+        accountsRecyclerView = (RecyclerView) view.findViewById(R.id.myAccountsRecycler);
         accountsRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.HORIZONTAL, false));
 
 
-        RecyclerView transRecyclerView = (RecyclerView) view.findViewById(R.id.recentTransactionsRecycler);
+        transRecyclerView = (RecyclerView) view.findViewById(R.id.recentTransactionsRecycler);
         transRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.VERTICAL, false));
 
-        RecyclerView billsRecyclerView = (RecyclerView) view.findViewById(R.id.upcomingBillsRecycler);
+        billsRecyclerView = (RecyclerView) view.findViewById(R.id.upcomingBillsRecycler);
         billsRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.VERTICAL, false));
 
 
-        myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), tempAccounts);
-        recentTransactionsAdapter = new RecentTransactionsRecyclerAdapter(getContext(), tempTrans);
-        upcomingBillsAdapter = new UpcomingBillsRecyclerAdapter(getContext(), tempBills);
-
-        myAccountsAdapter.setClickListener(this);
-        recentTransactionsAdapter.setClickListener(this);
-        upcomingBillsAdapter.setClickListener(this);
-
-        // Set adapters to recycler views
-        accountsRecyclerView.setAdapter(myAccountsAdapter);
-        transRecyclerView.setAdapter(recentTransactionsAdapter);
-        billsRecyclerView.setAdapter(upcomingBillsAdapter);
-
-
+        // Setup up adapters and populate the Overview screen with database content
+        refreshUserOverviewContent();
 
 
         // Configure floating action button listener
@@ -209,5 +189,46 @@ public class OverviewFragment extends Fragment
         Toast.makeText(getContext(), "You clicked " +
                 myAccountsAdapter.getItem(position) + " on " + it + " position " +
                 position, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void refreshUserOverviewContent() {
+
+        // TODO, just temporary
+
+        ArrayList<String> tempTrans = new ArrayList<>();
+        tempTrans.add("Groceries");
+        tempTrans.add("Eat out");
+
+        ArrayList<String> tempBills = new ArrayList<>();
+        tempBills.add("Gas Bill");
+        tempBills.add("Hydro Bill");
+
+
+        final OverviewFragment thisRef = this;
+
+        // Asynchronously get accounts from DB, update UI when downloaded
+        db.getUserAccountNames(new Database.DBInterface() {
+            @Override
+            public void didGetAccounts(List<Account> accounts, Exception e) {
+
+                myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), accounts);
+                myAccountsAdapter.setClickListener(thisRef);
+                accountsRecyclerView.setAdapter(myAccountsAdapter);
+            }
+        });
+
+
+
+        recentTransactionsAdapter = new RecentTransactionsRecyclerAdapter(getContext(), tempTrans);
+        upcomingBillsAdapter = new UpcomingBillsRecyclerAdapter(getContext(), tempBills);
+
+
+        recentTransactionsAdapter.setClickListener(this);
+        upcomingBillsAdapter.setClickListener(this);
+
+        // Set adapters to recycler views
+        transRecyclerView.setAdapter(recentTransactionsAdapter);
+        billsRecyclerView.setAdapter(upcomingBillsAdapter);
     }
 }

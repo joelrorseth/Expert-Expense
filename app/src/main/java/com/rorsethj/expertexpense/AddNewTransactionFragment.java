@@ -25,10 +25,6 @@ import java.util.Map;
 
 public class AddNewTransactionFragment extends Fragment {
 
-    public interface GetAccountsCallback {
-        void didGetAccounts(List<Account> accounts, Exception e);
-    }
-
     public interface AddTransactionCallback {
         void didAddTransaction(boolean success, Exception e);
     }
@@ -74,7 +70,7 @@ public class AddNewTransactionFragment extends Fragment {
 
         // Get account names for Spinner
         Database db = Database.getCurrentUserDatabase();
-        db.getUserAccountNames(new GetAccountsCallback() {
+        db.getUserAccountNames(new Database.DBInterface() {
 
             @Override
             public void didGetAccounts(List<Account> accounts, Exception e) {

@@ -75,6 +75,8 @@
     <string name="save_button">SAVE</string>
     <string name="cancel_button">CANCEL</string>
 
+    <string name="money_amount">$%1$.2f </string>
+
     <!-- Firebase keys -->
     <string name="firebase_key_accounts">accounts</string>
     <string name="firebase_key_bills">bills</string>

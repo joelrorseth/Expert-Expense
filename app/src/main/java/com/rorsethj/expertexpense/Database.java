@@ -23,16 +23,22 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
 public class Database {
 
+    public interface DBInterface {
+        void didGetAccounts(List<Account> accounts, Exception e);
+    }
+
 
     private static Database db = null;
     private static FirebaseUser currentUser = null;
     private FirebaseFirestore store;
+
 
 
     private Database() {
@@ -186,7 +192,7 @@ public class Database {
 
 
     // Asynchronous method with callback to return retrieved accounts for current user
-    public void getUserAccountNames(final AddNewTransactionFragment.GetAccountsCallback callback) {
+    public void getUserAccountNames(final DBInterface callback) {
 
 
         store.collection("users")
