@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Transaction {
 
+    private String account;
     private String payee;
     private String type;
     private String category;
@@ -16,9 +17,10 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(String payee, String type, String category, String notes,
+    public Transaction(String account, String payee, String type, String category, String notes,
                        String date, String status, double amount) {
 
+        this.account = account;
         this.payee = payee;
         this.type = type;
         this.category = category;
@@ -26,6 +28,10 @@ public class Transaction {
         this.date = date;
         this.status = status;
         this.amount = amount;
+    }
+
+    public String getAccount() {
+        return account;
     }
 
     public String getPayee() {

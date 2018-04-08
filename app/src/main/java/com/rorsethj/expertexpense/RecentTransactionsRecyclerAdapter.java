@@ -16,11 +16,11 @@ public class RecentTransactionsRecyclerAdapter
         extends RecyclerView.Adapter<RecentTransactionsRecyclerAdapter.ViewHolder> {
 
     // TODO: Replace with <Transaction> class?
-    private List<String> myTransactions = Collections.emptyList();
+    private List<Transaction> myTransactions = Collections.emptyList();
 
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
-
+    private Context context;
 
 
     // Class to store recycled views
@@ -52,8 +52,9 @@ public class RecentTransactionsRecyclerAdapter
 
 
     // Custom constructor
-    public RecentTransactionsRecyclerAdapter(Context context, List<String> transactions) {
+    public RecentTransactionsRecyclerAdapter(Context context, List<Transaction> transactions) {
         this.mInflater = LayoutInflater.from(context);
+        this.context = context;
         this.myTransactions = transactions;
     }
 
@@ -70,13 +71,19 @@ public class RecentTransactionsRecyclerAdapter
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        String trans = myTransactions.get(position);
-        holder.myImageView.setBackgroundColor(200);
+        Transaction trans = myTransactions.get(position);
 
-        // TODO
-        holder.titleTextView.setText(trans);
-        holder.descTextView.setText("Placeholder desc");
-        holder.amountTextView.setText("-$12.34");
+        // Set the fields of the view to display Transaction attributes
+        holder.titleTextView.setText(trans.getPayee());
+        holder.descTextView.setText(trans.getDate());
+
+        holder.amountTextView.setText(
+
+                String.format(
+                        context.getResources().getString(R.string.money_amount),
+                        trans.getAmount()
+                )
+        );
     }
 
 
@@ -87,7 +94,7 @@ public class RecentTransactionsRecyclerAdapter
     }
 
     // Get item at pos
-    public String getItem(int id) {
+    public Transaction getItem(int id) {
         return myTransactions.get(id);
     }
 

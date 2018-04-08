@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -30,8 +31,16 @@ import static android.content.ContentValues.TAG;
 
 public class Database {
 
-    public interface DBInterface {
-        void didGetAccounts(List<Account> accounts, Exception e);
+    public interface DBGetAccountsInterface {
+        void didGet(List<Account> accounts, List<String> accountIDs, Exception e);
+    }
+
+    public interface DBGetTransactionsInterface {
+        void didGet(List<Transaction> transactions, Exception e);
+    }
+
+    public interface DBGetBillsInterface {
+        void didGet(List<Bill> bills, Exception e);
     }
 
 
@@ -72,7 +81,7 @@ public class Database {
         store.collection("users")
                 .document(currentUser.getUid())
                 .collection("accounts")
-                .document(account.getAccountName())
+                .document()
                 .set(account)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -91,15 +100,13 @@ public class Database {
     }
 
 
-    // Save transaction under  users/<current_uid>/accounts/<account_name>/transactions/
-    public void saveNewTransaction(Transaction transaction, Account associatedAccount,
+    // Save transaction under  users/<current_uid>/transactions/
+    public void saveNewTransaction(Transaction transaction,
                                    final AddNewTransactionFragment.AddTransactionCallback callback) {
 
 
         store.collection("users")
                 .document(currentUser.getUid())
-                .collection("accounts")
-                .document(associatedAccount.getAccountName())
                 .collection("transactions")
                 .document()
                 .set(transaction)
@@ -143,56 +150,11 @@ public class Database {
                     }
                 });
     }
-
-
-
-
-
-
-
-
-    /*
-    // Generic function to save new document under  users/<current_uid>/<collection>/
-    private void saveDocumentUnderUserCollection(
-            String collection, Map<String, Object> document) throws Exception {
-
-
-        // Check current user, should be set upon login
-        if (currentUser == null) {
-            currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        }
-
-        // Add a new document with a generated ID
-        store.collection("users")
-                .document(currentUser.getUid())
-                .collection(collection)
-                .add(document)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-
-                }).addOnFailureListener(new OnFailureListener() {
-
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error adding document", e);
-
-                try {
-                    throw e;
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
-    }
-    */
+    
 
 
     // Asynchronous method with callback to return retrieved accounts for current user
-    public void getUserAccountNames(final DBInterface callback) {
+    public void getUserAccounts(final DBGetAccountsInterface callback) {
 
 
         store.collection("users")
@@ -204,25 +166,101 @@ public class Database {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
+                        ArrayList<String> accountIDs = new ArrayList<>();
                         ArrayList<Account> accounts = new ArrayList<>();
 
                         if (task.isSuccessful()) {
 
                             // For each Account document
                             for (QueryDocumentSnapshot document : task.getResult()) {
+
                                 Log.d(TAG, document.getId() + " => " + document.getData());
 
                                 // Transform into Account object and add to ArrayList
+                                accountIDs.add(document.getId());
                                 accounts.add(document.toObject(Account.class));
                             }
 
-                            callback.didGetAccounts(accounts, null);
+                            callback.didGet(accounts, accountIDs, null);
 
                         } else {
 
                             // Report back Exception to caller
                             Log.d(TAG, "Error getting documents: ", task.getException());
-                            callback.didGetAccounts(accounts, task.getException());
+                            callback.didGet(accounts, accountIDs, task.getException());
+                        }
+                    }
+                });
+    }
+
+
+    // Asynchronous method with callback to return retrieved accounts for current user
+    public void getUserTransactions(final DBGetTransactionsInterface callback) {
+
+
+        store.collection("users")
+                .document(currentUser.getUid())
+                .collection("transactions")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        ArrayList<Transaction> transactions = new ArrayList<>();
+
+                        if (task.isSuccessful()) {
+
+                            // Return list of transactions to caller
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                transactions.add(document.toObject(Transaction.class));
+                            }
+
+                            callback.didGet(transactions, null);
+
+                        } else {
+
+                            // Report back Exception to caller
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            callback.didGet(transactions, task.getException());
+                        }
+                    }
+                });
+    }
+
+
+    // Asynchronous method with callback to return retrieved accounts for current user
+    public void getUserBills(final DBGetBillsInterface callback) {
+
+
+        store.collection("users")
+                .document(currentUser.getUid())
+                .collection("bills")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        ArrayList<Bill> bills = new ArrayList<>();
+
+                        if (task.isSuccessful()) {
+
+                            // Make a list of Bills
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+
+                                bills.add(document.toObject(Bill.class));
+                            }
+
+                            callback.didGet(bills, null);
+
+                        } else {
+
+                            // Report back Exception to caller
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            callback.didGet(bills, task.getException());
                         }
                     }
                 });

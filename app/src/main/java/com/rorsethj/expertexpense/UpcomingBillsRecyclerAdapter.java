@@ -15,12 +15,11 @@ import java.util.List;
 public class UpcomingBillsRecyclerAdapter
         extends RecyclerView.Adapter<UpcomingBillsRecyclerAdapter.ViewHolder> {
 
-    // TODO: Replace with <Bill> class?
-    private List<String> myBills = Collections.emptyList();
+    private List<Bill> myBills = Collections.emptyList();
 
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
-
+    private Context context;
 
 
     // Class to store recycled views
@@ -52,8 +51,9 @@ public class UpcomingBillsRecyclerAdapter
 
 
     // Custom constructor
-    public UpcomingBillsRecyclerAdapter(Context context, List<String> bills) {
+    public UpcomingBillsRecyclerAdapter(Context context, List<Bill> bills) {
         this.mInflater = LayoutInflater.from(context);
+        this.context = context;
         this.myBills = bills;
     }
 
@@ -70,13 +70,18 @@ public class UpcomingBillsRecyclerAdapter
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        String bill = myBills.get(position);
-        holder.myImageView.setBackgroundColor(200);
+        Bill bill = myBills.get(position);
 
-        // TODO
-        holder.titleTextView.setText(bill);
-        holder.descTextView.setText("Placeholder desc");
-        holder.amountTextView.setText("$12.34");
+        holder.titleTextView.setText(bill.getPayee());
+        holder.descTextView.setText(bill.getDueDate());
+
+        holder.amountTextView.setText(
+
+                String.format(
+                        context.getResources().getString(R.string.money_amount),
+                        bill.getAmount()
+                )
+        );
     }
 
 
@@ -87,7 +92,7 @@ public class UpcomingBillsRecyclerAdapter
     }
 
     // Get item at pos
-    public String getItem(int id) {
+    public Bill getItem(int id) {
         return myBills.get(id);
     }
 

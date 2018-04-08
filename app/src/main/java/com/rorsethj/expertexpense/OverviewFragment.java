@@ -89,7 +89,6 @@ public class OverviewFragment extends Fragment
         accountsRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-
         transRecyclerView = (RecyclerView) view.findViewById(R.id.recentTransactionsRecycler);
         transRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.VERTICAL, false));
@@ -192,25 +191,15 @@ public class OverviewFragment extends Fragment
     }
 
 
+    // Refresh the accounts, transactions, bills etc from the database and update views
     private void refreshUserOverviewContent() {
-
-        // TODO, just temporary
-
-        ArrayList<String> tempTrans = new ArrayList<>();
-        tempTrans.add("Groceries");
-        tempTrans.add("Eat out");
-
-        ArrayList<String> tempBills = new ArrayList<>();
-        tempBills.add("Gas Bill");
-        tempBills.add("Hydro Bill");
-
 
         final OverviewFragment thisRef = this;
 
         // Asynchronously get accounts from DB, update UI when downloaded
-        db.getUserAccountNames(new Database.DBInterface() {
+        db.getUserAccounts(new Database.DBGetAccountsInterface() {
             @Override
-            public void didGetAccounts(List<Account> accounts, Exception e) {
+            public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
 
                 myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), accounts);
                 myAccountsAdapter.setClickListener(thisRef);
@@ -218,17 +207,26 @@ public class OverviewFragment extends Fragment
             }
         });
 
+        // Load transactions
+        db.getUserTransactions(new Database.DBGetTransactionsInterface() {
+            @Override
+            public void didGet(List<Transaction> transactions, Exception e) {
 
+                recentTransactionsAdapter = new RecentTransactionsRecyclerAdapter(getContext(), transactions);
+                recentTransactionsAdapter.setClickListener(thisRef);
+                transRecyclerView.setAdapter(recentTransactionsAdapter);
+            }
+        });
 
-        recentTransactionsAdapter = new RecentTransactionsRecyclerAdapter(getContext(), tempTrans);
-        upcomingBillsAdapter = new UpcomingBillsRecyclerAdapter(getContext(), tempBills);
+        // Load bills
+        db.getUserBills(new Database.DBGetBillsInterface() {
+            @Override
+            public void didGet(List<Bill> bills, Exception e) {
 
-
-        recentTransactionsAdapter.setClickListener(this);
-        upcomingBillsAdapter.setClickListener(this);
-
-        // Set adapters to recycler views
-        transRecyclerView.setAdapter(recentTransactionsAdapter);
-        billsRecyclerView.setAdapter(upcomingBillsAdapter);
+                upcomingBillsAdapter = new UpcomingBillsRecyclerAdapter(getContext(), bills);
+                upcomingBillsAdapter.setClickListener(thisRef);
+                billsRecyclerView.setAdapter(upcomingBillsAdapter);
+            }
+        });
     }
 }

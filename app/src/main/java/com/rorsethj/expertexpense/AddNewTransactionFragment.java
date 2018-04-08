@@ -41,6 +41,7 @@ public class AddNewTransactionFragment extends Fragment {
     private final Calendar myCalendar = Calendar.getInstance();
     private SimpleDateFormat dateFormatter;
 
+    private List<String> currentUserAccountIDs;
     private List<Account> currentUserAccounts;
 
 
@@ -70,11 +71,12 @@ public class AddNewTransactionFragment extends Fragment {
 
         // Get account names for Spinner
         Database db = Database.getCurrentUserDatabase();
-        db.getUserAccountNames(new Database.DBInterface() {
+        db.getUserAccounts(new Database.DBGetAccountsInterface() {
 
             @Override
-            public void didGetAccounts(List<Account> accounts, Exception e) {
+            public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
 
+                currentUserAccountIDs = accountIDs;
                 currentUserAccounts = accounts;
 
                 // If an error occurred loading accounts, print exception
@@ -137,9 +139,6 @@ public class AddNewTransactionFragment extends Fragment {
 
 
 
-
-
-
         // Attach listeners
         view.findViewById(R.id.new_transaction_cancel_button).setOnClickListener(
                 new View.OnClickListener() {
@@ -157,7 +156,10 @@ public class AddNewTransactionFragment extends Fragment {
 
                         // TODO: Validate fields
 
+                        int selectedAccountIndex = accountSpinner.getSelectedItemPosition();
+
                         Transaction newTransaction = new Transaction(
+                                currentUserAccountIDs.get(selectedAccountIndex),
                                 payeeText.getText().toString(),
                                 typeSpinner.getSelectedItem().toString(),
                                 categorySpinner.getSelectedItem().toString(),
@@ -167,12 +169,10 @@ public class AddNewTransactionFragment extends Fragment {
                                 Double.parseDouble(amountText.getText().toString())
                         );
 
-                        int selectedAccountIndex = accountSpinner.getSelectedItemPosition();
-                        Account selectedAccount = currentUserAccounts.get(selectedAccountIndex);
 
                         // Save the new transaction in database
                         Database db = Database.getCurrentUserDatabase();
-                        db.saveNewTransaction(newTransaction, selectedAccount, new AddTransactionCallback() {
+                        db.saveNewTransaction(newTransaction, new AddTransactionCallback() {
 
                             @Override
                             public void didAddTransaction(boolean success, Exception e) {
