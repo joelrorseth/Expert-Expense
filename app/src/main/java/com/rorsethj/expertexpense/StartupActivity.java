@@ -23,6 +23,9 @@ public class StartupActivity extends AppCompatActivity
 
         // TODO: Conditionally switch to setup only if new user, else go to MainActivity
 
+        // User verified, update Database current user
+        Database.fetchAndUpdateCurrentUser();
+
         // Switch to Setup fragment, set this activity as its delegate
         SetupFragment setupFrag = new SetupFragment();
         setupFrag.setSetupDelegate(this);

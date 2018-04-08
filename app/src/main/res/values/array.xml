@@ -21,7 +21,19 @@
         <item>Transfer</item>
     </string-array>
 
-    <string-array name="bill_category_array">
+    <string-array name="transaction_types_array">
+        <item>Deposit</item>
+        <item>Withdrawal</item>
+    </string-array>
+
+    <string-array name="transaction_status_array">
+        <item>Cleared</item>
+        <item>Uncleared</item>
+        <item>Reconciled</item>
+        <item>Void</item>
+    </string-array>
+
+    <string-array name="bill_transaction_category_array">
         <item>Accommodation</item>
         <item>Automobile</item>
         <item>Child Support</item>

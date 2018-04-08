@@ -11,6 +11,9 @@ public class Account {
     private String icon;
     private double balance;
 
+
+    public Account() {}
+
     public Account(String name, String desc, String curr, String ic, double bal) {
 
         accountName = name;
@@ -18,6 +21,26 @@ public class Account {
         currency = curr;
         icon = ic;
         balance = bal;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public double getBalance() {
+        return balance;
     }
 
     // Return a key,value representation of the parameters

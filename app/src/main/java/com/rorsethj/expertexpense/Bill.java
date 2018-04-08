@@ -14,6 +14,8 @@ public class Bill {
     private double amount;
 
 
+    public Bill() {}
+
     public Bill(String payee, String type, String currency, String category,
                 String notes, String dueDate, double amount) {
 
@@ -24,6 +26,34 @@ public class Bill {
         this.notes = notes;
         this.dueDate = dueDate;
         this.amount = amount;
+    }
+
+    public String getPayee() {
+        return payee;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public double getAmount() {
+        return amount;
     }
 
     // Return a key,value representation of the parameters

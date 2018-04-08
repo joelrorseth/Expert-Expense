@@ -5,10 +5,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ScrollView
-        android:id="@+id/newBillScrollView"
+        android:id="@+id/newTransactionScrollView"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_above="@id/addNewBillButtonsLayout"
+        android:layout_above="@id/addNewTransactionButtonsLayout"
         android:background="@color/colorMainBackground"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -18,6 +18,7 @@
             android:orientation="vertical"
             xmlns:android="http://schemas.android.com/apk/res/android">
 
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -25,19 +26,16 @@
                 android:fontFamily="sans-serif"
                 android:background="@android:color/white"
                 android:textStyle="bold"
-                android:text="@string/new_bill_payee"/>
+                android:text="@string/new_transaction_account"/>
 
-            <EditText
-                android:id="@+id/new_bill_payee_text"
+            <Spinner
+                android:id="@+id/new_transaction_account_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@android:color/white"
-                android:inputType="text"
-                android:hint="@string/new_bill_payee_hint"/>
-
-
+                android:drawSelectorOnTop="true"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -46,19 +44,17 @@
                 android:fontFamily="sans-serif"
                 android:background="@android:color/white"
                 android:textStyle="bold"
-                android:text="@string/new_bill_type"/>
+                android:text="@string/new_transaction_type"/>
 
             <Spinner
-                android:id="@+id/new_bill_type_spinner"
+                android:id="@+id/new_transaction_type_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@android:color/white"
                 android:drawSelectorOnTop="true"
-                android:entries="@array/bill_types_array"/>
-
-
+                android:entries="@array/transaction_types_array"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -67,17 +63,17 @@
                 android:fontFamily="sans-serif"
                 android:background="@android:color/white"
                 android:textStyle="bold"
-                android:text="@string/new_bill_amount"/>
+                android:text="@string/new_transaction_amount"/>
 
             <EditText
-                android:id="@+id/new_bill_amount_text"
+                android:id="@+id/new_transaction_amount_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@android:color/white"
                 android:inputType="text"
-                android:hint="@string/new_bill_amount_hint"/>
+                android:hint="@string/new_transaction_amount_hint"/>
 
 
 
@@ -86,21 +82,19 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:fontFamily="sans-serif"
-                android:textStyle="bold"
                 android:background="@android:color/white"
-                android:text="@string/new_bill_currency"/>
+                android:textStyle="bold"
+                android:text="@string/new_transaction_payee"/>
 
-            <Spinner
-                android:id="@+id/new_bill_currency_spinner"
+            <EditText
+                android:id="@+id/new_transaction_payee_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@android:color/white"
-                android:drawSelectorOnTop="true"
-                android:entries="@array/currency_array"/>
-
-
+                android:inputType="text"
+                android:hint="@string/new_transaction_payee_hint"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -109,10 +103,10 @@
                 android:fontFamily="sans-serif"
                 android:textStyle="bold"
                 android:background="@android:color/white"
-                android:text="@string/new_bill_category"/>
+                android:text="@string/new_transaction_category"/>
 
             <Spinner
-                android:id="@+id/new_bill_category_spinner"
+                android:id="@+id/new_transaction_category_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -121,8 +115,6 @@
                 android:drawSelectorOnTop="true"
                 android:entries="@array/bill_transaction_category_array"/>
 
-
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -130,17 +122,18 @@
                 android:fontFamily="sans-serif"
                 android:background="@android:color/white"
                 android:textStyle="bold"
-                android:text="@string/new_bill_notes"/>
+                android:text="@string/new_transaction_notes"/>
 
             <EditText
-                android:id="@+id/new_bill_notes_text"
+                android:id="@+id/new_transaction_notes_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@android:color/white"
                 android:inputType="text"
-                android:hint="@string/new_bill_notes_hint"/>
+                android:hint="@string/new_transaction_notes_hint"/>
+
 
 
 
@@ -151,10 +144,10 @@
                 android:fontFamily="sans-serif"
                 android:background="@android:color/white"
                 android:textStyle="bold"
-                android:text="@string/new_bill_due_date"/>
+                android:text="@string/new_transaction_date"/>
 
             <EditText
-                android:id="@+id/new_bill_due_date_text"
+                android:id="@+id/new_transaction_date_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -162,7 +155,26 @@
                 android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true"
-                android:hint="@string/new_bill_due_date_hint"/>
+                android:hint="@string/new_transaction_date_hint"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:background="@android:color/white"
+                android:text="@string/new_transaction_status"/>
+
+            <Spinner
+                android:id="@+id/new_transaction_status_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/white"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/transaction_status_array"/>
 
 
         </LinearLayout>
@@ -170,7 +182,7 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/addNewBillButtonsLayout"
+        android:id="@+id/addNewTransactionButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -178,7 +190,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/new_bill_cancel_button"
+            android:id="@+id/new_transaction_cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -188,7 +200,7 @@
             android:text="@string/cancel_button"/>
 
         <Button
-            android:id="@+id/new_bill_save_button"
+            android:id="@+id/new_transaction_save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

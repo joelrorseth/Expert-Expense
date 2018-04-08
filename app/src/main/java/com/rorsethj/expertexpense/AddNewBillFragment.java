@@ -22,6 +22,10 @@ import java.util.Locale;
 
 public class AddNewBillFragment extends Fragment {
 
+    public interface AddBillCallback {
+        void didAddBill(boolean success, Exception e);
+    }
+
     private EditText payeeText;
     private EditText amountText;
     private EditText notesText;
@@ -120,18 +124,24 @@ public class AddNewBillFragment extends Fragment {
 
                         Database db = Database.getCurrentUserDatabase();
 
-                        // Attempt to save in the database, handle any errors with Toast
-                        try {
+                        // Attempt to save new Account in database
+                        db.saveNewBill(newBill, new AddNewBillFragment.AddBillCallback() {
+                            @Override
+                            public void didAddBill(boolean success, Exception e) {
 
-                            // If successful, dismiss
-                            db.saveNewBill(newBill);
-                            Toast.makeText(getContext(), "New bill has been added", Toast.LENGTH_SHORT).show();
-                            getFragmentManager().popBackStack();
+                                if (!success && e != null) {
+                                    Toast.makeText(getContext(), e.getLocalizedMessage(),
+                                            Toast.LENGTH_SHORT).show();
 
-                        } catch (Exception e) {
+                                } else {
 
-                            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                                    // Show success message and go back
+                                    Toast.makeText(getContext(), "New bill has been added",
+                                            Toast.LENGTH_SHORT).show();
+                                    getFragmentManager().popBackStack();
+                                }
+                            }
+                        });
                     }
                 }
         );

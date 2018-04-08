@@ -32,6 +32,7 @@ public class AuthFragment extends Fragment {
     // Allow parent activity to implement functionality and manage this fragment
     public interface AuthInterface {
         public void didAuthorizeLogin();
+
         public void didRejectLoginAttempt();
     }
 
@@ -102,30 +103,25 @@ public class AuthFragment extends Fragment {
     private void signInExistingUser(String email, String password) {
 
         authManager.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
 
-                    authDelegate.didAuthorizeLogin();
+                            // Sign in success, update UI with the signed-in user's information
+                            System.out.println("User signed in successfully");
+                            authDelegate.didAuthorizeLogin();
 
-                    // Sign in success, update UI with the signed-in user's information
-                    System.out.println("User signed in successfully");
-                    FirebaseUser user = authManager.getCurrentUser();
+                        } else {
 
-                    // TODO: Set current user
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInExistingUserWithEmail:failure", task.getException());
+                            authDelegate.didRejectLoginAttempt();
+                        }
 
-                } else {
-
-                    authDelegate.didRejectLoginAttempt();
-
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInExistingUserWithEmail:failure", task.getException());
-                }
-
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
     }
 
 
@@ -133,29 +129,26 @@ public class AuthFragment extends Fragment {
     private void createNewUser(String email, String password) {
 
         authManager.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
 
-                    authDelegate.didAuthorizeLogin();
+                        if (task.isSuccessful()) {
 
-                    // Sign in success, update UI with the signed-in user's information
-                    System.out.println("User created successfully");
-                    FirebaseUser user = authManager.getCurrentUser();
+                            // Sign in success, update UI with the signed-in user's information
+                            System.out.println("User created successfully");
+                            authDelegate.didAuthorizeLogin();
 
-                    // TODO: Set current user
 
-                } else {
+                        } else {
 
-                    authDelegate.didRejectLoginAttempt();
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            authDelegate.didRejectLoginAttempt();
+                        }
 
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                }
-
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
     }
 }

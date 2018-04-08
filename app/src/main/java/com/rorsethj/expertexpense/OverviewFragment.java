@@ -29,6 +29,7 @@ public class OverviewFragment extends Fragment
     public interface OverviewInterface {
         void didSelectCustomizationIcon();
         void didSelectAddAccountIcon();
+        void didSelectAddTransactionIcon();
         void didSelectAddBillIcon();
     }
 
@@ -53,17 +54,22 @@ public class OverviewFragment extends Fragment
         view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
                 new View.OnClickListener() {
                     @Override public void onClick(View view) {
-
                         parentDelegate.didSelectAddAccountIcon();
                     }
                 }
         );
 
+        view.findViewById(R.id.overviewTransactionsAddButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+                        parentDelegate.didSelectAddTransactionIcon();
+                    }
+                }
+        );
 
         view.findViewById(R.id.overviewBillsAddButton).setOnClickListener(
                 new View.OnClickListener() {
                     @Override public void onClick(View view) {
-
                         parentDelegate.didSelectAddBillIcon();
                     }
                 }
