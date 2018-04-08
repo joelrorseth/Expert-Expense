@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal"
-                    android:text="Net Balance (CAD): $1,2345.00"
+                    android:text="@string/net_balance_amount"
                     android:textColor="@color/colorTextBlack"
                     android:textSize="20sp"/>
 

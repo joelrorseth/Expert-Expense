@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class OverviewFragment extends Fragment
     OverviewInterface parentDelegate;
     Database db;
 
+    private TextView newBalanceTextView;
     private RecyclerView accountsRecyclerView;
     private RecyclerView transRecyclerView;
     private RecyclerView billsRecyclerView;
@@ -57,6 +59,7 @@ public class OverviewFragment extends Fragment
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
+        newBalanceTextView = view.findViewById(R.id.newBalanceTextView);
 
         // Add references and set listeners to buttons inside this fragment
         view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
@@ -139,7 +142,7 @@ public class OverviewFragment extends Fragment
 
             case R.id.action_refresh:
 
-                // TODO: Initiate cloud sync
+                refreshUserOverviewContent();
                 return true;
         }
 
@@ -200,6 +203,13 @@ public class OverviewFragment extends Fragment
         db.getUserAccounts(new Database.DBGetAccountsInterface() {
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
+
+                // Calculate total across all accounts to display
+                double sum = 0.0;
+                for (Account a: accounts) { sum += a.getBalance(); }
+                newBalanceTextView.setText(
+                        String.format(getResources().getString(R.string.net_balance_amount), sum)
+                );
 
                 myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), accounts);
                 myAccountsAdapter.setClickListener(thisRef);
