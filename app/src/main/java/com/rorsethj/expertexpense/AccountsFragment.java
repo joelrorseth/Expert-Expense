@@ -8,9 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AccountsFragment extends Fragment
@@ -18,7 +20,10 @@ public class AccountsFragment extends Fragment
 
 
     private AccountsAccountsRecyclerAdapter accountsAccountsAdapter;
+    private RecyclerView accountsRecyclerView;
+    private Database db;
 
+    private TextView accountsNewBalanceTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,29 +33,38 @@ public class AccountsFragment extends Fragment
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_accounts, container, false);
 
-
-        // TODO, just temporary
-        // Populate data for recycler
-        ArrayList<String> tempAccounts = new ArrayList<>();
-        tempAccounts.add("Cash");
-        tempAccounts.add("Bank");
-        tempAccounts.add("Offshore");
+        accountsNewBalanceTextView = view.findViewById(R.id.accountsNewBalanceTextView);
 
 
         // Set up recycler views
-        RecyclerView accountsRecyclerView = (RecyclerView) view.findViewById(R.id.accountsAccountsRecycler);
+        accountsRecyclerView = (RecyclerView) view.findViewById(R.id.accountsAccountsRecycler);
         accountsRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.VERTICAL, false));
 
+        final AccountsFragment thisRef = this;
 
-        accountsAccountsAdapter = new AccountsAccountsRecyclerAdapter(getContext(), tempAccounts);
+        // Get Accounts from DB
+        db = Database.getCurrentUserDatabase();
+        db.getUserAccounts(new Database.DBGetAccountsInterface() {
 
-        accountsAccountsAdapter.setClickListener(this);
+            @Override
+            public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
 
-        // Set adapters to recycler views
-        accountsRecyclerView.setAdapter(accountsAccountsAdapter);
+                accountsAccountsAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
+                accountsAccountsAdapter.setClickListener(thisRef);
 
+                // Set adapters to recycler views
+                accountsRecyclerView.setAdapter(accountsAccountsAdapter);
 
+                // Update total balance label
+                // Calculate total across all accounts to display
+                double sum = 0.0;
+                for (Account a: accounts) { sum += a.getBalance(); }
+                accountsNewBalanceTextView.setText(
+                        String.format(getResources().getString(R.string.net_balance_amount), sum)
+                );
+            }
+        });
 
 
         // Configure floating action button listener

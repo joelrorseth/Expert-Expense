@@ -189,7 +189,7 @@ public class OverviewFragment extends Fragment
             displayIncomeVsExpense(view);
         }
     }
-    
+
     private void displayAccounts(View view) {
 
         // Unhide the Accounts view

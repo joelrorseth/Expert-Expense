@@ -15,12 +15,11 @@ import java.util.List;
 public class AccountsAccountsRecyclerAdapter
         extends RecyclerView.Adapter<AccountsAccountsRecyclerAdapter.ViewHolder> {
 
-    // TODO: Replace with <Account> class?
-    private List<String> myAccounts = Collections.emptyList();
+    private List<Account> myAccounts = Collections.emptyList();
 
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
-
+    private Context context;
 
 
     // Class to store recycled views
@@ -52,9 +51,10 @@ public class AccountsAccountsRecyclerAdapter
 
 
     // Custom constructor
-    public AccountsAccountsRecyclerAdapter(Context context, List<String> accounts) {
+    public AccountsAccountsRecyclerAdapter(Context context, List<Account> accounts) {
         this.mInflater = LayoutInflater.from(context);
         this.myAccounts = accounts;
+        this.context = context;
     }
 
 
@@ -70,13 +70,19 @@ public class AccountsAccountsRecyclerAdapter
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        String accounts = myAccounts.get(position);
-        holder.myImageView.setBackgroundColor(200);
+        Account account = myAccounts.get(position);
 
-        // TODO
-        holder.titleTextView.setText(accounts);
-        holder.descTextView.setText("Placeholder desc");
-        holder.amountTextView.setText("$1200.34");
+        holder.titleTextView.setText(account.getAccountName());
+        holder.descTextView.setText(account.getCurrency());
+        holder.amountTextView.setText(
+
+                String.format(
+                        context.getResources().getString(R.string.money_amount),
+                        account.getBalance()
+                )
+        );
+
+        // TODO: Set icon
     }
 
 
@@ -87,7 +93,7 @@ public class AccountsAccountsRecyclerAdapter
     }
 
     // Get item at pos
-    public String getItem(int id) {
+    public Account getItem(int id) {
         return myAccounts.get(id);
     }
 
