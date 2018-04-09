@@ -58,7 +58,6 @@
     <string name="new_transaction_date_hint">25/01/2000</string>
 
 
-
     <string name="new_bill_payee">PAYEE</string>
     <string name="new_bill_type">TYPE</string>
     <string name="new_bill_amount">AMOUNT</string>
@@ -91,5 +90,8 @@
     <string name="prefs_high_spending">High Spending Alerts</string>
     <string name="prefs_expense_category">Expense By Category</string>
     <string name="prefs_income_expense">Invome Vs Expense</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
