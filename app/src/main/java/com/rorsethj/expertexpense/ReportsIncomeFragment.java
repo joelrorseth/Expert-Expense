@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -13,6 +14,7 @@ import android.widget.TextView;
  */
 public class ReportsIncomeFragment extends Fragment {
 
+    private ListView listView;
 
     public ReportsIncomeFragment() {
         // Required empty public constructor
@@ -21,8 +23,19 @@ public class ReportsIncomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.reusable_report_list, container, false);
-        return rootView;
-    }
 
+        View view = inflater.inflate(R.layout.reusable_report_list, container, false);
+
+        listView = (ListView) view.findViewById(R.id.reusableReportListView);
+
+        // Load report options and their icons
+        String[] reportOptions = getResources().getStringArray(R.array.reports_income);
+        int[] drawableIds = {R.drawable.ic_pie_chart, R.drawable.ic_bar_chart, R.drawable.ic_bar_chart};
+
+        // Use this adapter on the list view
+        SimpleIconTextRowAdapter adapter = new SimpleIconTextRowAdapter(getContext(), reportOptions, drawableIds);
+        listView.setAdapter(adapter);
+
+        return view;
+    }
 }

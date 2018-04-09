@@ -68,4 +68,27 @@
         <item>Vacation</item>
         <item>Other</item>
     </string-array>
+
+
+    <string-array name="reports_expense">
+        <item>Expense By Category</item>
+        <item>Daily Expense</item>
+        <item>Monthly Expense</item>
+    </string-array>
+
+    <string-array name="reports_income">
+        <item>Income By Category</item>
+        <item>Daily Income</item>
+        <item>Monthly Income</item>
+    </string-array>
+
+    <string-array name="reports_cashflow">
+        <item>Income Vs Expense</item>
+    </string-array>
+
+    <string-array name="reports_balance">
+        <item>Daily Balance</item>
+    </string-array>
+
+
 </resources>
