@@ -24,6 +24,8 @@
 
 
             <LinearLayout
+                android:id="@+id/overviewAccountsLayout"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -92,6 +94,8 @@
 
 
             <LinearLayout
+                android:id="@+id/overviewTransactionsLayout"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -150,6 +154,8 @@
 
 
             <LinearLayout
+                android:id="@+id/overviewBillsLayout"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"

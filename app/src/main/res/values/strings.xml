@@ -87,6 +87,7 @@
 
     <string name="prefs_accounts_overview">Accounts Overview</string>
     <string name="prefs_latest_transactions">Latest Transactions</string>
+    <string name="prefs_upcoming_bills">Upcoming Bills</string>
     <string name="prefs_high_spending">High Spending Alerts</string>
     <string name="prefs_expense_category">Expense By Category</string>
     <string name="prefs_income_expense">Invome Vs Expense</string>

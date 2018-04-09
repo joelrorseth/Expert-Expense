@@ -4,6 +4,7 @@
     <string-array name="overview_preferences">
         <item>Accounts Overview</item>
         <item>Latest Transactions</item>
+        <item>Upcoming Bills</item>
         <item>High Spending Alerts</item>
         <item>Expense By Category</item>
         <item>Invome Vs Expense</item>

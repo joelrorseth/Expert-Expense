@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,79 +63,9 @@ public class OverviewFragment extends Fragment
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
-        newBalanceTextView = view.findViewById(R.id.newBalanceTextView);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        Resources resources = getResources();
-
-
-        // TODO:
         // Conditionally load in elements into Overview screen based on preferences
-        if (prefs.getBoolean(resources.getString(R.string.prefs_accounts_overview), true)) {
-
-        }
-
-        if (prefs.getBoolean(resources.getString(R.string.prefs_latest_transactions), true)) {
-
-        }
-
-        if (prefs.getBoolean(resources.getString(R.string.prefs_high_spending), true)) {
-
-        }
-
-        if (prefs.getBoolean(resources.getString(R.string.prefs_expense_category), true)) {
-
-        }
-
-        if (prefs.getBoolean(resources.getString(R.string.prefs_income_expense), true)) {
-
-        }
-
-
-
-        // Add references and set listeners to buttons inside this fragment
-        view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override public void onClick(View view) {
-                        parentDelegate.didSelectAddAccountIcon();
-                    }
-                }
-        );
-
-        view.findViewById(R.id.overviewTransactionsAddButton).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override public void onClick(View view) {
-                        parentDelegate.didSelectAddTransactionIcon();
-                    }
-                }
-        );
-
-        view.findViewById(R.id.overviewBillsAddButton).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override public void onClick(View view) {
-                        parentDelegate.didSelectAddBillIcon();
-                    }
-                }
-        );
-
-
-        // Set up recycler views
-        accountsRecyclerView = (RecyclerView) view.findViewById(R.id.myAccountsRecycler);
-        accountsRecyclerView.setLayoutManager(new LinearLayoutManager(
-                getContext(), LinearLayoutManager.HORIZONTAL, false));
-
-        transRecyclerView = (RecyclerView) view.findViewById(R.id.recentTransactionsRecycler);
-        transRecyclerView.setLayoutManager(new LinearLayoutManager(
-                getContext(), LinearLayoutManager.VERTICAL, false));
-
-        billsRecyclerView = (RecyclerView) view.findViewById(R.id.upcomingBillsRecycler);
-        billsRecyclerView.setLayoutManager(new LinearLayoutManager(
-                getContext(), LinearLayoutManager.VERTICAL, false));
-
-
-        // Setup up adapters and populate the Overview screen with database content
-        refreshUserOverviewContent();
-
+        conditionallyLoadAllContent(view);
 
         // Configure floating action button listener
         FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.overviewAddButton);
@@ -173,7 +104,7 @@ public class OverviewFragment extends Fragment
 
             case R.id.action_refresh:
 
-                refreshUserOverviewContent();
+                refreshDBContent();
                 return true;
         }
 
@@ -225,8 +156,120 @@ public class OverviewFragment extends Fragment
     }
 
 
+
+    // MARK: Module loading
+    // Conditionally display the following layout based on user preferences
+    private void conditionallyLoadAllContent(View view) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        Resources resources = getResources();
+
+        // Conditionally load in elements into Overview screen based on preferences
+        if (prefs.getBoolean(resources.getString(R.string.prefs_accounts_overview), true)) {
+            displayAccounts(view);
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_latest_transactions), true)) {
+            displayTransactions(view);
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_upcoming_bills), true)) {
+            displayUpcomingBills(view);
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_high_spending), true)) {
+            displayHighSpending(view);
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_expense_category), true)) {
+            displayExpenseByCategory(view);
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_income_expense), true)) {
+            displayIncomeVsExpense(view);
+        }
+    }
+    
+    private void displayAccounts(View view) {
+
+        // Unhide the Accounts view
+        view.findViewById(R.id.overviewAccountsLayout).setVisibility(LinearLayout.VISIBLE);
+        newBalanceTextView = view.findViewById(R.id.newBalanceTextView);
+
+        // Add references and set listeners to buttons inside this fragment
+        view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+                        parentDelegate.didSelectAddAccountIcon();
+                    }
+                }
+        );
+
+        // Set up recycler views
+        accountsRecyclerView = (RecyclerView) view.findViewById(R.id.myAccountsRecycler);
+        accountsRecyclerView.setLayoutManager(new LinearLayoutManager(
+                getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        loadAccountsFromDB();
+
+    }
+
+    private void displayTransactions(View view) {
+
+        // Unhide
+        view.findViewById(R.id.overviewTransactionsLayout).setVisibility(LinearLayout.VISIBLE);
+
+        view.findViewById(R.id.overviewTransactionsAddButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+                        parentDelegate.didSelectAddTransactionIcon();
+                    }
+                }
+        );
+
+        transRecyclerView = (RecyclerView) view.findViewById(R.id.recentTransactionsRecycler);
+        transRecyclerView.setLayoutManager(new LinearLayoutManager(
+                getContext(), LinearLayoutManager.VERTICAL, false));
+
+        loadTransactionsFromDB();
+    }
+
+    private void displayUpcomingBills(View view) {
+
+        // Unhide
+        view.findViewById(R.id.overviewBillsLayout).setVisibility(LinearLayout.VISIBLE);
+
+        view.findViewById(R.id.overviewBillsAddButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+                        parentDelegate.didSelectAddBillIcon();
+                    }
+                }
+        );
+
+        billsRecyclerView = (RecyclerView) view.findViewById(R.id.upcomingBillsRecycler);
+        billsRecyclerView.setLayoutManager(new LinearLayoutManager(
+                getContext(), LinearLayoutManager.VERTICAL, false));
+
+        loadBillsFromDB();
+    }
+
+    private void displayHighSpending(View view) {
+
+    }
+
+    private  void displayExpenseByCategory(View view) {
+
+    }
+
+    private void displayIncomeVsExpense(View view) {
+
+    }
+
+
+    // MARK: DB Content update only
     // Refresh the accounts, transactions, bills etc from the database and update views
-    private void refreshUserOverviewContent() {
+    private void loadAccountsFromDB() {
 
         final OverviewFragment thisRef = this;
 
@@ -247,6 +290,11 @@ public class OverviewFragment extends Fragment
                 accountsRecyclerView.setAdapter(myAccountsAdapter);
             }
         });
+    }
+
+    private void loadTransactionsFromDB() {
+
+        final OverviewFragment thisRef = this;
 
         // Load transactions
         db.getUserTransactions(new Database.DBGetTransactionsInterface() {
@@ -258,6 +306,11 @@ public class OverviewFragment extends Fragment
                 transRecyclerView.setAdapter(recentTransactionsAdapter);
             }
         });
+    }
+
+    private void loadBillsFromDB() {
+
+        final OverviewFragment thisRef = this;
 
         // Load bills
         db.getUserBills(new Database.DBGetBillsInterface() {
@@ -269,5 +322,11 @@ public class OverviewFragment extends Fragment
                 billsRecyclerView.setAdapter(upcomingBillsAdapter);
             }
         });
+    }
+
+    private void refreshDBContent() {
+        loadTransactionsFromDB();
+        loadTransactionsFromDB();
+        loadBillsFromDB();
     }
 }
