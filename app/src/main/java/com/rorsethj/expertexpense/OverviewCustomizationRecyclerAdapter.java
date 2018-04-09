@@ -1,14 +1,19 @@
 package com.rorsethj.expertexpense;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,12 +21,12 @@ import java.util.List;
 public class OverviewCustomizationRecyclerAdapter
         extends RecyclerView.Adapter<OverviewCustomizationRecyclerAdapter.ViewHolder> {
 
-    // TODO: Replace with actual preferences?
     private List<String> mySettings = Collections.emptyList();
+    private SharedPreferences prefs;
 
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
-
+    private Context context;
 
 
     // Class to store recycled views
@@ -47,11 +52,14 @@ public class OverviewCustomizationRecyclerAdapter
     }
 
 
-
     // Custom constructor
     public OverviewCustomizationRecyclerAdapter(Context context, List<String> settings) {
         this.mInflater = LayoutInflater.from(context);
         this.mySettings = settings;
+        this.context = context;
+
+        // Get preferences at first load
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
 
@@ -67,12 +75,22 @@ public class OverviewCustomizationRecyclerAdapter
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        // TODO: Insert logic to read from shared preferences for the switch
-        String setting = mySettings.get(position);
-        // switch ...
+        // Set title of the preference at this position
+        final String currentSetting = mySettings.get(position);
+        holder.titleTextView.setText(currentSetting);
 
-        // TODO
-        holder.titleTextView.setText(setting);
+        // Set the switch to be enabled / disabled
+        // IMPORTANT: The preferences keys are simply the name of settings displayed in the menu
+        holder.enabledSwitch.setChecked(prefs.getBoolean(currentSetting, true));
+
+        holder.enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                // Write the new changed boolean (switch on?) of the switch to this pref
+                PreferenceManager.getDefaultSharedPreferences(context)
+                        .edit().putBoolean(currentSetting,isChecked).apply();
+            }
+        });
     }
 
 

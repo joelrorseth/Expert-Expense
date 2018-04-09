@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="overview_preferences">
+        <item>Accounts Overview</item>
+        <item>Latest Transactions</item>
+        <item>High Spending Alerts</item>
+        <item>Expense By Category</item>
+        <item>Invome Vs Expense</item>
+    </string-array>
+
     <string-array name="currency_array">
         <item>CAD</item>
         <item>USD</item>

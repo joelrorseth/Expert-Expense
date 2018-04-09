@@ -1,6 +1,9 @@
 package com.rorsethj.expertexpense;
 
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -60,6 +63,34 @@ public class OverviewFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
         newBalanceTextView = view.findViewById(R.id.newBalanceTextView);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        Resources resources = getResources();
+
+
+        // TODO:
+        // Conditionally load in elements into Overview screen based on preferences
+        if (prefs.getBoolean(resources.getString(R.string.prefs_accounts_overview), true)) {
+
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_latest_transactions), true)) {
+
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_high_spending), true)) {
+
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_expense_category), true)) {
+
+        }
+
+        if (prefs.getBoolean(resources.getString(R.string.prefs_income_expense), true)) {
+
+        }
+
+
 
         // Add references and set listeners to buttons inside this fragment
         view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(

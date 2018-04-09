@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class OverviewCustomizationFragment extends Fragment
@@ -27,11 +28,10 @@ public class OverviewCustomizationFragment extends Fragment
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_overview_customization, container, false);
 
-        // TODO, just temporary
-        // Populate data for recycler
-        ArrayList<String> tempSettings = new ArrayList<>();
-        tempSettings.add("Accounts Overview");
-        tempSettings.add("Alphabetical Order");
+        // Get setting names to use in adapter
+        ArrayList<String> settings = new ArrayList<String>(Arrays.asList(
+                getResources().getStringArray(R.array.overview_preferences)
+        ));
 
 
         // Set up recycler view
@@ -41,7 +41,7 @@ public class OverviewCustomizationFragment extends Fragment
 
 
         // Set the adapter for the RecyclerView we are linking from XML
-        adapter = new OverviewCustomizationRecyclerAdapter(getContext(), tempSettings);
+        adapter = new OverviewCustomizationRecyclerAdapter(getContext(), settings);
         adapter.setClickListener(this);
         recycler.setAdapter(adapter);
 
