@@ -42,7 +42,7 @@ public class ReportsBalanceFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 ReportChartFragment frag = new ReportChartFragment();
-                frag.plotGraph(reportOptions[i]);
+                frag.chartType = reportOptions[i];
 
                 FragmentManager manager = getFragmentManager();
                 manager.beginTransaction()
