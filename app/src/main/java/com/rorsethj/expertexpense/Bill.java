@@ -56,6 +56,35 @@ public class Bill {
         return amount;
     }
 
+
+    public void setPayee(String payee) {
+        this.payee = payee;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
     // Return a key,value representation of the parameters
     public Map<String, Object> toMap() {
 

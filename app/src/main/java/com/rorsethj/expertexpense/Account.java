@@ -43,6 +43,26 @@ public class Account {
         return balance;
     }
 
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
     // Return a key,value representation of the parameters
     public Map<String, Object> toMap() {
 

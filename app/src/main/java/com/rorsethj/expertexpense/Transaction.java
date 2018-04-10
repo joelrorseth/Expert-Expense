@@ -61,4 +61,37 @@ public class Transaction {
     public double getAmount() {
         return amount;
     }
+
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public void setPayee(String payee) {
+        this.payee = payee;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 }

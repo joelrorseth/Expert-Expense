@@ -17,10 +17,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+
+//import com.google.firebase.firestore.DocumentReference;
+//import com.google.firebase.firestore.FirebaseFirestore;
+//import com.google.firebase.firestore.QueryDocumentSnapshot;
+//import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
+
+
 
 public class Database {
 
@@ -46,12 +55,13 @@ public class Database {
 
     private static Database db = null;
     private static FirebaseUser currentUser = null;
-    private FirebaseFirestore store;
-
+    //private FirebaseFirestore store;
+    private DatabaseReference store;
 
 
     private Database() {
-        store = FirebaseFirestore.getInstance();
+        //store = FirebaseFirestore.getInstance();
+        store = FirebaseDatabase.getInstance().getReference();
     }
 
     public static Database getCurrentUserDatabase() {
@@ -68,6 +78,9 @@ public class Database {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
+
+
+
     // MARK: Firebase Firestore
     // The root of the database is a collection of users, where each user is a document identified
     // by uid. Inside each document, several collections will exist, representing the set of
@@ -78,11 +91,11 @@ public class Database {
     public void saveNewAccount(Account account,
                                final AddNewAccountFragment.AddAccountCallback callback) {
 
-        store.collection("users")
-                .document(currentUser.getUid())
-                .collection("accounts")
-                .document()
-                .set(account)
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("accounts")
+                .push()
+                .setValue(account)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -105,11 +118,11 @@ public class Database {
                                    final AddNewTransactionFragment.AddTransactionCallback callback) {
 
 
-        store.collection("users")
-                .document(currentUser.getUid())
-                .collection("transactions")
-                .document()
-                .set(transaction)
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("transactions")
+                .push()
+                .setValue(transaction)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -130,11 +143,11 @@ public class Database {
     // Save bill under  users/<current_uid>/bills/
     public void saveNewBill(Bill bill, final AddNewBillFragment.AddBillCallback callback) {
 
-        store.collection("users")
-                .document(currentUser.getUid())
-                .collection("bills")
-                .document()
-                .set(bill)
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("bills")
+                .push()
+                .setValue(bill)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -157,38 +170,31 @@ public class Database {
     public void getUserAccounts(final DBGetAccountsInterface callback) {
 
 
-        store.collection("users")
-                .document(currentUser.getUid())
-                .collection("accounts")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("accounts")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
                         ArrayList<String> accountIDs = new ArrayList<>();
                         ArrayList<Account> accounts = new ArrayList<>();
 
-                        if (task.isSuccessful()) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
 
-                            // For each Account document
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d(TAG, child.getKey() + " => " + child.getValue());
 
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-
-                                // Transform into Account object and add to ArrayList
-                                accountIDs.add(document.getId());
-                                accounts.add(document.toObject(Account.class));
-                            }
-
-                            callback.didGet(accounts, accountIDs, null);
-
-                        } else {
-
-                            // Report back Exception to caller
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                            callback.didGet(accounts, accountIDs, task.getException());
+                            Account account = child.getValue(Account.class);
+                            accountIDs.add(child.getKey());
+                            accounts.add(account);
                         }
+
+                        callback.didGet(accounts, accountIDs, null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
     }
@@ -198,33 +204,30 @@ public class Database {
     public void getUserTransactions(final DBGetTransactionsInterface callback) {
 
 
-        store.collection("users")
-                .document(currentUser.getUid())
-                .collection("transactions")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("transactions")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
                         ArrayList<Transaction> transactions = new ArrayList<>();
 
-                        if (task.isSuccessful()) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
 
-                            // Return list of transactions to caller
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                transactions.add(document.toObject(Transaction.class));
-                            }
+                            Log.d(TAG, child.getKey() + " => " + child.getValue());
 
-                            callback.didGet(transactions, null);
-
-                        } else {
-
-                            // Report back Exception to caller
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                            callback.didGet(transactions, task.getException());
+                            Transaction transaction = child.getValue(Transaction.class);
+                            transactions.add(transaction);
                         }
+
+                        callback.didGet(transactions, null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
     }
@@ -234,34 +237,30 @@ public class Database {
     public void getUserBills(final DBGetBillsInterface callback) {
 
 
-        store.collection("users")
-                .document(currentUser.getUid())
-                .collection("bills")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("bills")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
 
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
                         ArrayList<Bill> bills = new ArrayList<>();
 
-                        if (task.isSuccessful()) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
 
-                            // Make a list of Bills
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            Log.d(TAG, child.getKey() + " => " + child.getValue());
 
-                                bills.add(document.toObject(Bill.class));
-                            }
-
-                            callback.didGet(bills, null);
-
-                        } else {
-
-                            // Report back Exception to caller
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                            callback.didGet(bills, task.getException());
+                            Bill bill = child.getValue(Bill.class);
+                            bills.add(bill);
                         }
+
+                        callback.didGet(bills, null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
     }
