@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
@@ -71,9 +72,10 @@ public class UpcomingBillsRecyclerAdapter
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         Bill bill = myBills.get(position);
+        Date date = new Date( bill.getDueDate() );
 
         holder.titleTextView.setText(bill.getPayee());
-        holder.descTextView.setText(bill.getDueDate());
+        holder.descTextView.setText(date.toString());
 
         holder.amountTextView.setText(
 

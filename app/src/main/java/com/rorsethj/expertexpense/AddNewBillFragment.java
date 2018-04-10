@@ -118,7 +118,7 @@ public class AddNewBillFragment extends Fragment {
                                 currencySpinner.getSelectedItem().toString(),
                                 categorySpinner.getSelectedItem().toString(),
                                 notesText.getText().toString(),
-                                dueDateText.getText().toString(),
+                                myCalendar.getTime().getTime(),     // Time in ms since epoch
                                 Double.parseDouble(amountText.getText().toString())
                         );
 

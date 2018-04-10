@@ -10,15 +10,15 @@ public class Transaction {
     private String type;
     private String category;
     private String notes;
-    private String date;
     private String status;
+    private long date;
     private double amount;
 
 
     public Transaction() {}
 
     public Transaction(String account, String payee, String type, String category, String notes,
-                       String date, String status, double amount) {
+                       String status, long date, double amount) {
 
         this.account = account;
         this.payee = payee;
@@ -50,16 +50,16 @@ public class Transaction {
         return notes;
     }
 
-    public String getDate() {
-        return date;
-    }
-
     public String getStatus() {
         return status;
     }
 
     public double getAmount() {
         return amount;
+    }
+
+    public long getDate() {
+        return date;
     }
 
 
@@ -83,15 +83,15 @@ public class Transaction {
         this.notes = notes;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public void setStatus(String status) {
         this.status = status;
     }
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
     }
 }

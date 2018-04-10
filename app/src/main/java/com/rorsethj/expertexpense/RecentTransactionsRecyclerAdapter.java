@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
@@ -72,10 +73,11 @@ public class RecentTransactionsRecyclerAdapter
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         Transaction trans = myTransactions.get(position);
+        Date date = new Date( trans.getDate() );
 
         // Set the fields of the view to display Transaction attributes
         holder.titleTextView.setText(trans.getPayee());
-        holder.descTextView.setText(trans.getDate());
+        holder.descTextView.setText(date.toString());
 
         holder.amountTextView.setText(
 

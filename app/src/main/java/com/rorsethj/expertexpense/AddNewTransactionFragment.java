@@ -164,8 +164,8 @@ public class AddNewTransactionFragment extends Fragment {
                                 typeSpinner.getSelectedItem().toString(),
                                 categorySpinner.getSelectedItem().toString(),
                                 notesText.getText().toString(),
-                                dateText.getText().toString(),
                                 statusSpinner.getSelectedItem().toString(),
+                                myCalendar.getTime().getTime(), // Time in ms since epoch
                                 Double.parseDouble(amountText.getText().toString())
                         );
 
