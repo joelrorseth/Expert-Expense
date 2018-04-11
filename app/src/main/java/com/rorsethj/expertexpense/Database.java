@@ -81,12 +81,13 @@ public class Database {
 
 
 
-    // MARK: Firebase Firestore
+    // DB - Firebase Realtime Database
     // The root of the database is a collection of users, where each user is a document identified
     // by uid. Inside each document, several collections will exist, representing the set of
     // properties of this user.
 
 
+    // MARK: SAVE OPERATIONS
     // Save account under  users/<current_uid>/accounts/
     public void saveNewAccount(Account account,
                                final AddNewAccountFragment.AddAccountCallback callback) {
@@ -166,6 +167,7 @@ public class Database {
     
 
 
+    // MARK: RETRIEVE OPERATIONS
     // Asynchronous method with callback to return retrieved accounts for current user
     public void getUserAccounts(final DBGetAccountsInterface callback) {
 
@@ -256,6 +258,44 @@ public class Database {
                         }
 
                         callback.didGet(bills, null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
+
+    // Get all the Transactions which occurred between the dates 'older' and 'newer'
+    // The dates provided are in ms since epoch
+    public void getTransactionsBetweenDates(long older, long newer,
+                                            final DBGetTransactionsInterface callback) {
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("transactions")
+                .orderByChild("date")
+                .startAt(older)
+                .endAt(newer)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        ArrayList<Transaction> transactions = new ArrayList<>();
+
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+                            Log.d(TAG, child.getKey() + " => " + child.getValue());
+
+                            Transaction transaction = child.getValue(Transaction.class);
+                            transactions.add(transaction);
+                        }
+
+                        callback.didGet(transactions, null);
                     }
 
                     @Override

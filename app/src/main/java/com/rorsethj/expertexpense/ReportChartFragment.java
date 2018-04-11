@@ -21,11 +21,16 @@ import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ReportChartFragment extends Fragment {
 
+    private Database db;
     public String chartType;
 
     public ReportChartFragment() {
@@ -36,15 +41,17 @@ public class ReportChartFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_report_chart, container, false);
 
+        db = Database.getCurrentUserDatabase();
         plotCorrectGraph(view);
 
         return view;
     }
 
-    public void plotCorrectGraph(View view) {
+    public void plotCorrectGraph(final View view) {
 
 
         ArrayList<String> labels = new ArrayList<>();
@@ -55,19 +62,22 @@ public class ReportChartFragment extends Fragment {
 
             // TODO:
             case "Expense By Category":
-                // Get all expenses, labels are categories, values are expense amounts per
-                // Show total expenses over all categories
+
+                plotByCategory(view, "Withdrawal");
                 break;
+
             case "Daily Expense":
                 // Get expense last 7 days in bar chart
                 break;
             case "Monthly Expense":
                 // Show total expenses each month since january, show average over those months
                 break;
+
             case "Income By Category":
-                // Get all incomes, split up labels as categories, values are incomes per
-                // Show total income over all categories
+
+                plotByCategory(view, "Deposit");
                 break;
+
             case "Daily Income":
                 // Bar chart shows total income for each of last 7 days
                 break;
@@ -77,14 +87,115 @@ public class ReportChartFragment extends Fragment {
             case "Income Vs Expense":
                 // Show pie chart with income and expense labels, values are this months amount
                 // for each. Should be income vs expense totals for the month
+
+                plotByCategory(view, "vs");
                 break;
             case "Daily Balance":
                 // Show, for each day, a +/- standing in a line graph
                 break;
         }
+    }
+
+
+
+    // MARK: Logic
+    // Plot expense / income by category, by obtaining transactions of that type between 2 dates
+    private void plotByCategory(final View view, final String type) {
+
+        // Get transactions from last 30 days
+        Calendar oldCal = Calendar.getInstance();
+        oldCal.setTime(new Date());
+        oldCal.add(Calendar.DATE, -30);
+
+        long oldDate = oldCal.getTime().getTime();
+        long newDate = (new Date()).getTime();
+
+        db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
+            @Override
+            public void didGet(List<Transaction> transactions, Exception e) {
+
+                if (type.equals("vs")) {
+                    plotIncomeVsExpense(view, transactions);
+                } else {
+                    plotTransactionWithType(view, transactions, type);
+                }
+            }
+        });
+    }
+
+
+    // Determine variables and filter transactions to plot all of a given type
+    private void plotTransactionWithType(final View view, List<Transaction> transactions, String type) {
+
+        Map<String, Double> expenseByCategory = new HashMap<>();
+
+        // Make a map of categories to total expense amount for that category
+        for (Transaction t: transactions) {
+
+            // Expenses are Transactions with type "Withdrawal"
+            // Income are Transactions with type "Deposit"
+            if (t.getType().equals(type)) {
+
+                String category = t.getCategory();
+                Double amount = t.getAmount();
+
+                // Add to other totals from that category if multiple
+                if (expenseByCategory.containsKey(category)) {
+                    expenseByCategory.put(category, expenseByCategory.get(category) + amount);
+
+                } else {
+                    expenseByCategory.put(category, amount);
+                }
+            }
+        }
+
+        List<String> labels = new ArrayList<>();
+        float values[] = new float[expenseByCategory.size()];
+        int i = 0;
+
+        for (Map.Entry<String, Double> entry : expenseByCategory.entrySet()) {
+            labels.add(entry.getKey());
+            values[i++] = entry.getValue().floatValue();
+        }
 
         plotPieChart(view, chartType, labels, values);
     }
+
+    private void plotIncomeVsExpense(final View view, List<Transaction> transactions) {
+
+        Map<String, Double> expenseByCategory = new HashMap<>();
+
+        // Make a map of categories to total expense amount for that category
+        for (Transaction t: transactions) {
+
+            String type = t.getType();
+            Double amount = t.getAmount();
+
+            // Add to other totals from that category if multiple
+            if (expenseByCategory.containsKey(type)) {
+                expenseByCategory.put(type, expenseByCategory.get(type) + amount);
+
+            } else {
+                expenseByCategory.put(type, amount);
+            }
+        }
+
+        List<String> labels = new ArrayList<>();
+        float values[] = new float[expenseByCategory.size()];
+        int i = 0;
+
+        for (Map.Entry<String, Double> entry : expenseByCategory.entrySet()) {
+            labels.add(entry.getKey());
+            values[i++] = entry.getValue().floatValue();
+        }
+
+        plotPieChart(view, chartType, labels, values);
+    }
+
+
+
+
+
 
 
     // MARK: Chart rendering
@@ -101,18 +212,18 @@ public class ReportChartFragment extends Fragment {
         PieDataSet pieDataSet = new PieDataSet(entries, title);
         PieData pieData = new PieData(pieDataSet);
 
-        pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
         // Create the chart view
         PieChart chart = new PieChart(getContext());
         chart.setDrawHoleEnabled(true);
         chart.setHoleColor(Color.TRANSPARENT);
-        chart.setHoleRadius(40);
-        chart.setTransparentCircleRadius(40);
+        chart.setHoleRadius(50);
+        chart.setTransparentCircleRadius(50);
 
         // Animate the chart appearing
         chart.setData(pieData);
-        chart.animateY(2000);
+        chart.animateY(1000);
 
         // Create layout parameters to force the chart to be full screen
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
