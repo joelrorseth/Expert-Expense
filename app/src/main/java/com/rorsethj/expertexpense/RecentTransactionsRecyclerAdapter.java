@@ -73,19 +73,42 @@ public class RecentTransactionsRecyclerAdapter
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         Transaction trans = myTransactions.get(position);
-        Date date = new Date( trans.getDate() );
 
-        // Set the fields of the view to display Transaction attributes
         holder.titleTextView.setText(trans.getPayee());
-        holder.descTextView.setText(date.toString());
+        holder.descTextView.setText(trans.getCategory());
 
-        holder.amountTextView.setText(
+        // Determine color of amount text based on type
+        if (trans.getType().equals("Withdrawal")) {
 
-                String.format(
-                        context.getResources().getString(R.string.money_amount),
-                        trans.getAmount()
-                )
-        );
+            // Set color to red
+            holder.amountTextView.setTextColor(
+                    context.getResources().getColor(R.color.colorErrorRed)
+            );
+
+            // Add minus sign when displaying amount
+            holder.amountTextView.setText(
+
+                    String.format(
+                            context.getResources().getString(R.string.money_amount_negative),
+                            trans.getAmount()
+                    )
+            );
+
+        } else {
+
+            // Set green
+            holder.amountTextView.setTextColor(
+                    context.getResources().getColor(R.color.colorValidGreen)
+            );
+
+            holder.amountTextView.setText(
+
+                    String.format(
+                            context.getResources().getString(R.string.money_amount),
+                            trans.getAmount()
+                    )
+            );
+        }
     }
 
 
