@@ -76,6 +76,7 @@
 
     <string name="net_balance_amount">Net Balance (CAD): $%1$.2f</string>
     <string name="money_amount">$%1$.2f</string>
+    <string name="money_amount_negative">-$%1$.2f</string>
 
     <!-- Firebase keys -->
     <string name="firebase_key_accounts">accounts</string>

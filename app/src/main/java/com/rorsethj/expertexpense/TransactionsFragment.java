@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,7 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 
-public class TransactionsFragment extends Fragment {
+public class TransactionsFragment extends Fragment implements
+        TransactionsTransactionsRecyclerAdapter.ItemClickListener {
 
 
     private List<String> selectedAccountNames;
@@ -28,6 +31,9 @@ public class TransactionsFragment extends Fragment {
     private String currentlySelectedPeriod;
     private Database db;
     private AlertDialog dialog;
+
+    private TransactionsTransactionsRecyclerAdapter transAdapter;
+    private RecyclerView transactionsRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,6 +49,13 @@ public class TransactionsFragment extends Fragment {
         allPeriodNames = new ArrayList<String>(
                 Arrays.asList( getResources().getStringArray(R.array.time_periods)) );
         currentlySelectedPeriod = allPeriodNames.get(0);
+
+
+        // Set up recycler views
+        transactionsRecyclerView = (RecyclerView) view.findViewById(R.id.transactionsTransactionsRecycler);
+        transactionsRecyclerView.setLayoutManager(new LinearLayoutManager(
+                getContext(), LinearLayoutManager.VERTICAL, false));
+
 
 
         // Get a list of account names to display
@@ -85,9 +98,12 @@ public class TransactionsFragment extends Fragment {
         });
 
 
+        // Populate
+        populateTransactions();
+
 
     // Configure floating action button listener
-        FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.addButton);
+        FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.transactionsAddButton);
         addButton.setOnClickListener(
 
                 new View.OnClickListener() {
@@ -103,6 +119,15 @@ public class TransactionsFragment extends Fragment {
     }
 
 
+    // MARK: Interface implementation
+    @Override
+    public void onItemClick(View view, int position) {
+
+    }
+
+
+
+    // MARK: DB Interaction
     private void setupSelectAccountsDialog(final List<String> accountNames) {
 
 
@@ -270,12 +295,23 @@ public class TransactionsFragment extends Fragment {
                 newDate = nowDate.getTime();
         }
 
+
+        final TransactionsFragment thisRef = this;
+
         // Get the transactions that happened between the two dates established
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
             public void didGet(List<Transaction> transactions, Exception e) {
 
                 // Populate the transaction list
+
+                transAdapter = new TransactionsTransactionsRecyclerAdapter(getContext(), transactions);
+                transAdapter.setClickListener(thisRef);
+
+                // Set adapters to recycler views
+                transactionsRecyclerView.setAdapter(transAdapter);
+
+                // TODO: Show sum somewhere?
             }
         });
     }
