@@ -4,18 +4,23 @@ package com.rorsethj.expertexpense;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
@@ -29,6 +34,11 @@ import java.util.Map;
 
 
 public class ReportChartFragment extends Fragment {
+
+    public static final String WITHDRAWAL = "Withdrawal";
+    public static final String DEPOSIT = "Deposit";
+    public static final String DAILY = "Daily";
+    public static final String MONTHLY = "Monthly";
 
     private Database db;
     public String chartType;
@@ -63,33 +73,44 @@ public class ReportChartFragment extends Fragment {
             // TODO:
             case "Expense By Category":
 
-                plotByCategory(view, "Withdrawal");
+                plotByCategory(view, WITHDRAWAL);
                 break;
 
             case "Daily Expense":
+
                 // Get expense last 7 days in bar chart
+                plotTransactionTypeForIncrement(view, chartType, WITHDRAWAL, DAILY);
                 break;
+
             case "Monthly Expense":
                 // Show total expenses each month since january, show average over those months
+                plotTransactionTypeForIncrement(view, chartType, WITHDRAWAL, MONTHLY);
                 break;
 
             case "Income By Category":
 
-                plotByCategory(view, "Deposit");
+                plotByCategory(view, DEPOSIT);
                 break;
 
             case "Daily Income":
+
                 // Bar chart shows total income for each of last 7 days
+                plotTransactionTypeForIncrement(view, chartType, DEPOSIT, DAILY);
                 break;
+
             case "Monthly Income":
+
                 // Bar chart shows YTD each months income, display average also
+                plotTransactionTypeForIncrement(view, chartType, DEPOSIT, MONTHLY);
                 break;
+
             case "Income Vs Expense":
                 // Show pie chart with income and expense labels, values are this months amount
                 // for each. Should be income vs expense totals for the month
 
                 plotByCategory(view, "vs");
                 break;
+
             case "Daily Balance":
                 // Show, for each day, a +/- standing in a line graph
                 break;
@@ -197,6 +218,122 @@ public class ReportChartFragment extends Fragment {
 
 
 
+    // Plot expenses / incomes for daily / monthly basis
+    private void plotTransactionTypeForIncrement(final View view, final String title,
+                                                 final String type, String increment) {
+
+
+        // Create two placeholder objects for two dates
+        Calendar oldCal = Calendar.getInstance();
+        Calendar tempCal = Calendar.getInstance();
+        Date newDateObj = new Date();
+        oldCal.setTime(newDateObj);
+        oldCal.setTime(newDateObj);
+
+        final String incrementMapKey;
+        final ArrayList<String> increments = new ArrayList<>();
+
+
+        if (increment.equals(MONTHLY)) {
+
+            oldCal.add(Calendar.DATE, -170);    // TODO: Temp ~6 months
+            tempCal.add(Calendar.DATE, -170);    // TODO: Temp ~6 months
+            incrementMapKey = "MMM"; // eg. "Jun"
+
+            //Calendar tempDate = oldCal;
+            String newDateMonth = (String) DateFormat.format(incrementMapKey,   newDateObj);
+
+            // Populate ArrayList of increments between start and end date eg. [Nov,Dec,Jan,Feb,Mar]
+            while (true) {
+
+                String tempDateCurrentMonth = (String) DateFormat.format(incrementMapKey, tempCal);
+                increments.add(tempDateCurrentMonth);
+
+                if (tempDateCurrentMonth.equals(newDateMonth)) { break; }
+                else { tempCal.add(Calendar.MONTH, 1); }   // Increment to next month
+            }
+
+
+        } else {
+
+            oldCal.add(Calendar.DATE, -7);      // TODO: Temo ~7 days
+            tempCal.add(Calendar.DATE, -7);      // TODO: Temo ~7 days
+            incrementMapKey = "dd";  // "20"
+
+            //Calendar tempDate = oldCal;
+            String newDateDay = (String) DateFormat.format(incrementMapKey,   newDateObj);
+
+            // Populate ArrayList of increments between start and end date eg. [29,30,31,01,02,03]
+            while (true) {
+
+                String tempDateCurrentDay = (String) DateFormat.format(incrementMapKey, tempCal);
+                increments.add(tempDateCurrentDay);
+
+                if (tempDateCurrentDay.equals(newDateDay)) { break; }
+                else { tempCal.add(Calendar.DATE, 1); }   // Increment to next month
+            }
+        }
+
+
+        long oldDate = oldCal.getTime().getTime();
+        long newDate = (newDateObj).getTime();
+
+
+        db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
+            @Override
+            public void didGet(List<Transaction> transactions, Exception e) {
+
+
+                // Create mapping of incremental categories to the amounts accumulated in those increments
+                Map<String, Double> amountByCategory = new HashMap<>();
+                for (Transaction t: transactions) {
+
+                    // Filter out types that are not the specified type, eg. filter expenses
+                    if (!t.getType().equals(type)) { continue; }
+
+                    // Get corresponding increment depending, eg. get Jun if monthly, or get 27 if daily
+                    Double amount = t.getAmount();
+                    Date date = new Date(t.getDate());
+                    String increment = (String) DateFormat.format(incrementMapKey, date);
+
+
+                    // Add to other totals from that category if multiple
+                    if (amountByCategory.containsKey(increment)) {
+                        amountByCategory.put(increment, amountByCategory.get(increment) + amount);
+
+                    } else {
+                        amountByCategory.put(increment, amount);
+                    }
+                }
+
+                float values[] = new float[increments.size()];
+                int i = 0;
+
+
+                // Manually populate values, inserting 0.0 for missing, we already know labels
+                for (String increment: increments) {
+
+                    if (amountByCategory.containsKey(increment)) {
+                        values[i++] = amountByCategory.get(increment).floatValue();
+
+                    } else {
+                        values[i++] = 0.0f;
+                    }
+                }
+
+
+                plotBarChart(view, title, increments, values);
+            }
+        });
+    }
+
+
+
+
+
+
+
+
 
     // MARK: Chart rendering
     // Plot a Pie Chart using data
@@ -223,6 +360,41 @@ public class ReportChartFragment extends Fragment {
 
         // Animate the chart appearing
         chart.setData(pieData);
+        chart.animateY(1000);
+
+        // Create layout parameters to force the chart to be full screen
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
+
+        chart.setLayoutParams(lp);
+
+        // Dynamically load in the chart
+        RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.reportChartLinearLayout);
+        layout.addView(chart);
+    }
+
+
+    // Plot a bar chart
+    private void plotBarChart(View view, String title, List<String> labels, float[] values) {
+
+        List<BarEntry> entries = new ArrayList<>();
+
+        // Create Entry for each label,value pair
+        for (int i = 0; i < labels.size(); ++i) {
+            System.out.println(labels.get(i) + ": " + values[i]);
+            entries.add(new BarEntry(i, values[i]));
+        }
+
+        BarDataSet dataset = new BarDataSet(entries, title);
+        BarData data = new BarData(dataset);
+
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+
+        // Create the chart view
+        BarChart chart = new BarChart(getContext());
+        chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        chart.setData(data);
         chart.animateY(1000);
 
         // Create layout parameters to force the chart to be full screen
