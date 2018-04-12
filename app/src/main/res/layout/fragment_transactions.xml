@@ -1,30 +1,27 @@
-<LinearLayout
-    android:orientation="vertical"
+<RelativeLayout
+    android:id="@+id/transactionsRelativeLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_margin="0dp"
-    android:padding="0dp"
-    android:layout_marginStart="0dp"
-    android:layout_marginEnd="0dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <GridLayout
+        android:id="@+id/transactionsGridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
-        android:padding="8dp"
+        android:layout_marginStart="0dp"
         android:background="@color/colorPrimaryDark"
-        android:rowCount="2"
-        android:columnCount="2">
+        android:columnCount="2"
+        android:padding="8dp"
+        android:rowCount="2">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_columnSpan="1"
             android:layout_columnWeight="1"
-            android:layout_columnSpan="1">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -43,11 +40,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_columnWeight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_columnSpan="1">
+            android:layout_columnSpan="1"
+            android:layout_columnWeight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -67,18 +64,38 @@
         </LinearLayout>
     </GridLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/transactionsTransactionsRecycler"
-        android:background="@color/colorWhiteBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical"/>
 
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_below="@id/transactionsGridLayout"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/transactionsTransactionsRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@color/colorWhiteBackground"
+                android:orientation="vertical"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/transactionsAddButton"
@@ -86,5 +103,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:src="@drawable/ic_add"/>
-</LinearLayout>
+
+</RelativeLayout>

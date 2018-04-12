@@ -28,6 +28,12 @@ import java.util.Set;
 public class TransactionsFragment extends Fragment implements
         TransactionsTransactionsRecyclerAdapter.ItemClickListener {
 
+    public interface TransactionsInterface {
+        void didSelectAddTransaction();
+    }
+
+    public TransactionsInterface parentDelegate;
+
 
     private Set<String> selectedAccountNames;
     private Map<String, String> accountIDToNameLookup;
@@ -128,8 +134,7 @@ public class TransactionsFragment extends Fragment implements
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                        // TODO
+                        parentDelegate.didSelectAddTransaction();
                     }
                 }
         );

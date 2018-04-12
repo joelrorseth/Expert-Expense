@@ -12,7 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements OverviewFragment.OverviewInterface, AccountsFragment.AccountsInterface {
+        implements OverviewFragment.OverviewInterface, AccountsFragment.AccountsInterface,
+        TransactionsFragment.TransactionsInterface {
 
     private DrawerLayout mDrawerLayout;
 
@@ -66,7 +67,9 @@ public class MainActivity extends AppCompatActivity
                                 break;
 
                             case R.id.nav_transactions:
-                                switchToFragment(new TransactionsFragment());
+                                TransactionsFragment transFrag = new TransactionsFragment();
+                                transFrag.parentDelegate = thisRef;
+                                switchToFragment(transFrag);
                                 break;
 
                             case R.id.nav_reports:
@@ -129,5 +132,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void didSelectAddAccount() {
         switchToFragment(new AddNewAccountFragment());
+    }
+
+    @Override
+    public void didSelectAddTransaction() {
+        switchToFragment(new AddNewTransactionFragment());
     }
 }
