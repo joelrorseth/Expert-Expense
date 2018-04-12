@@ -5,13 +5,12 @@
     android:layout_height="match_parent"
     android:layout_gravity="top|center"
     android:gravity="top|center"
-    android:background="@color/temp2">
+    android:background="@color/colorWhiteBackground">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:layout_marginTop="10dp"
         android:src="@drawable/wallet"/>
 
     <TextView

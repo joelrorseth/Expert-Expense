@@ -35,14 +35,20 @@
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:hint="@string/auth_username_field"
-        android:inputType="text"/>
+        android:backgroundTint="@color/colorAccent"
+        android:inputType="textEmailAddress"/>
 
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:hint="@string/auth_password_field"
+        android:backgroundTint="@color/colorAccent"
         android:inputType="textPassword"/>
 
     <Button
