@@ -27,6 +27,10 @@ public class AddNewAccountFragment extends Fragment {
     private Spinner currencySpinner;
     private String icon = "ICON_NAME";  // TODO
 
+    private boolean isBeingEdited = false;
+    private String currentAccountIDBeingEdited;
+    private Account currentAccountBeingEdited;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -41,7 +45,24 @@ public class AddNewAccountFragment extends Fragment {
         currencySpinner = view.findViewById(R.id.new_account_currency_spinner);
 
 
-        // Attach listeners
+        // EDIT mode ONLY
+        // Potentially fill blank EditText objects if account is being edited
+        if (isBeingEdited) {
+
+            // Set the EditText text attributes
+            nameText.setText(currentAccountBeingEdited.getAccountName());
+            descrText.setText(currentAccountBeingEdited.getDescription());
+            balanceText.setText(currentAccountBeingEdited.getBalance() + "");
+
+            String currencies[] = getResources().getStringArray(R.array.currency_array);
+            for (int i = 0; i < currencies.length; ++i) {
+                if (currencies[i].equals(currentAccountBeingEdited.getCurrency()))
+                    currencySpinner.setSelection(i);
+            }
+        }
+
+
+        // Attach listeners to SAVE and CANCEL
         view.findViewById(R.id.new_account_cancel_button).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -69,29 +90,62 @@ public class AddNewAccountFragment extends Fragment {
 
                         Database db = Database.getCurrentUserDatabase();
 
+                        if (isBeingEdited) {
 
-                        // Attempt to save new Account in database
-                        db.saveNewAccount(newAccount, new AddAccountCallback() {
-                            @Override
-                            public void didAddAccount(boolean success, Exception e) {
+                            // Update the account being edited (using ID) with account made here
+                            db.updateExistingAccount(currentAccountIDBeingEdited, newAccount,
+                                    new AddAccountCallback() {
+                                @Override
+                                public void didAddAccount(boolean success, Exception e) {
 
-                                if (!success && e != null) {
-                                    Toast.makeText(getContext(), e.getLocalizedMessage(),
-                                            Toast.LENGTH_SHORT).show();
+                                    if (!success && e != null) {
+                                        Toast.makeText(getContext(), e.getLocalizedMessage(),
+                                                Toast.LENGTH_SHORT).show();
 
-                                } else {
+                                    } else {
 
-                                    // Show success message and go back
-                                    Toast.makeText(getContext(), "New account has been added",
-                                            Toast.LENGTH_SHORT).show();
-                                    getFragmentManager().popBackStack();
+                                        // Show success message and go back
+                                        Toast.makeText(getContext(), "Account has been updated",
+                                                Toast.LENGTH_SHORT).show();
+                                        getFragmentManager().popBackStack();
+                                    }
                                 }
-                            }
-                        });
+                            });
+
+                        } else {
+                            // Attempt to save new Account in database
+                            db.saveNewAccount(newAccount, new AddAccountCallback() {
+                                @Override
+                                public void didAddAccount(boolean success, Exception e) {
+
+                                    if (!success && e != null) {
+                                        Toast.makeText(getContext(), e.getLocalizedMessage(),
+                                                Toast.LENGTH_SHORT).show();
+
+                                    } else {
+
+                                        // Show success message and go back
+                                        Toast.makeText(getContext(), "New account has been added",
+                                                Toast.LENGTH_SHORT).show();
+                                        getFragmentManager().popBackStack();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
         );
 
         return view;
+    }
+
+
+    // Call this method to populate this form with an account already made
+    // This should be called when instead an account is being edited
+    public void populateAccountBeingEdited(String id, Account accountBeingEdited) {
+
+        currentAccountIDBeingEdited = id;
+        currentAccountBeingEdited = accountBeingEdited;
+        isBeingEdited = true;
     }
 }

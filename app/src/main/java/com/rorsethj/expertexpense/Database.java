@@ -100,14 +100,12 @@ public class Database {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-
                         callback.didAddAccount(true, null);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
                         callback.didAddAccount(false, e);
                     }
                 });
@@ -127,14 +125,12 @@ public class Database {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-
                         callback.didAddTransaction(true, null);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
                         callback.didAddTransaction(false, e);
                     }
                 });
@@ -152,19 +148,43 @@ public class Database {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-
                         callback.didAddBill(true, null);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
                         callback.didAddBill(false, e);
                     }
                 });
     }
-    
+
+
+
+    // MARK: UPDATE OPERATIONS
+    // Save account under  users/<current_uid>/accounts/
+    public void updateExistingAccount(String existingAccountID, Account updatedAccount,
+                               final AddNewAccountFragment.AddAccountCallback callback) {
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("accounts")
+                .child(existingAccountID)
+                .setValue(updatedAccount)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        callback.didAddAccount(true, null);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.didAddAccount(false, e);
+                    }
+                });
+    }
+
 
 
     // MARK: RETRIEVE OPERATIONS

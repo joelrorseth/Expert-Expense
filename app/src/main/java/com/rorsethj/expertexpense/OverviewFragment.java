@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,12 +19,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import uk.co.markormesher.android_fab.FloatingActionButton;
 import uk.co.markormesher.android_fab.SpeedDialMenuAdapter;
 import uk.co.markormesher.android_fab.SpeedDialMenuItem;
@@ -34,14 +31,15 @@ import uk.co.markormesher.android_fab.SpeedDialMenuItem;
 public class OverviewFragment extends Fragment
         implements MyAccountsRecyclerAdapter.ItemClickListener,
         RecentTransactionsRecyclerAdapter.ItemClickListener,
-        UpcomingBillsRecyclerAdapter.ItemClickListener{
+        UpcomingBillsRecyclerAdapter.ItemClickListener,
+        AccountPopupFragment.AccountPopupInterface {
 
 
     // Define interface to containing Activity to respond to events taking place here
     public interface OverviewInterface {
         void didSelectCustomizationIcon();
-        void didSelectAddAccountIcon();
-        void didSelectAddTransactionIcon();
+        void didSelectAddAccountIcon(boolean isEdit, Account existingAccount, String accountID);
+        void didSelectAddTransactionIcon(boolean isEdit, Transaction existingTrans, String transID);
         void didSelectAddBillIcon();
     }
 
@@ -53,9 +51,18 @@ public class OverviewFragment extends Fragment
     private RecyclerView transRecyclerView;
     private RecyclerView billsRecyclerView;
 
+    private AccountPopupFragment accPopupFragment;
+
     private MyAccountsRecyclerAdapter myAccountsAdapter;
     private RecentTransactionsRecyclerAdapter recentTransactionsAdapter;
     private UpcomingBillsRecyclerAdapter upcomingBillsAdapter;
+
+    private List<Account> currentAccounts = new ArrayList<>();
+    private List<String> currentAccountIDs = new ArrayList<>();
+    private List<Transaction> currentTransactions = new ArrayList<>();
+    private List<String> currentTransactionIDs = new ArrayList<>();
+    private int currentlySelectedAccountIndex = -1;
+    private int getCurrentlySelectedTransIndex = -1;
 
 
 
@@ -71,6 +78,11 @@ public class OverviewFragment extends Fragment
 
         // Conditionally load in elements into Overview screen based on preferences
         conditionallyLoadAllContent(view);
+
+        // Configure Popup dialogs ahead of time
+        accPopupFragment = new AccountPopupFragment();
+        accPopupFragment.parentDelegate = this;
+
 
         // Configure floating action button listener
         FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.overviewAddButton);
@@ -97,7 +109,7 @@ public class OverviewFragment extends Fragment
             public boolean onMenuItemClick(int position) {
 
                 // Ask parent delegate to begin a new transaction
-                parentDelegate.didSelectAddTransactionIcon();
+                parentDelegate.didSelectAddTransactionIcon(false, null, null);
                 return super.onMenuItemClick(position);
             }
         });
@@ -134,12 +146,15 @@ public class OverviewFragment extends Fragment
     }
 
 
+
+    // MARK: Popup Logic and interface implementations
     @Override
     public void onItemClick(View view, int position) {
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.
+
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
@@ -147,37 +162,68 @@ public class OverviewFragment extends Fragment
         }
         ft.addToBackStack(null);
 
-        // Create and show the dialog.
-        DialogFragment newFragment = new GeneralPopupFragment();
-        newFragment.show(ft, "dialog");
 
-
-        String it = "";
         String tag = view.getTag().toString();
 
-        // TODO: Make transition to fragment
+
         // Determine which View was clicked -- Several subviews implement onItemClick
         if (tag.equals(getResources().getString(R.string.tag_overview_accounts_view))) {
 
-            // TODO: Handle account click
-            it = "accounts";
+            // Update index corresponding to which Account was clicked
+            currentlySelectedAccountIndex = position;
+
+            // Show popup menu, use this class as delegate
+            accPopupFragment.show(ft, "dialog");
+
 
         } else if (tag.equals(getResources().getString(R.string.tag_overview_transactions_view))) {
 
-            // TODO: Handle transaction click
-            it = "trans";
+            // Update index for selected Transaction
+            // TODO: Implement custom popup for transactions
+            getCurrentlySelectedTransIndex = position;
 
         } else if (tag.equals(getResources().getString(R.string.tag_overview_bills_view))) {
 
-            it = "bill";
+            // TODO: Transition directly to edit bill screen
         }
-
-        Toast.makeText(getContext(), "You clicked " +
-                myAccountsAdapter.getItem(position) + " on " + it + " position " +
-                position, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void acDidSelectShowTransactions() {
 
+    }
+
+    @Override
+    public void acDidSelectAddTransaction() {
+
+    }
+
+    @Override
+    public void acDidSelectDeleteAccount() {
+
+    }
+
+    @Override
+    public void acDidSelectEditAccount() {
+
+        // Get selected account
+        Account accountToBeEdited = currentAccounts.get(currentlySelectedAccountIndex);
+        String accountIDToBeEdited = currentAccountIDs.get(currentlySelectedAccountIndex);
+
+        // Tell parent to show Add Account screen, but set up for editing
+        accPopupFragment.dismiss();
+        parentDelegate.didSelectAddAccountIcon(true, accountToBeEdited, accountIDToBeEdited);
+    }
+
+    @Override
+    public void acDidSelectHide() {
+
+    }
+
+    @Override
+    public void acDidSelectTransfer() {
+
+    }
 
     // MARK: Module loading
     // Conditionally display the following layout based on user preferences
@@ -222,7 +268,7 @@ public class OverviewFragment extends Fragment
         view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
                 new View.OnClickListener() {
                     @Override public void onClick(View view) {
-                        parentDelegate.didSelectAddAccountIcon();
+                        parentDelegate.didSelectAddAccountIcon(false, null, null);
                     }
                 }
         );
@@ -244,7 +290,7 @@ public class OverviewFragment extends Fragment
         view.findViewById(R.id.overviewTransactionsAddButton).setOnClickListener(
                 new View.OnClickListener() {
                     @Override public void onClick(View view) {
-                        parentDelegate.didSelectAddTransactionIcon();
+                        parentDelegate.didSelectAddTransactionIcon(false, null, null);
                     }
                 }
         );
@@ -300,6 +346,9 @@ public class OverviewFragment extends Fragment
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
 
+                currentAccounts = accounts;
+                currentAccountIDs = accountIDs;
+
                 // Calculate total across all accounts to display
                 double sum = 0.0;
                 for (Account a: accounts) { sum += a.getBalance(); }
@@ -347,7 +396,7 @@ public class OverviewFragment extends Fragment
     }
 
     private void refreshDBContent() {
-        loadTransactionsFromDB();
+        loadAccountsFromDB();
         loadTransactionsFromDB();
         loadBillsFromDB();
     }

@@ -8,7 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 
-public class GeneralPopupFragment extends DialogFragment {
+public class AccountPopupFragment extends DialogFragment {
+
+
+    public interface AccountPopupInterface {
+        void acDidSelectShowTransactions();
+        void acDidSelectEditAccount();
+        void acDidSelectAddTransaction();
+        void acDidSelectTransfer();
+        void acDidSelectDeleteAccount();
+        void acDidSelectHide();
+    }
+
+    public AccountPopupInterface parentDelegate;
 
     private final int popupButtonIDs[] = {
             R.id.genPopupTransactions,
@@ -60,32 +72,39 @@ public class GeneralPopupFragment extends DialogFragment {
             case R.id.genPopupTransactions:
 
                 // Go to TransactionFragment, displaying transactions for this account only
+                parentDelegate.acDidSelectShowTransactions();
                 break;
 
             case R.id.genPopupEditAcct:
 
                 // Go to edit account screen
+                parentDelegate.acDidSelectEditAccount();
                 break;
 
             case R.id.genPopupAddTrans:
 
                 // Go to add transaction screen, with calculator prompted
+                parentDelegate.acDidSelectAddTransaction();
                 break;
 
             case R.id.genPopupTransfer:
 
                 // Go to transfer creation screen
+                parentDelegate.acDidSelectTransfer();
                 break;
 
             case R.id.genPopupDelete:
 
                 // Confirm the deletion, if confirmed, delete account from records
+                parentDelegate.acDidSelectDeleteAccount();
                 break;
 
             case R.id.genPopupHide:
 
                 // Hide this account from views
+                parentDelegate.acDidSelectHide();
                 break;
         }
     }
+
 }

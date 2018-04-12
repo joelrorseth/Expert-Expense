@@ -106,12 +106,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void didSelectAddAccountIcon() {
-        switchToFragment(new AddNewAccountFragment());
+    public void didSelectAddAccountIcon(boolean isEdit, Account existingAccount, String accountID) {
+        AddNewAccountFragment f = new AddNewAccountFragment();
+
+        // If this is an edit, setup the fragment for the edit process instead
+        if (isEdit) {
+            f.populateAccountBeingEdited(accountID, existingAccount);
+        }
+
+        switchToFragment(f);
     }
 
     @Override
-    public void didSelectAddTransactionIcon() { switchToFragment(new AddNewTransactionFragment()); }
+    public void didSelectAddTransactionIcon(boolean isEdit, Transaction existingTrans, String transID) {
+        switchToFragment(new AddNewTransactionFragment());
+    }
 
     @Override
     public void didSelectAddBillIcon() {
