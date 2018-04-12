@@ -1,4 +1,4 @@
-<android.support.design.widget.CoordinatorLayout
+<RelativeLayout
     android:id="@+id/overviewCoordinator"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,7 +8,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
-
 
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -221,14 +220,10 @@
 
     </ScrollView>
 
-    <android.support.design.widget.FloatingActionButton
+    <uk.co.markormesher.android_fab.FloatingActionButton
         android:id="@+id/overviewAddButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add"
-        app:layout_anchor="@id/overviewScrollView"
-        app:layout_anchorGravity="bottom|right|end"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

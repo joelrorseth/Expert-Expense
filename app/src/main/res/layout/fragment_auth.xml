@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:fontFamily="sans-serif"
         android:hint="@string/auth_username_field"
         android:backgroundTint="@color/colorAccent"
         android:inputType="textEmailAddress"/>
@@ -48,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:fontFamily="sans-serif"
         android:hint="@string/auth_password_field"
         android:backgroundTint="@color/colorAccent"
         android:inputType="textPassword"/>

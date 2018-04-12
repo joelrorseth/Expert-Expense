@@ -1,10 +1,10 @@
 package com.rorsethj.expertexpense;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -21,8 +21,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import uk.co.markormesher.android_fab.FloatingActionButton;
+import uk.co.markormesher.android_fab.SpeedDialMenuAdapter;
+import uk.co.markormesher.android_fab.SpeedDialMenuItem;
 
 
 public class OverviewFragment extends Fragment
@@ -63,22 +69,38 @@ public class OverviewFragment extends Fragment
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
-
         // Conditionally load in elements into Overview screen based on preferences
         conditionallyLoadAllContent(view);
 
         // Configure floating action button listener
         FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.overviewAddButton);
-        addButton.setOnClickListener(
+        addButton.setButtonIconResource(R.drawable.ic_add);
+        addButton.setButtonBackgroundColour(getResources().getColor(R.color.colorPrimaryDark, null));
+        addButton.setSpeedDialMenuAdapter(new SpeedDialMenuAdapter() {
+            @Override
+            public int getCount() {
+                return 2;
+            }
 
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+            @NotNull
+            @Override
+            public SpeedDialMenuItem getMenuItem(Context context, int i) {
 
-                        // TODO
-                    }
+                if (i == 0) {
+                    return new SpeedDialMenuItem(context, R.drawable.ic_accounts, "Add Income");
+                } else {
+                    return new SpeedDialMenuItem(context, R.drawable.ic_money_sign, "Add Expense");
                 }
-        );
+            }
+
+            @Override
+            public boolean onMenuItemClick(int position) {
+
+                // Ask parent delegate to begin a new transaction
+                parentDelegate.didSelectAddTransactionIcon();
+                return super.onMenuItemClick(position);
+            }
+        });
 
         return view;
     }
