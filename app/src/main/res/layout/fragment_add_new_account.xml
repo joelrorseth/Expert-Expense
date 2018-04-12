@@ -135,7 +135,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/colorErrorRed"
+            android:background="@color/colorDarkGray"
+            android:textColor="@color/colorWhiteBackground"
             android:fontFamily="sans-serif"
             android:text="@string/cancel_button"
             android:textStyle="bold"/>
@@ -145,7 +146,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/colorValidGreen"
+            android:background="@color/colorPrimaryDark"
             android:fontFamily="sans-serif"
             android:text="@string/save_button"
             android:textStyle="bold"/>

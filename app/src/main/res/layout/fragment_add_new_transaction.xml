@@ -153,8 +153,9 @@
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@android:color/white"
-                android:clickable="true"
-                android:focusable="true"
+                android:clickable="false"
+                android:focusable="false"
+                android:inputType="none"
                 android:hint="@string/new_transaction_date_hint"/>
 
             <TextView
@@ -194,7 +195,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/colorErrorRed"
+            android:background="@color/colorDarkGray"
+            android:textColor="@color/colorWhiteBackground"
             android:fontFamily="sans-serif"
             android:textStyle="bold"
             android:text="@string/cancel_button"/>
@@ -204,7 +206,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/colorValidGreen"
+            android:background="@color/colorPrimaryDark"
             android:fontFamily="sans-serif"
             android:textStyle="bold"
             android:text="@string/save_button"/>

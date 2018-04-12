@@ -6,6 +6,7 @@
     <color name="colorMainBackground">#e7e7e7</color>
     <color name="colorWhiteBackground">#ffffff</color>
     <color name="colorTextBlack">#000000</color>
+    <color name="colorDarkGray">#707070</color>
 
     <color name="colorErrorRed">#ff0000</color>
     <color name="colorValidGreen">#7ee000</color>
