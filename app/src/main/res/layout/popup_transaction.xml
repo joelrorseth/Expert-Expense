@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/tranPopupEdit"
+            android:layout_width="@dimen/button_size_large"
+            android:layout_height="@dimen/button_size_large"
+            android:layout_marginStart="@dimen/button_margin_width"
+            android:layout_marginEnd="@dimen/button_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:gravity="center"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorOrange"
+            android:src="@drawable/ic_edit"/>
+
+        <ImageButton
+            android:id="@+id/tranPopupDelete"
+            android:layout_width="@dimen/button_size_large"
+            android:layout_height="@dimen/button_size_large"
+            android:layout_marginStart="@dimen/button_margin_width"
+            android:layout_marginEnd="@dimen/button_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:gravity="center"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorRed"
+            android:src="@drawable/ic_delete"/>
+
+        <ImageButton
+            android:id="@+id/tranPopupCopy"
+            android:layout_width="@dimen/button_size_large"
+            android:layout_height="@dimen/button_size_large"
+            android:layout_marginStart="@dimen/button_margin_width"
+            android:layout_marginEnd="@dimen/button_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:gravity="center"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorBlue"
+            android:src="@drawable/ic_transfer"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="@dimen/button_label_width_large"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/button_label_margin_width"
+            android:layout_marginEnd="@dimen/button_label_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:textAlignment="center"
+            android:textSize="9dp"
+            android:text="View/Edit Transaction"/>
+
+        <TextView
+            android:layout_width="@dimen/button_label_width_large"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/button_label_margin_width"
+            android:layout_marginEnd="@dimen/button_label_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:textAlignment="center"
+            android:textSize="9dp"
+            android:text="Delete Transaction"/>
+
+        <TextView
+            android:layout_width="@dimen/button_label_width_large"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/button_label_margin_width"
+            android:layout_marginEnd="@dimen/button_label_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:textAlignment="center"
+            android:textSize="9dp"
+            android:text="Copy Transaction"/>
+
+    </LinearLayout>
+
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <ImageButton
+            android:id="@+id/tranPopupMove"
+            android:layout_width="@dimen/button_size_large"
+            android:layout_height="@dimen/button_size_large"
+            android:layout_marginStart="@dimen/button_margin_width"
+            android:layout_marginEnd="@dimen/button_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:gravity="center"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorBlue"
+            android:src="@drawable/ic_folder"/>
+
+        <ImageButton
+            android:id="@+id/tranPopupNewStatus"
+            android:layout_width="@dimen/button_size_large"
+            android:layout_height="@dimen/button_size_large"
+            android:layout_marginStart="@dimen/button_margin_width"
+            android:layout_marginEnd="@dimen/button_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:gravity="center"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorGreen"
+            android:src="@drawable/ic_info"/>
+
+        <ImageButton
+            android:id="@+id/tranPopupSetProj"
+            android:layout_width="@dimen/button_size_large"
+            android:layout_height="@dimen/button_size_large"
+            android:layout_marginStart="@dimen/button_margin_width"
+            android:layout_marginEnd="@dimen/button_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:gravity="center"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorPurple"
+            android:src="@drawable/ic_drop_circle"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="@dimen/button_label_width_large"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/button_label_margin_width"
+            android:layout_marginEnd="@dimen/button_label_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:textAlignment="center"
+            android:textSize="9dp"
+            android:text="Move Transaction"/>
+
+        <TextView
+            android:layout_width="@dimen/button_label_width_large"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/button_label_margin_width"
+            android:layout_marginEnd="@dimen/button_label_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:textAlignment="center"
+            android:textSize="9dp"
+            android:text="Set New Status"/>
+
+        <TextView
+            android:layout_width="@dimen/button_label_width_large"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/button_label_margin_width"
+            android:layout_marginEnd="@dimen/button_label_margin_width"
+            android:layout_marginTop="@dimen/button_margin_height"
+            android:layout_marginBottom="@dimen/button_margin_height"
+            android:textAlignment="center"
+            android:textSize="9dp"
+            android:text="Set Project"/>
+
+    </LinearLayout>
+</LinearLayout>

@@ -32,7 +32,8 @@ public class OverviewFragment extends Fragment
         implements MyAccountsRecyclerAdapter.ItemClickListener,
         RecentTransactionsRecyclerAdapter.ItemClickListener,
         UpcomingBillsRecyclerAdapter.ItemClickListener,
-        AccountPopupFragment.AccountPopupInterface {
+        AccountPopupFragment.AccountPopupInterface,
+        TransactionPopupFragment.TransactionPopupInterface {
 
 
     // Define interface to containing Activity to respond to events taking place here
@@ -41,6 +42,7 @@ public class OverviewFragment extends Fragment
         void didSelectAddAccountIcon(boolean isEdit, Account existingAccount, String accountID);
         void didSelectAddTransactionIcon(boolean isEdit, Transaction existingTrans, String transID);
         void didSelectAddBillIcon();
+        void didRequestTransactionsFrag();
     }
 
     OverviewInterface parentDelegate;
@@ -52,6 +54,7 @@ public class OverviewFragment extends Fragment
     private RecyclerView billsRecyclerView;
 
     private AccountPopupFragment accPopupFragment;
+    private TransactionPopupFragment tranPopupFragment;
 
     private MyAccountsRecyclerAdapter myAccountsAdapter;
     private RecentTransactionsRecyclerAdapter recentTransactionsAdapter;
@@ -82,6 +85,9 @@ public class OverviewFragment extends Fragment
         // Configure Popup dialogs ahead of time
         accPopupFragment = new AccountPopupFragment();
         accPopupFragment.parentDelegate = this;
+
+        tranPopupFragment = new TransactionPopupFragment();
+        tranPopupFragment.parentDelegate = this;
 
 
         // Configure floating action button listener
@@ -169,18 +175,15 @@ public class OverviewFragment extends Fragment
         // Determine which View was clicked -- Several subviews implement onItemClick
         if (tag.equals(getResources().getString(R.string.tag_overview_accounts_view))) {
 
-            // Update index corresponding to which Account was clicked
+            // Update index corresponding to which Account was clicked, show popup
             currentlySelectedAccountIndex = position;
-
-            // Show popup menu, use this class as delegate
             accPopupFragment.show(ft, "dialog");
-
 
         } else if (tag.equals(getResources().getString(R.string.tag_overview_transactions_view))) {
 
-            // Update index for selected Transaction
-            // TODO: Implement custom popup for transactions
+            // Update index for selected Transaction, show popup
             getCurrentlySelectedTransIndex = position;
+            tranPopupFragment.show(ft, "dialog");
 
         } else if (tag.equals(getResources().getString(R.string.tag_overview_bills_view))) {
 
@@ -188,19 +191,25 @@ public class OverviewFragment extends Fragment
         }
     }
 
+
+
+    // MARK: AccountPopupFragment interface
     @Override
     public void acDidSelectShowTransactions() {
-
+        accPopupFragment.dismiss();
+        parentDelegate.didRequestTransactionsFrag();
     }
 
     @Override
     public void acDidSelectAddTransaction() {
-
+        accPopupFragment.dismiss();
+        parentDelegate.didSelectAddTransactionIcon(false, null, null);
     }
 
     @Override
     public void acDidSelectDeleteAccount() {
-
+        accPopupFragment.dismiss();
+        // TODO
     }
 
     @Override
@@ -217,13 +226,56 @@ public class OverviewFragment extends Fragment
 
     @Override
     public void acDidSelectHide() {
-
+        accPopupFragment.dismiss();
     }
 
     @Override
     public void acDidSelectTransfer() {
+        accPopupFragment.dismiss();
+    }
+
+
+
+    // MARK: TransactionPopupFragment interface
+
+
+    @Override
+    public void trDidSelectEdit() {
+
+        // Get selected account
+        Transaction transToBeEdited = currentTransactions.get(getCurrentlySelectedTransIndex);
+        String transIDToBeEdited = currentTransactionIDs.get(getCurrentlySelectedTransIndex);
+
+        // Tell parent to show Add Account screen, but set up for editing
+        tranPopupFragment.dismiss();
+        parentDelegate.didSelectAddTransactionIcon(true, transToBeEdited, transIDToBeEdited);
+    }
+
+    @Override
+    public void trDidSelectDelete() {
 
     }
+
+    @Override
+    public void trDidSelectCopy() {
+
+    }
+
+    @Override
+    public void trDidSelectMove() {
+
+    }
+
+    @Override
+    public void trDidSelectNewStatus() {
+
+    }
+
+    @Override
+    public void trDidSelectSetProj() {
+
+    }
+
 
     // MARK: Module loading
     // Conditionally display the following layout based on user preferences
@@ -370,7 +422,10 @@ public class OverviewFragment extends Fragment
         // Load transactions
         db.getUserTransactions(new Database.DBGetTransactionsInterface() {
             @Override
-            public void didGet(List<Transaction> transactions, Exception e) {
+            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
+
+                currentTransactions = transactions;
+                currentTransactionIDs = transactionIDs;
 
                 recentTransactionsAdapter = new RecentTransactionsRecyclerAdapter(getContext(), transactions);
                 recentTransactionsAdapter.setClickListener(thisRef);

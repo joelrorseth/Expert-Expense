@@ -23,12 +23,12 @@ public class AccountPopupFragment extends DialogFragment {
     public AccountPopupInterface parentDelegate;
 
     private final int popupButtonIDs[] = {
-            R.id.genPopupTransactions,
-            R.id.genPopupEditAcct,
-            R.id.genPopupAddTrans,
-            R.id.genPopupTransfer,
-            R.id.genPopupDelete,
-            R.id.genPopupHide };
+            R.id.accPopupTransactions,
+            R.id.accPopupEditAcct,
+            R.id.accPopupAddTrans,
+            R.id.accPopupTransfer,
+            R.id.accPopupDelete,
+            R.id.accPopupHide };
 
 
     @Override
@@ -40,7 +40,7 @@ public class AccountPopupFragment extends DialogFragment {
 
         // Inflate the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        View view = inflater.inflate(R.layout.general_popup_view, null);
+        View view = inflater.inflate(R.layout.popup_account, null);
 
         // Set the dialog layout
         builder.setView(view);
@@ -69,37 +69,37 @@ public class AccountPopupFragment extends DialogFragment {
 
         switch (buttonID) {
 
-            case R.id.genPopupTransactions:
+            case R.id.accPopupTransactions:
 
                 // Go to TransactionFragment, displaying transactions for this account only
                 parentDelegate.acDidSelectShowTransactions();
                 break;
 
-            case R.id.genPopupEditAcct:
+            case R.id.accPopupEditAcct:
 
                 // Go to edit account screen
                 parentDelegate.acDidSelectEditAccount();
                 break;
 
-            case R.id.genPopupAddTrans:
+            case R.id.accPopupAddTrans:
 
                 // Go to add transaction screen, with calculator prompted
                 parentDelegate.acDidSelectAddTransaction();
                 break;
 
-            case R.id.genPopupTransfer:
+            case R.id.accPopupTransfer:
 
                 // Go to transfer creation screen
                 parentDelegate.acDidSelectTransfer();
                 break;
 
-            case R.id.genPopupDelete:
+            case R.id.accPopupDelete:
 
                 // Confirm the deletion, if confirmed, delete account from records
                 parentDelegate.acDidSelectDeleteAccount();
                 break;
 
-            case R.id.genPopupHide:
+            case R.id.accPopupHide:
 
                 // Hide this account from views
                 parentDelegate.acDidSelectHide();

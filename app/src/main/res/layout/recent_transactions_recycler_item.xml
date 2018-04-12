@@ -8,7 +8,7 @@
     android:paddingRight="6dp"
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
-    android:tag="@string/tag_accounts_accounts_view">
+    android:tag="@string/tag_overview_transactions_view">
 
     <ImageView
         android:id="@+id/recentTransactionItemIcon"

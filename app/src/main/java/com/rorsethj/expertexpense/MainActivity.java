@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    // OverviewFragment interface implementation
+    // MARK: OverviewFragment interface implementation
     @Override
     public void didSelectCustomizationIcon() {
 
@@ -119,7 +119,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void didSelectAddTransactionIcon(boolean isEdit, Transaction existingTrans, String transID) {
-        switchToFragment(new AddNewTransactionFragment());
+        AddNewTransactionFragment f = new AddNewTransactionFragment();
+
+        // If this is an edit, setup the fragment for the edit process instead
+        if (isEdit) {
+            f.populateTransactionBeingEdited(transID, existingTrans);
+        }
+
+        switchToFragment(f);
     }
 
     @Override
@@ -127,17 +134,17 @@ public class MainActivity extends AppCompatActivity
         switchToFragment(new AddNewBillFragment());
     }
 
+    @Override
+    public void didRequestTransactionsFrag() {
+        TransactionsFragment transFrag = new TransactionsFragment();
+        transFrag.parentDelegate = this;
+        switchToFragment(transFrag);
 
-    // Perform a FragmentTransaction to replace current hosted fragment with new one
-    private void switchToFragment(Fragment destFragment) {
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContainer, destFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
     }
 
-    // Accounts Fragment Interface
+
+
+    // MARK: AccountsFragment Interface
     @Override
     public void didSelectAddAccount() {
         switchToFragment(new AddNewAccountFragment());
@@ -146,5 +153,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void didSelectAddTransaction() {
         switchToFragment(new AddNewTransactionFragment());
+    }
+
+
+
+    // MARK: Utility
+    // Perform a FragmentTransaction to replace current hosted fragment with new one
+    private void switchToFragment(Fragment destFragment) {
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainer, destFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

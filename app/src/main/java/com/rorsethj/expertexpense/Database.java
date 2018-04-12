@@ -45,7 +45,7 @@ public class Database {
     }
 
     public interface DBGetTransactionsInterface {
-        void didGet(List<Transaction> transactions, Exception e);
+        void didGet(List<Transaction> transactions, List<String> transactionIDs,  Exception e);
     }
 
     public interface DBGetBillsInterface {
@@ -160,6 +160,7 @@ public class Database {
     }
 
 
+    
 
     // MARK: UPDATE OPERATIONS
     // Save account under  users/<current_uid>/accounts/
@@ -185,12 +186,34 @@ public class Database {
                 });
     }
 
+    public void updateExistingTransaction(String existingTransID, Transaction transaction,
+                                   final AddNewTransactionFragment.AddTransactionCallback callback) {
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("transactions")
+                .child(existingTransID)
+                .setValue(transaction)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        callback.didAddTransaction(true, null);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.didAddTransaction(false, e);
+                    }
+                });
+    }
+
+
 
 
     // MARK: RETRIEVE OPERATIONS
     // Asynchronous method with callback to return retrieved accounts for current user
     public void getUserAccounts(final DBGetAccountsInterface callback) {
-
 
         store.child("users")
                 .child(currentUser.getUid())
@@ -225,7 +248,6 @@ public class Database {
     // Asynchronous method with callback to return retrieved accounts for current user
     public void getUserTransactions(final DBGetTransactionsInterface callback) {
 
-
         store.child("users")
                 .child(currentUser.getUid())
                 .child("transactions")
@@ -234,6 +256,7 @@ public class Database {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
+                        ArrayList<String> transactionIDs = new ArrayList<>();
                         ArrayList<Transaction> transactions = new ArrayList<>();
 
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
@@ -241,10 +264,11 @@ public class Database {
                             Log.d(TAG, child.getKey() + " => " + child.getValue());
 
                             Transaction transaction = child.getValue(Transaction.class);
+                            transactionIDs.add(child.getKey());
                             transactions.add(transaction);
                         }
 
-                        callback.didGet(transactions, null);
+                        callback.didGet(transactions, transactionIDs, null);
                     }
 
                     @Override
@@ -305,6 +329,7 @@ public class Database {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
+                        ArrayList<String> transactionIDs = new ArrayList<>();
                         ArrayList<Transaction> transactions = new ArrayList<>();
 
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
@@ -312,10 +337,11 @@ public class Database {
                             Log.d(TAG, child.getKey() + " => " + child.getValue());
 
                             Transaction transaction = child.getValue(Transaction.class);
+                            transactionIDs.add(child.getKey());
                             transactions.add(transaction);
                         }
 
-                        callback.didGet(transactions, null);
+                        callback.didGet(transactions, transactionIDs, null);
                     }
 
                     @Override

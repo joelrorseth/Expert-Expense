@@ -15,7 +15,7 @@
 
 
         <ImageButton
-            android:id="@+id/genPopupTransactions"
+            android:id="@+id/accPopupTransactions"
             android:layout_width="@dimen/button_size_large"
             android:layout_height="@dimen/button_size_large"
             android:layout_marginStart="@dimen/button_margin_width"
@@ -28,7 +28,7 @@
             android:src="@drawable/ic_book"/>
 
         <ImageButton
-            android:id="@+id/genPopupEditAcct"
+            android:id="@+id/accPopupEditAcct"
             android:layout_width="@dimen/button_size_large"
             android:layout_height="@dimen/button_size_large"
             android:layout_marginStart="@dimen/button_margin_width"
@@ -41,7 +41,7 @@
             android:src="@drawable/ic_edit"/>
 
         <ImageButton
-            android:id="@+id/genPopupAddTrans"
+            android:id="@+id/accPopupAddTrans"
             android:layout_width="@dimen/button_size_large"
             android:layout_height="@dimen/button_size_large"
             android:layout_marginStart="@dimen/button_margin_width"
@@ -109,7 +109,7 @@
 
 
         <ImageButton
-            android:id="@+id/genPopupTransfer"
+            android:id="@+id/accPopupTransfer"
             android:layout_width="@dimen/button_size_large"
             android:layout_height="@dimen/button_size_large"
             android:layout_marginStart="@dimen/button_margin_width"
@@ -122,7 +122,7 @@
             android:src="@drawable/ic_transfer"/>
 
         <ImageButton
-            android:id="@+id/genPopupDelete"
+            android:id="@+id/accPopupDelete"
             android:layout_width="@dimen/button_size_large"
             android:layout_height="@dimen/button_size_large"
             android:layout_marginStart="@dimen/button_margin_width"
@@ -135,7 +135,7 @@
             android:src="@drawable/ic_delete"/>
 
         <ImageButton
-            android:id="@+id/genPopupHide"
+            android:id="@+id/accPopupHide"
             android:layout_width="@dimen/button_size_large"
             android:layout_height="@dimen/button_size_large"
             android:layout_marginStart="@dimen/button_margin_width"

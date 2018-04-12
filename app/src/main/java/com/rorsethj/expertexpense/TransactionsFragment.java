@@ -319,7 +319,7 @@ public class TransactionsFragment extends Fragment implements
         // Get the transactions that happened between the two dates established
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
-            public void didGet(List<Transaction> transactions, Exception e) {
+            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
                 // Populate the transaction list
 

@@ -132,7 +132,7 @@ public class ReportChartFragment extends Fragment {
 
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
-            public void didGet(List<Transaction> transactions, Exception e) {
+            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
                 if (type.equals("vs")) {
                     plotIncomeVsExpense(view, transactions);
@@ -280,7 +280,7 @@ public class ReportChartFragment extends Fragment {
 
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
-            public void didGet(List<Transaction> transactions, Exception e) {
+            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
 
                 // Create mapping of incremental categories to the amounts accumulated in those increments
