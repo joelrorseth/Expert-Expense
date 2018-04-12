@@ -31,9 +31,9 @@ public class AuthFragment extends Fragment {
 
     // Allow parent activity to implement functionality and manage this fragment
     public interface AuthInterface {
-        public void didAuthorizeLogin();
-
-        public void didRejectLoginAttempt();
+        void didAuthorizeLogin();
+        void didAuthorizeNewAccount();
+        void didRejectLoginAttempt();
     }
 
 
@@ -137,7 +137,7 @@ public class AuthFragment extends Fragment {
 
                             // Sign in success, update UI with the signed-in user's information
                             System.out.println("User created successfully");
-                            authDelegate.didAuthorizeLogin();
+                            authDelegate.didAuthorizeNewAccount();
 
 
                         } else {

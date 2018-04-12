@@ -21,7 +21,15 @@ public class StartupActivity extends AppCompatActivity
     @Override
     public void didAuthorizeLogin() {
 
-        // TODO: Conditionally switch to setup only if new user, else go to MainActivity
+        Database.fetchAndUpdateCurrentUser();
+
+        // Go to MainActivity
+        Intent myIntent = new Intent(this, MainActivity.class);
+        startActivity(myIntent);
+    }
+
+    @Override
+    public void didAuthorizeNewAccount() {
 
         // User verified, update Database current user
         Database.fetchAndUpdateCurrentUser();
@@ -41,11 +49,51 @@ public class StartupActivity extends AppCompatActivity
     }
 
     @Override
-    public void didConfirmDone() {
+    public void didConfirmDone(String currency, String language,
+                               String cashAmount, String bankAmount) {
 
-        // TODO: Potentially add validation to setup fields, prob okay to leave blank
+        Database.fetchAndUpdateCurrentUser();
+        Database db = Database.getCurrentUserDatabase();
 
-        // Go to MainActivity
+        // Attempt to save the described "Cash" account
+        if (cashAmount != null && !cashAmount.isEmpty()) {
+            double amount = Double.parseDouble(cashAmount);
+            Account account = new Account("Cash", "Cash account", currency,
+                    "ICON_NAME", amount);
+
+            db.saveNewAccount(account, new AddNewAccountFragment.AddAccountCallback() {
+                @Override
+                public void didAddAccount(boolean success, Exception e) {
+                    if (e != null) {
+
+                        // Display Toast with error if account cannot be created
+                        Toast.makeText(getApplicationContext(), e.getLocalizedMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        // Attempt to save the described "Bank" account
+        if (bankAmount != null && !bankAmount.isEmpty()) {
+            double amount = Double.parseDouble(bankAmount);
+            Account account = new Account("Bank", "Bank account", currency,
+                    "ICON_NAME", amount);
+
+            db.saveNewAccount(account, new AddNewAccountFragment.AddAccountCallback() {
+                @Override
+                public void didAddAccount(boolean success, Exception e) {
+                    if (e != null) {
+
+                        // Display Toast with error if account cannot be created
+                        Toast.makeText(getApplicationContext(), e.getLocalizedMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        // Now go to MainActivity
         Intent myIntent = new Intent(this, MainActivity.class);
         startActivity(myIntent);
     }

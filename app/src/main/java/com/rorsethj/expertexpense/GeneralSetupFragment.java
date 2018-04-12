@@ -6,11 +6,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 
 public class GeneralSetupFragment extends Fragment {
+
+    public interface GeneralSetupInterface {
+        void didUpdateCurrency(String currency);
+        void didUpdateLanguage(String language);
+    }
+
+    public GeneralSetupInterface setupDelegate;
 
 
     @Override
@@ -35,21 +43,28 @@ public class GeneralSetupFragment extends Fragment {
         languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
-        // TODO: Under construction
-        /*
-        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        // Delegate is informed when new selection from spinner occurs
+        defaultCurrencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
+                setupDelegate.didUpdateCurrency( getResources().getStringArray(R.array.currency_array)[position] );
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
+            public void onNothingSelected(AdapterView<?> parentView) {}
+        });
+
+
+        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                setupDelegate.didUpdateLanguage( getResources().getStringArray(R.array.language_array)[position] );
             }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {}
         });
-        */
+
 
 
         // Set adapters to the spinners

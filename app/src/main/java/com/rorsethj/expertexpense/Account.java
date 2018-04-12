@@ -62,17 +62,4 @@ public class Account {
     public void setBalance(double balance) {
         this.balance = balance;
     }
-
-    // Return a key,value representation of the parameters
-    public Map<String, Object> toMap() {
-
-        Map<String, Object> accMap = new HashMap<>();
-        accMap.put("name", accountName);
-        accMap.put("description", description);
-        accMap.put("currency", currency);
-        accMap.put("icon", icon);
-        accMap.put("balance", balance);
-
-        return accMap;
-    }
 }

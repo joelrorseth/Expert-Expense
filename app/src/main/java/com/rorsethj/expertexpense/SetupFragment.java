@@ -14,12 +14,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 
-public class SetupFragment extends Fragment {
+public class SetupFragment extends Fragment implements
+        GeneralSetupFragment.GeneralSetupInterface, AccountSetupFragment.AccountSetupInterface {
 
     // Allow parent activity to implement functionality and manage this fragment
     public interface SetupInterface {
-        public void didConfirmDone();
+        void didConfirmDone(String currency, String language, String cashAmount, String bankAmount);
     }
+
+    private String selectedCurrency = "CAD";
+    private String selectedLanguage = "English";
+    private String cashAccountAmount = null;
+    private String bankAccountAmount = null;
+
+    private GeneralSetupFragment generalSetupFrag;
+    private AccountSetupFragment accountSetupFrag;
 
     private SetupInterface setupDelegate;
 
@@ -36,6 +45,12 @@ public class SetupFragment extends Fragment {
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_setup, container, false);
 
+        // Establish the fragments and this as delegate, ahead of time
+        generalSetupFrag = new GeneralSetupFragment();
+        generalSetupFrag.setupDelegate = this;
+
+        accountSetupFrag = new AccountSetupFragment();
+        accountSetupFrag.setupDelegate = this;
 
         ViewPager pager = (ViewPager) view.findViewById(R.id.setupViewPager);
         PagerAdapter adapter = new MyPagerAdapter(getChildFragmentManager());
@@ -49,7 +64,9 @@ public class SetupFragment extends Fragment {
 
             public void onClick(View v) {
 
-                setupDelegate.didConfirmDone();
+                // Pass the selected fields being maintained in this fragment back to the delegate
+                setupDelegate.didConfirmDone(selectedCurrency, selectedLanguage,
+                        cashAccountAmount, bankAccountAmount);
             }
         });
 
@@ -67,10 +84,11 @@ public class SetupFragment extends Fragment {
         public Fragment getItem(int pos) {
             switch(pos) {
 
-                case 0: return new GeneralSetupFragment();
-                case 1: return new AccountSetupFragment();
+                // Put correct fragment in swipe pager container
+                case 0: return generalSetupFrag;
+                case 1: return accountSetupFrag;
                 default:
-                    return new GeneralSetupFragment();
+                    return generalSetupFrag;
             }
         }
 
@@ -78,5 +96,28 @@ public class SetupFragment extends Fragment {
         public int getCount() {
             return 2;
         }
+    }
+
+
+    // MARK: Implementation for delegate methods
+
+    @Override
+    public void didUpdateCurrency(String currency) {
+        this.selectedCurrency = currency;
+    }
+
+    @Override
+    public void didUpdateLanguage(String language) {
+        this.selectedLanguage = language;
+    }
+
+    @Override
+    public void didChangeCashAmount(String amount) {
+        this.cashAccountAmount = amount;
+    }
+
+    @Override
+    public void didChangeBankAmount(String amount) {
+        this.bankAccountAmount = amount;
     }
 }
