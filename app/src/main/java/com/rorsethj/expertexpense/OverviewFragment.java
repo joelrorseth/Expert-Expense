@@ -65,7 +65,7 @@ public class OverviewFragment extends Fragment
     private List<Transaction> currentTransactions = new ArrayList<>();
     private List<String> currentTransactionIDs = new ArrayList<>();
     private int currentlySelectedAccountIndex = -1;
-    private int getCurrentlySelectedTransIndex = -1;
+    private int currentlySelectedTransIndex = -1;
 
 
 
@@ -182,7 +182,7 @@ public class OverviewFragment extends Fragment
         } else if (tag.equals(getResources().getString(R.string.tag_overview_transactions_view))) {
 
             // Update index for selected Transaction, show popup
-            getCurrentlySelectedTransIndex = position;
+            currentlySelectedTransIndex = position;
             tranPopupFragment.show(ft, "dialog");
 
         } else if (tag.equals(getResources().getString(R.string.tag_overview_bills_view))) {
@@ -209,7 +209,23 @@ public class OverviewFragment extends Fragment
     @Override
     public void acDidSelectDeleteAccount() {
         accPopupFragment.dismiss();
-        // TODO
+
+        String accountIDToBeDeleted = currentAccountIDs.get(currentlySelectedAccountIndex);
+        db.deleteAccount(accountIDToBeDeleted, new Database.DBDeletionInterface() {
+            @Override
+            public void didSuccessfullyDelete(boolean success) {
+
+                if (success) {
+                    Toast.makeText(getContext(), "Account has been deleted",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "An error occurred while deleting the account",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                refreshDBContent();
+            }
+        });
     }
 
     @Override
@@ -237,14 +253,12 @@ public class OverviewFragment extends Fragment
 
 
     // MARK: TransactionPopupFragment interface
-
-
     @Override
     public void trDidSelectEdit() {
 
         // Get selected account
-        Transaction transToBeEdited = currentTransactions.get(getCurrentlySelectedTransIndex);
-        String transIDToBeEdited = currentTransactionIDs.get(getCurrentlySelectedTransIndex);
+        Transaction transToBeEdited = currentTransactions.get(currentlySelectedTransIndex);
+        String transIDToBeEdited = currentTransactionIDs.get(currentlySelectedTransIndex);
 
         // Tell parent to show Add Account screen, but set up for editing
         tranPopupFragment.dismiss();
@@ -253,27 +267,44 @@ public class OverviewFragment extends Fragment
 
     @Override
     public void trDidSelectDelete() {
+        tranPopupFragment.dismiss();
 
+        String transIDToBeDeleted = currentTransactionIDs.get(currentlySelectedTransIndex);
+        db.deleteTransaction(transIDToBeDeleted, new Database.DBDeletionInterface() {
+            @Override
+            public void didSuccessfullyDelete(boolean success) {
+
+                if (success) {
+                    Toast.makeText(getContext(), "Transaction has been deleted",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "An error occurred while deleting the transaction",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                refreshDBContent();
+            }
+        });
     }
 
     @Override
     public void trDidSelectCopy() {
-
+        trDidSelectEdit();
     }
 
     @Override
     public void trDidSelectMove() {
-
+        trDidSelectEdit();
     }
 
     @Override
     public void trDidSelectNewStatus() {
-
+        trDidSelectEdit();
     }
 
     @Override
     public void trDidSelectSetProj() {
-
+        trDidSelectEdit();
     }
 
 

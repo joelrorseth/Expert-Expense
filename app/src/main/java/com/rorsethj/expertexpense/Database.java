@@ -52,6 +52,10 @@ public class Database {
         void didGet(List<Bill> bills, Exception e);
     }
 
+    public interface DBDeletionInterface {
+        void didSuccessfullyDelete(boolean success);
+    }
+
 
     private static Database db = null;
     private static FirebaseUser currentUser = null;
@@ -160,7 +164,7 @@ public class Database {
     }
 
 
-    
+
 
     // MARK: UPDATE OPERATIONS
     // Save account under  users/<current_uid>/accounts/
@@ -347,6 +351,41 @@ public class Database {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
+                    }
+                });
+    }
+
+
+
+    // MARK: DELETE OPERATIONS
+    public void deleteAccount(String existingAccountID, final DBDeletionInterface callback) {
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("accounts")
+                .child(existingAccountID)
+                .removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                        if (databaseError != null) { callback.didSuccessfullyDelete(false); }
+                        else { callback.didSuccessfullyDelete(true); }
+                    }
+                });
+    }
+
+    public void deleteTransaction(String existingTransID, final DBDeletionInterface callback) {
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("transactions")
+                .child(existingTransID)
+                .removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                        if (databaseError != null) { callback.didSuccessfullyDelete(false); }
+                        else { callback.didSuccessfullyDelete(true); }
                     }
                 });
     }
