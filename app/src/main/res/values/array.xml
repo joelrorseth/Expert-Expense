@@ -70,6 +70,22 @@
     </string-array>
 
 
+    <string-array name="time_periods">
+        <item>Current Month</item>
+        <item>Month to Date</item>
+        <item>Last Month</item>
+        <item>Next Month</item>
+        <item>Last 7 Days</item>
+        <item>Last 30 Days</item>
+        <item>Last 60 Days</item>
+        <item>Last 90 Days</item>
+        <item>Last 6 Months</item>
+        <item>Year to Date</item>
+        <item>Last Year</item>
+        <item>All</item>
+    </string-array>
+
+
     <string-array name="reports_expense">
         <item>Expense By Category</item>
         <item>Daily Expense</item>
