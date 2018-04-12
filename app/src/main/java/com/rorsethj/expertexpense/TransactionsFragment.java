@@ -18,15 +18,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class TransactionsFragment extends Fragment implements
         TransactionsTransactionsRecyclerAdapter.ItemClickListener {
 
 
-    private List<String> selectedAccountNames;
+    private Set<String> selectedAccountNames;
+    private Map<String, String> accountIDToNameLookup;
     private List<String> allAccountNames;
+    private List<Account> allAccounts;
     private List<String> allPeriodNames;
     private String currentlySelectedPeriod;
     private Database db;
@@ -44,11 +50,15 @@ public class TransactionsFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_transactions, container, false);
 
         db = Database.getCurrentUserDatabase();
-        selectedAccountNames = new ArrayList<>();
+        selectedAccountNames = new HashSet<>();
+        accountIDToNameLookup = new HashMap<>();
+        allAccounts = new ArrayList<>();
         allAccountNames = new ArrayList<>();
+
         allPeriodNames = new ArrayList<String>(
                 Arrays.asList( getResources().getStringArray(R.array.time_periods)) );
         currentlySelectedPeriod = allPeriodNames.get(0);
+
 
 
         // Set up recycler views
@@ -58,23 +68,35 @@ public class TransactionsFragment extends Fragment implements
 
 
 
-        // Get a list of account names to display
+        // Retrieve all accounts from the DB
         db.getUserAccounts(new Database.DBGetAccountsInterface() {
 
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
 
+                allAccounts.clear();
                 allAccountNames.clear();
-                for (Account a: accounts) { allAccountNames.add(a.getAccountName()); }
+                int i = 0;
+
+                // Add accounts to all accounts, all names, and all selected names initially
+                allAccounts = accounts;
+                for (Account a: accounts) {
+                    allAccountNames.add(a.getAccountName());
+                    selectedAccountNames.add(a.getAccountName());
+                    accountIDToNameLookup.put(accountIDs.get(i++), a.getAccountName());
+                }
 
                 setupSelectAccountsDialog(allAccountNames);
+
+                // Populate
+                populateTransactions();
             }
         });
 
 
         // Set touch handler for accounts filter spinner, prompting dialog to choose many
         Spinner accountsSpinner = ((Spinner) view.findViewById(R.id.transactionsAccountsSpinner));
-        accountsSpinner.setPrompt("Filter Accounts");
+        accountsSpinner.setClickable(false);
         accountsSpinner.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -97,9 +119,6 @@ public class TransactionsFragment extends Fragment implements
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-
-        // Populate
-        populateTransactions();
 
 
     // Configure floating action button listener
@@ -136,25 +155,20 @@ public class TransactionsFragment extends Fragment implements
 
         // Use the account names as items to select in the dialog
         CharSequence items[] = accountNames.toArray(new CharSequence[accountNames.size()]);
+        boolean[] isInitiallyChecked = new boolean[accountNames.size()];
+        Arrays.fill(isInitiallyChecked, true);
 
-        builder.setMultiChoiceItems(items, null,
+        builder.setMultiChoiceItems(items, isInitiallyChecked,
                 new DialogInterface.OnMultiChoiceClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
-                        if (isChecked) {
-                            // If the user checked the item, add it to the selected items
-                            // write your code when user checked the checkbox
 
+                        if (isChecked) {
                             selectedAccountNames.add(accountNames.get(indexSelected));
-                            //selectedAccountNames.add(indexSelected);
 
                         } else if (selectedAccountNames.contains(accountNames.get(indexSelected))) {
-                            // Else, if the item is already in the array, remove it
-                            // write your code when user Uchecked the checkbox
-
                             selectedAccountNames.remove(accountNames.get(indexSelected));
-                            //seletedItems.remove(Integer.valueOf(indexSelected));
                         }
                     }
                 })
@@ -168,13 +182,12 @@ public class TransactionsFragment extends Fragment implements
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
+                    public void onClick(DialogInterface dialog, int id) {}
                 });
 
         dialog = builder.create();
     }
+
 
 
     // Populate the transactions in the fragment dynamically
@@ -305,7 +318,19 @@ public class TransactionsFragment extends Fragment implements
 
                 // Populate the transaction list
 
-                transAdapter = new TransactionsTransactionsRecyclerAdapter(getContext(), transactions);
+                ArrayList<Transaction> filteredTransactions = new ArrayList<>();
+                for (Transaction t: transactions) {
+
+                    // Get the account name, given the account id version of the name stored in trans
+                    String transAccountName = accountIDToNameLookup.get(t.getAccount());
+                    if (selectedAccountNames.contains(transAccountName)) {
+                        filteredTransactions.add(t);
+                    }
+                }
+
+
+                transAdapter = new TransactionsTransactionsRecyclerAdapter(
+                        getContext(), filteredTransactions);
                 transAdapter.setClickListener(thisRef);
 
                 // Set adapters to recycler views

@@ -85,6 +85,10 @@
         <item>All</item>
     </string-array>
 
+    <string-array name="accounts_placeholder">
+        <item>Choose Account</item>
+    </string-array>
+
 
     <string-array name="reports_expense">
         <item>Expense By Category</item>

@@ -27,16 +27,17 @@
             android:layout_columnSpan="1">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="ACCOUNTS"/>
 
             <Spinner
                 android:id="@+id/transactionsAccountsSpinner"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:entries="@array/accounts_placeholder"
                 android:spinnerMode="dialog"/>
 
         </LinearLayout>
@@ -49,7 +50,7 @@
             android:layout_columnSpan="1">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="PERIOD"/>
@@ -57,7 +58,7 @@
 
             <Spinner
                 android:id="@+id/transactionsPeriodSpinner"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawSelectorOnTop="true"
