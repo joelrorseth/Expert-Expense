@@ -7,40 +7,49 @@
     android:orientation="horizontal"
     android:padding="10dp">
 
+
     <ImageView
         android:id="@+id/accountsAccountsItemIcon"
-        android:layout_width="@dimen/icon_regular_size"
-        android:layout_height="@dimen/icon_regular_size"
-        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|start|center_vertical"
+        android:layout_weight="15"
+        android:adjustViewBounds="true"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_accounts"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
+        android:layout_weight="55"
+        android:layout_gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/accountsAccountsItemTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ACCOUNT NAME"
-            android:textSize="20sp"/>
+            android:text="TRANSACTION NAME"
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/accountsAccountsItemDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account Description"
+            android:text="Category"
             android:textSize="14sp"/>
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/accountsAccountsItemAmount"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_gravity="end|center_vertical"
+        android:layout_weight="30"
+        android:layout_marginEnd="4dp"
+        android:gravity="end"
         android:text="$2000.00"
         android:textColor="@color/colorValidGreen"
         android:textSize="20sp"/>

@@ -74,13 +74,38 @@ public class AccountsAccountsRecyclerAdapter
 
         holder.titleTextView.setText(account.getAccountName());
         holder.descTextView.setText(account.getCurrency());
-        holder.amountTextView.setText(
 
-                String.format(
-                        context.getResources().getString(R.string.money_amount),
-                        account.getBalance()
-                )
-        );
+        // Determine color of amount text based on possibility of negative balance
+        if (account.getBalance() < 0.0) {
+
+            // Set color to red
+            holder.amountTextView.setTextColor(
+                    context.getResources().getColor(R.color.colorErrorRed)
+            );
+
+            // Add minus sign when displaying amount
+            holder.amountTextView.setText(
+                    String.format(
+                            context.getResources().getString(R.string.money_amount_negative),
+                            account.getBalance()
+                    )
+            );
+
+        } else {
+
+            // Set green
+            holder.amountTextView.setTextColor(
+                    context.getResources().getColor(R.color.colorTextBlack)
+            );
+
+            holder.amountTextView.setText(
+
+                    String.format(
+                            context.getResources().getString(R.string.money_amount),
+                            account.getBalance()
+                    )
+            );
+        }
 
         // TODO: Set icon
     }

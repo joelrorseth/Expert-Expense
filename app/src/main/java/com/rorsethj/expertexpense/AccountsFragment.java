@@ -19,6 +19,12 @@ public class AccountsFragment extends Fragment
         implements AccountsAccountsRecyclerAdapter.ItemClickListener {
 
 
+    public interface AccountsInterface {
+        void didSelectAddAccount();
+    }
+
+    public AccountsInterface parentDelegate;
+
     private AccountsAccountsRecyclerAdapter accountsAccountsAdapter;
     private RecyclerView accountsRecyclerView;
     private Database db;
@@ -74,8 +80,7 @@ public class AccountsFragment extends Fragment
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                        // TODO
+                        parentDelegate.didSelectAddAccount();
                     }
                 }
         );

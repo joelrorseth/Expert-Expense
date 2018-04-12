@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements OverviewFragment.OverviewInterface {
+        implements OverviewFragment.OverviewInterface, AccountsFragment.AccountsInterface {
 
     private DrawerLayout mDrawerLayout;
 
@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity
         frag.parentDelegate = MainActivity.this;
         switchToFragment(frag);
 
+        final MainActivity thisRef = this;
 
         // Assign a navigation item selected listener to the NavigationView
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -54,12 +55,14 @@ public class MainActivity extends AppCompatActivity
 
                             case R.id.nav_overview:
                                 OverviewFragment frag = new OverviewFragment();
-                                frag.parentDelegate = MainActivity.this;
+                                frag.parentDelegate = thisRef;
                                 switchToFragment(frag);
                                 break;
 
                             case R.id.nav_accounts:
-                                switchToFragment(new AccountsFragment());
+                                AccountsFragment accFrag = new AccountsFragment();
+                                accFrag.parentDelegate = thisRef;
+                                switchToFragment(accFrag);
                                 break;
 
                             case R.id.nav_transactions:
@@ -120,5 +123,11 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.fragmentContainer, destFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    // Accounts Fragment Interface
+    @Override
+    public void didSelectAddAccount() {
+        switchToFragment(new AddNewAccountFragment());
     }
 }
