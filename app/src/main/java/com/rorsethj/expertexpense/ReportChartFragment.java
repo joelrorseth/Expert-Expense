@@ -63,10 +63,6 @@ public class ReportChartFragment extends Fragment {
 
     public void plotCorrectGraph(final View view) {
 
-
-        ArrayList<String> labels = new ArrayList<>();
-        float[] values = {};
-
         // Determine what to graph
         switch (chartType) {
 
@@ -112,7 +108,10 @@ public class ReportChartFragment extends Fragment {
                 break;
 
             case "Daily Balance":
+
                 // Show, for each day, a +/- standing in a line graph
+                // TODO
+                plotTransactionTypeForIncrement(view, chartType, WITHDRAWAL, DAILY);
                 break;
         }
     }
@@ -228,7 +227,7 @@ public class ReportChartFragment extends Fragment {
         Calendar tempCal = Calendar.getInstance();
         Date newDateObj = new Date();
         oldCal.setTime(newDateObj);
-        oldCal.setTime(newDateObj);
+        tempCal.setTime(newDateObj);
 
         final String incrementMapKey;
         final ArrayList<String> increments = new ArrayList<>();

@@ -46,7 +46,7 @@ public class ReportsIncomeFragment extends Fragment {
 
                 FragmentManager manager = getFragmentManager();
                 manager.beginTransaction()
-                        .add(R.id.fragmentContainer, frag)
+                        .replace(R.id.fragmentContainer, frag)
                         .addToBackStack(null)
                         .commit();
             }
