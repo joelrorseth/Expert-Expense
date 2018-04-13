@@ -21,6 +21,7 @@ public class ReportsFragment extends Fragment {
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_reports, container, false);
 
+        setRetainInstance(true);
 
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = view.findViewById(R.id.reportsViewPager);
@@ -36,22 +37,6 @@ public class ReportsFragment extends Fragment {
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = view.findViewById(R.id.reportsTabLayout);
         tabLayout.setupWithViewPager(viewPager);
-
-
-
-
-        // Configure floating action button listener
-        FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.addButton);
-        addButton.setOnClickListener(
-
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        // TODO
-                    }
-                }
-        );
 
         return view;
     }

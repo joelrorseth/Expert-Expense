@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -75,7 +76,9 @@ public class UpcomingBillsRecyclerAdapter
         Date date = new Date( bill.getDueDate() );
 
         holder.titleTextView.setText(bill.getPayee());
-        holder.descTextView.setText(date.toString());
+
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        holder.descTextView.setText(format.format(date));
 
         holder.amountTextView.setText(
 

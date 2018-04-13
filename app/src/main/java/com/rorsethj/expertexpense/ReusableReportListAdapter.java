@@ -4,8 +4,9 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class ReusableReportListAdapter extends FragmentPagerAdapter {
+public class ReusableReportListAdapter extends FragmentStatePagerAdapter {
 
     private Context mContext;
 
@@ -48,9 +49,8 @@ public class ReusableReportListAdapter extends FragmentPagerAdapter {
             case 2:
                 return mContext.getString(R.string.reports_tab_cashflow);
             case 3:
-                return mContext.getString(R.string.reports_tab_balance);
             default:
-                return null;
+                return mContext.getString(R.string.reports_tab_balance);
         }
     }
 

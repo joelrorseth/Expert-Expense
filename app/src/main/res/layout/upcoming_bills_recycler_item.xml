@@ -7,42 +7,50 @@
     android:orientation="horizontal"
     android:padding="10dp">
 
-    <ImageView
-        android:id="@+id/upcomingBillsItemIcon"
-        android:layout_width="@dimen/icon_regular_size"
-        android:layout_height="@dimen/icon_regular_size"
-        android:layout_weight="2"
-        android:src="@drawable/ic_money_sign"/>
+<ImageView
+    android:id="@+id/upcomingBillsItemIcon"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="left|start|center_vertical"
+    android:layout_weight="15"
+    android:adjustViewBounds="true"
+    android:padding="6dp"
+    android:scaleType="fitCenter"
+    android:src="@drawable/ic_money_sign"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="4"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/upcomingBillsItemTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="BILL NAME"
-            android:textSize="20sp"/>
-
-        <TextView
-            android:id="@+id/upcomingBillsItemDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bill Description"
-            android:textSize="14sp"/>
-
-    </LinearLayout>
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="55"
+    android:layout_gravity="center_vertical"
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/upcomingBillsItemAmount"
+        android:id="@+id/upcomingBillsItemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="$20.00"
-        android:textColor="@color/colorErrorRed"
-        android:textSize="20sp"/>
+        android:text="TRANSACTION NAME"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/upcomingBillsItemDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textSize="14sp"/>
+
+</LinearLayout>
+
+<TextView
+    android:id="@+id/upcomingBillsItemAmount"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="end|center_vertical"
+    android:layout_weight="30"
+    android:layout_marginEnd="4dp"
+    android:gravity="end"
+    android:text="$2000.00"
+    android:textColor="@color/colorErrorRed"
+    android:textSize="20sp"/>
 
 </LinearLayout>

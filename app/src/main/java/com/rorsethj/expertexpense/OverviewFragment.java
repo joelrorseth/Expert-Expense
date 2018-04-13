@@ -22,6 +22,7 @@ import android.widget.Toast;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import uk.co.markormesher.android_fab.FloatingActionButton;
 import uk.co.markormesher.android_fab.SpeedDialMenuAdapter;
@@ -411,10 +412,14 @@ public class OverviewFragment extends Fragment
 
     private  void displayExpenseByCategory(View view) {
 
+        // Unhide
+        view.findViewById(R.id.overviewExpenseCatLayout).setVisibility(LinearLayout.VISIBLE);
     }
 
     private void displayIncomeVsExpense(View view) {
 
+        // Unhide
+        view.findViewById(R.id.overviewIncVsExpLayout).setVisibility(LinearLayout.VISIBLE);
     }
 
 
@@ -474,7 +479,7 @@ public class OverviewFragment extends Fragment
         final OverviewFragment thisRef = this;
 
         // Load bills
-        db.getUserBills(new Database.DBGetBillsInterface() {
+        db.getBillsAfterDate((new Date()).getTime(), new Database.DBGetBillsInterface() {
             @Override
             public void didGet(List<Bill> bills, Exception e) {
 

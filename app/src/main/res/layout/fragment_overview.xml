@@ -187,7 +187,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:text="Upcoming Bills (0)"
+                        android:text="Upcoming Bills"
                         android:textColor="@color/colorTextBlack"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
@@ -215,6 +215,106 @@
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
             </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/overviewExpenseCatLayout"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorWhiteBackground"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/title_margin_top">
+
+
+                    <TextView
+                        android:id="@+id/overviewExpenseCatTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="Expense By Category"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+
+                    <Button
+                        android:id="@+id/overviewExpenseCatMoreButton"
+                        android:layout_width="@dimen/more_vert_width"
+                        android:layout_height="@dimen/more_vert_height"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/button_margin"
+                        android:layout_marginStart="@dimen/button_margin"
+                        android:background="@drawable/ic_more_vert"/>
+
+                </RelativeLayout>
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/overviewExpenseCatChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/overviewIncVsExpLayout"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorWhiteBackground"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/title_margin_top">
+
+
+                    <TextView
+                        android:id="@+id/overviewIncVsExpTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="Income Vs Expense"
+                        android:textColor="@color/colorTextBlack"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+
+                    <Button
+                        android:id="@+id/overviewIncVsExpMoreButton"
+                        android:layout_width="@dimen/more_vert_width"
+                        android:layout_height="@dimen/more_vert_height"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/button_margin"
+                        android:layout_marginStart="@dimen/button_margin"
+                        android:background="@drawable/ic_more_vert"/>
+
+                </RelativeLayout>
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/overviewIncVsExpChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

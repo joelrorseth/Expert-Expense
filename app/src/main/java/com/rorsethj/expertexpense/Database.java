@@ -316,6 +316,41 @@ public class Database {
     }
 
 
+    // Get bills occurring after a given date
+    public void getBillsAfterDate(long date, final DBGetBillsInterface callback) {
+
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("bills")
+                .orderByChild("dueDate")
+                .startAt(date)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        ArrayList<Bill> bills = new ArrayList<>();
+
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+                            Log.d(TAG, child.getKey() + " => " + child.getValue());
+
+                            Bill bill = child.getValue(Bill.class);
+                            bills.add(bill);
+                        }
+
+                        callback.didGet(bills, null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
 
     // Get all the Transactions which occurred between the dates 'older' and 'newer'
     // The dates provided are in ms since epoch
