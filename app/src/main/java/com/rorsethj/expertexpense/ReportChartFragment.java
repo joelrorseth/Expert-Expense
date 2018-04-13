@@ -1,18 +1,24 @@
 package com.rorsethj.expertexpense;
 
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -26,11 +32,14 @@ import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class ReportChartFragment extends Fragment {
@@ -40,33 +49,171 @@ public class ReportChartFragment extends Fragment {
     public static final String DAILY = "Daily";
     public static final String MONTHLY = "Monthly";
 
+    private Spinner accountsSpinner;
+    private Spinner periodsSpinner;
+
+    private PieChart pieChart = null;
+    private BarChart barChart = null;
+
+    private List<String> allPeriodNames;
+    private String currentlySelectedPeriod;
+    private Set<String> selectedAccountNames;
+    private Map<String, String> accountIDToNameLookup;
+    private List<String> allAccountNames;
+    private List<Account> allAccounts;
+
     private Database db;
+    private AlertDialog dialog;
+    private boolean hasErroneousSpinnerClickOccured = false;
+
+    private List<Transaction> allTransactions = new ArrayList<>();
+
     public String chartType;
+
+
 
     public ReportChartFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_report_chart, container, false);
+        final View viewRef = view;
+
+        // Find spinners
+        accountsSpinner = view.findViewById(R.id.reportAccountsSpinner);
+        periodsSpinner = view.findViewById(R.id.reportPeriodSpinner);
+
+        // Initialize lists etc, initialize currently SELECTED PERIOD
+        db = Database.getCurrentUserDatabase();
+        selectedAccountNames = new HashSet<>();
+        accountIDToNameLookup = new HashMap<>();
+        allAccounts = new ArrayList<>();
+        allAccountNames = new ArrayList<>();
+        allPeriodNames = new ArrayList<String>(
+                Arrays.asList( getResources().getStringArray(R.array.time_periods)) );
+        currentlySelectedPeriod = allPeriodNames.get(0);
+
+
+        // Retrieve all accounts from the DB, initialize currently SELECTED ACCOUNTS
+        db.getUserAccounts(new Database.DBGetAccountsInterface() {
+            @Override
+            public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
+
+                allAccounts.clear();
+                allAccountNames.clear();
+                int i = 0;
+
+                // Add accounts to all accounts, all names, and all selected names initially
+                allAccounts = accounts;
+                for (Account a: accounts) {
+                    allAccountNames.add(a.getAccountName());
+                    selectedAccountNames.add(a.getAccountName());
+                    accountIDToNameLookup.put(accountIDs.get(i++), a.getAccountName());
+                }
+
+                // Initialize the alert dialog for choosing accounts, now we have info to PLOT
+                setupSelectAccountsDialog(viewRef, allAccountNames);
+                System.out.println("#### Got accounts from db, should be only one triggering");
+                plotCorrectGraph(viewRef);
+            }
+        });
+
+
+        // Set touch handler for accounts filter spinner, prompting dialog to choose many
+        Spinner accountsSpinner = ((Spinner) view.findViewById(R.id.reportAccountsSpinner));
+        accountsSpinner.setClickable(false);
+        accountsSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                if (dialog != null) { dialog.show(); }
+                return false;
+            }
+        });
+
+
+        ((Spinner) view.findViewById(R.id.reportPeriodSpinner))
+                .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        currentlySelectedPeriod = allPeriodNames.get(i);
+
+                        // NOTE: Known bug is occurring where this onItemSelected is fired once for
+                        // each spinner BEFORE the view is loaded. Account for this here
+                        if (hasErroneousSpinnerClickOccured) {
+
+                            // REDRAW the chart when NEW PERIOD is selected
+                            System.out.println("#### Period spinner was selected, triggering");
+                            plotCorrectGraph(viewRef);
+
+                        } else { hasErroneousSpinnerClickOccured = true; }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {}
+                });
+
 
         db = Database.getCurrentUserDatabase();
-        plotCorrectGraph(view);
-
         return view;
     }
 
+    // Initialize the Dialog to allow Account filter selection
+    private void setupSelectAccountsDialog(final View view, final List<String> accountNames) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Select Accounts to Include");
+
+        // Use the account names as items to select in the dialog
+        CharSequence items[] = accountNames.toArray(new CharSequence[accountNames.size()]);
+        boolean[] isInitiallyChecked = new boolean[accountNames.size()];
+        Arrays.fill(isInitiallyChecked, true);
+
+        builder.setMultiChoiceItems(items, isInitiallyChecked,
+                new DialogInterface.OnMultiChoiceClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
+
+                        // Manage which names are selected/not, store in variables
+                        if (isChecked) {
+                            selectedAccountNames.add(accountNames.get(indexSelected));
+
+                        } else if (selectedAccountNames.contains(accountNames.get(indexSelected))) {
+                            selectedAccountNames.remove(accountNames.get(indexSelected));
+                        }
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int id) {
+                        // REDRAW chart when NEW ACCOUNT(S) are selected
+                        System.out.println("#### Selected new accounts, triggered");
+                        plotCorrectGraph(view);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int id) {}
+                });
+
+        dialog = builder.create();
+    }
+
+
+
+
+    // MARK: Charting Dispatch
+    // MAIN entry point to determine plotting procedure for the indicated CHART_TYPE
+    // This determines which type of chart to draw, who to call to draw that
     public void plotCorrectGraph(final View view) {
 
         // Determine what to graph
         switch (chartType) {
 
-            // TODO:
             case "Expense By Category":
 
                 plotByCategory(view, WITHDRAWAL);
@@ -118,32 +265,136 @@ public class ReportChartFragment extends Fragment {
 
 
 
-    // MARK: Logic
+    // MARK: Logic of What to Plot
+    // Entry point for pie chart logic
     // Plot expense / income by category, by obtaining transactions of that type between 2 dates
     private void plotByCategory(final View view, final String type) {
 
-        // Get transactions from last 30 days
-        Calendar oldCal = Calendar.getInstance();
-        oldCal.setTime(new Date());
-        oldCal.add(Calendar.DATE, -30);
-
-        long oldDate = oldCal.getTime().getTime();
-        long newDate = (new Date()).getTime();
+        // Pull currently selected period
+        DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
+        long oldDate = range.getOld();
+        long newDate = range.getNew();
 
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
             public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
-                if (type.equals("vs")) {
-                    plotIncomeVsExpense(view, transactions);
-                } else {
-                    plotTransactionWithType(view, transactions, type);
-                }
+                // Pie charts might plot Income vs Expense for example, so call separate method
+                if (type.equals("vs")) { plotIncomeVsExpense(view, transactions); }
+                else { plotTransactionWithType(view, transactions, type); }
             }
         });
     }
 
 
+    // Entry point for bar chart logic
+    // Plot expenses / incomes for daily / monthly basis
+    private void plotTransactionTypeForIncrement(final View view, final String title,
+                                                 final String type, String chartIncrement) {
+
+        // Get current period
+        DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
+        long oldDate = range.getOld();
+        long newDate = range.getNew();
+
+
+        // Increments gathers ALL x-axis values eg. [Nov, Dec, Jan, Feb] or ["29","30","31","01"]
+        final ArrayList<String> increments = new ArrayList<>();
+        int CAL_INCREMENT = -1;
+        String INCREMENT_KEY = "";
+
+        if (chartIncrement.equals(MONTHLY)) {
+            CAL_INCREMENT = Calendar.MONTH;
+            INCREMENT_KEY = "MMM";
+
+        } else if (chartIncrement.equals(DAILY)) {
+            CAL_INCREMENT = Calendar.DATE;
+            INCREMENT_KEY = "dd";
+        }
+
+
+        // Start temp calendar at "old date", we will increment until "new date"
+        Calendar oldCal = Calendar.getInstance();
+        Calendar tempCal = Calendar.getInstance();
+        oldCal.setTimeInMillis(oldDate);
+        tempCal.setTimeInMillis(oldDate);
+
+        // Get string for "new date" for stopping point eg. May
+        String newDateString = (String) DateFormat.format(INCREMENT_KEY, (new Date(newDate)).getTime());
+
+        while (true) {
+
+            // Store the next key for month/day (eg. Jan for monthly, "27" if daily)
+            String tempDateString = (String) DateFormat.format(INCREMENT_KEY, tempCal);
+            increments.add(tempDateString);
+
+            // If temp, the counter, has reach the new date, then we are finished
+            // Otherwise, advance temp to next month/day and add that increment
+
+            if (tempDateString.equals(newDateString)) { break; }
+            else { tempCal.add(CAL_INCREMENT, 1); }
+        }
+
+
+
+        final String kINCREMENT_KEY = INCREMENT_KEY;
+
+        db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
+            @Override
+            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
+
+
+                // Create mapping of incremental categories to the amounts accumulated in those increments
+                Map<String, Double> amountByCategory = new HashMap<>();
+                for (Transaction t: transactions) {
+
+                    // Filter out any transactions which do not belong to currently selected accounts
+                    String nameOfCurrentAccount = accountIDToNameLookup.get(t.getAccount());
+                    if (!selectedAccountNames.contains(nameOfCurrentAccount)) { continue; }
+
+
+                    // Filter out types that are not the specified type, eg. filter expenses
+                    if (!t.getType().equals(type)) { continue; }
+
+
+                    // Get corresponding increment depending, eg. get Jun if monthly, or get 27 if daily
+                    Double amount = t.getAmount();
+                    Date date = new Date(t.getDate());
+                    String increment = (String) DateFormat.format(kINCREMENT_KEY, date);
+
+
+                    // Add to other totals from that category if multiple
+                    if (amountByCategory.containsKey(increment)) {
+                        amountByCategory.put(increment, amountByCategory.get(increment) + amount);
+
+                    } else {
+                        amountByCategory.put(increment, amount);
+                    }
+                }
+
+                float values[] = new float[increments.size()];
+                int i = 0;
+
+
+                // Bar graphs require interpolation to make sure days without values get 0.0 etc
+                // Manually populate values, inserting 0.0 for missing, we already know labels
+                for (String increment: increments) {
+
+                    if (amountByCategory.containsKey(increment)) {
+                        values[i++] = amountByCategory.get(increment).floatValue();
+
+                    } else { values[i++] = 0.0f; }
+                }
+
+                plotBarChart(view, title, increments, values);
+            }
+        });
+    }
+
+
+
+
+    // MARK: Data formatting for plotting (only PieCharts right now)
     // Determine variables and filter transactions to plot all of a given type
     private void plotTransactionWithType(final View view, List<Transaction> transactions, String type) {
 
@@ -151,6 +402,10 @@ public class ReportChartFragment extends Fragment {
 
         // Make a map of categories to total expense amount for that category
         for (Transaction t: transactions) {
+
+            // Filter out any transactions which do not belong to currently selected accounts
+            String nameOfCurrentAccount = accountIDToNameLookup.get(t.getAccount());
+            if (!selectedAccountNames.contains(nameOfCurrentAccount)) { continue; }
 
             // Expenses are Transactions with type "Withdrawal"
             // Income are Transactions with type "Deposit"
@@ -181,12 +436,18 @@ public class ReportChartFragment extends Fragment {
         plotPieChart(view, chartType, labels, values);
     }
 
+
     private void plotIncomeVsExpense(final View view, List<Transaction> transactions) {
 
         Map<String, Double> expenseByCategory = new HashMap<>();
 
         // Make a map of categories to total expense amount for that category
         for (Transaction t: transactions) {
+
+            // Filter out any transactions which do not belong to currently selected accounts
+            String nameOfCurrentAccount = accountIDToNameLookup.get(t.getAccount());
+            if (!selectedAccountNames.contains(nameOfCurrentAccount)) { continue; }
+
 
             String type = t.getType();
             Double amount = t.getAmount();
@@ -215,128 +476,17 @@ public class ReportChartFragment extends Fragment {
 
 
 
-
-
-    // Plot expenses / incomes for daily / monthly basis
-    private void plotTransactionTypeForIncrement(final View view, final String title,
-                                                 final String type, String increment) {
-
-
-        // Create two placeholder objects for two dates
-        Calendar oldCal = Calendar.getInstance();
-        Calendar tempCal = Calendar.getInstance();
-        Date newDateObj = new Date();
-        oldCal.setTime(newDateObj);
-        tempCal.setTime(newDateObj);
-
-        final String incrementMapKey;
-        final ArrayList<String> increments = new ArrayList<>();
-
-
-        if (increment.equals(MONTHLY)) {
-
-            oldCal.add(Calendar.DATE, -170);    // TODO: Temp ~6 months
-            tempCal.add(Calendar.DATE, -170);    // TODO: Temp ~6 months
-            incrementMapKey = "MMM"; // eg. "Jun"
-
-            //Calendar tempDate = oldCal;
-            String newDateMonth = (String) DateFormat.format(incrementMapKey,   newDateObj);
-
-            // Populate ArrayList of increments between start and end date eg. [Nov,Dec,Jan,Feb,Mar]
-            while (true) {
-
-                String tempDateCurrentMonth = (String) DateFormat.format(incrementMapKey, tempCal);
-                increments.add(tempDateCurrentMonth);
-
-                if (tempDateCurrentMonth.equals(newDateMonth)) { break; }
-                else { tempCal.add(Calendar.MONTH, 1); }   // Increment to next month
-            }
-
-
-        } else {
-
-            oldCal.add(Calendar.DATE, -7);      // TODO: Temo ~7 days
-            tempCal.add(Calendar.DATE, -7);      // TODO: Temo ~7 days
-            incrementMapKey = "dd";  // "20"
-
-            //Calendar tempDate = oldCal;
-            String newDateDay = (String) DateFormat.format(incrementMapKey,   newDateObj);
-
-            // Populate ArrayList of increments between start and end date eg. [29,30,31,01,02,03]
-            while (true) {
-
-                String tempDateCurrentDay = (String) DateFormat.format(incrementMapKey, tempCal);
-                increments.add(tempDateCurrentDay);
-
-                if (tempDateCurrentDay.equals(newDateDay)) { break; }
-                else { tempCal.add(Calendar.DATE, 1); }   // Increment to next month
-            }
-        }
-
-
-        long oldDate = oldCal.getTime().getTime();
-        long newDate = (newDateObj).getTime();
-
-
-        db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
-            @Override
-            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
-
-
-                // Create mapping of incremental categories to the amounts accumulated in those increments
-                Map<String, Double> amountByCategory = new HashMap<>();
-                for (Transaction t: transactions) {
-
-                    // Filter out types that are not the specified type, eg. filter expenses
-                    if (!t.getType().equals(type)) { continue; }
-
-                    // Get corresponding increment depending, eg. get Jun if monthly, or get 27 if daily
-                    Double amount = t.getAmount();
-                    Date date = new Date(t.getDate());
-                    String increment = (String) DateFormat.format(incrementMapKey, date);
-
-
-                    // Add to other totals from that category if multiple
-                    if (amountByCategory.containsKey(increment)) {
-                        amountByCategory.put(increment, amountByCategory.get(increment) + amount);
-
-                    } else {
-                        amountByCategory.put(increment, amount);
-                    }
-                }
-
-                float values[] = new float[increments.size()];
-                int i = 0;
-
-
-                // Manually populate values, inserting 0.0 for missing, we already know labels
-                for (String increment: increments) {
-
-                    if (amountByCategory.containsKey(increment)) {
-                        values[i++] = amountByCategory.get(increment).floatValue();
-
-                    } else {
-                        values[i++] = 0.0f;
-                    }
-                }
-
-
-                plotBarChart(view, title, increments, values);
-            }
-        });
-    }
-
-
-
-
-
-
-
-
-
     // MARK: Chart rendering
     // Plot a Pie Chart using data
     private void plotPieChart(View view, String title, List<String> labels, float[] values) {
+
+
+        RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.reportChartLinearLayout);
+
+        if (pieChart != null) {
+            pieChart.clear();
+            layout.removeView(pieChart);
+        }
 
         ArrayList<PieEntry> entries = new ArrayList<>();
 
@@ -351,31 +501,37 @@ public class ReportChartFragment extends Fragment {
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
         // Create the chart view
-        PieChart chart = new PieChart(getContext());
-        chart.setDrawHoleEnabled(true);
-        chart.setHoleColor(Color.TRANSPARENT);
-        chart.setHoleRadius(50);
-        chart.setTransparentCircleRadius(50);
+        pieChart = new PieChart(getContext());
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleColor(Color.TRANSPARENT);
+        pieChart.setHoleRadius(50);
+        pieChart.setTransparentCircleRadius(50);
 
         // Animate the chart appearing
-        chart.setData(pieData);
-        chart.animateY(1000);
+        pieChart.setData(pieData);
+        pieChart.animateY(1000);
 
         // Create layout parameters to force the chart to be full screen
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        chart.setLayoutParams(lp);
+        pieChart.setLayoutParams(lp);
 
         // Dynamically load in the chart
-        RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.reportChartLinearLayout);
-        layout.addView(chart);
+        layout.addView(pieChart);
     }
 
 
     // Plot a bar chart
     private void plotBarChart(View view, String title, List<String> labels, float[] values) {
+
+        RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.reportChartLinearLayout);
+
+        if (barChart != null) {
+            barChart.clear();
+            layout.removeView(barChart);
+        }
 
         List<BarEntry> entries = new ArrayList<>();
 
@@ -391,20 +547,19 @@ public class ReportChartFragment extends Fragment {
         dataset.setColors(ColorTemplate.COLORFUL_COLORS);
 
         // Create the chart view
-        BarChart chart = new BarChart(getContext());
-        chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
-        chart.setData(data);
-        chart.animateY(1000);
+        barChart = new BarChart(getContext());
+        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        barChart.setData(data);
+        barChart.animateY(1000);
 
         // Create layout parameters to force the chart to be full screen
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        chart.setLayoutParams(lp);
+        barChart.setLayoutParams(lp);
 
         // Dynamically load in the chart
-        RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.reportChartLinearLayout);
-        layout.addView(chart);
+        layout.addView(barChart);
     }
 }
