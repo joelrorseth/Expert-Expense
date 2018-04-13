@@ -78,6 +78,19 @@
     <string name="money_amount">$%1$.2f</string>
     <string name="money_amount_negative">-$%1$.2f</string>
 
+    <string name="calc_dialog_clear">Clear</string>
+    <string name="calc_dialog_cancel">Cancel</string>
+    <string name="calc_dialog_ok">OK</string>
+
+    <string name="calc_answer">Ans</string>
+
+    <string-array name="calc_dialog_errors">
+        <item>Division by zero</item>
+        <item>Out of bounds</item>
+        <item>Result must be positive</item>
+        <item>Result must be negative</item>
+    </string-array>
+
     <!-- Firebase keys -->
     <string name="firebase_key_accounts">accounts</string>
     <string name="firebase_key_bills">bills</string>

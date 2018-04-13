@@ -14,13 +14,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 
-public class AddNewBillFragment extends Fragment {
+public class AddNewBillFragment extends Fragment implements CalcDialog.CalcDialogCallback {
 
     public interface AddBillCallback {
         void didAddBill(boolean success, Exception e);
@@ -34,8 +35,10 @@ public class AddNewBillFragment extends Fragment {
     private Spinner currencySpinner;
     private Spinner categorySpinner;
 
+    private BigDecimal value;
     private final Calendar myCalendar = Calendar.getInstance();
     private SimpleDateFormat dateFormatter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,7 +94,21 @@ public class AddNewBillFragment extends Fragment {
 
 
 
+        final CalcDialog calcDialog = new CalcDialog();
+        final AddNewBillFragment thisRef = this;
 
+        // Set click listener to amount EditText, present custom calculator popup dialog
+        view.findViewById(R.id.new_bill_amount_text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Set the value, pass along this fragment to be delegate for updates
+                calcDialog.setValue(value)
+                        .setSignCanBeChanged(false, 1)
+                        .setTargetFragment(thisRef, 0);
+                calcDialog.show(getFragmentManager(), "calc_dialog");
+            }
+        });
 
 
 
@@ -147,5 +164,12 @@ public class AddNewBillFragment extends Fragment {
         );
 
         return view;
+    }
+
+    // Interface
+    @Override
+    public void onValueEntered(BigDecimal value) {
+        // The calculator dialog returned a value
+        amountText.setText(value.toPlainString());
     }
 }

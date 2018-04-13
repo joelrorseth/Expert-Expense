@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class AddNewTransactionFragment extends Fragment {
+public class AddNewTransactionFragment extends Fragment implements CalcDialog.CalcDialogCallback {
 
     public interface AddTransactionCallback {
         void didAddTransaction(boolean success, Exception e);
@@ -41,6 +42,8 @@ public class AddNewTransactionFragment extends Fragment {
 
     private final Calendar myCalendar = Calendar.getInstance();
     private SimpleDateFormat dateFormatter;
+
+    private BigDecimal value;
 
     private List<String> currentUserAccountIDs;
     private List<Account> currentUserAccounts;
@@ -209,6 +212,23 @@ public class AddNewTransactionFragment extends Fragment {
 
 
 
+        final CalcDialog calcDialog = new CalcDialog();
+        final AddNewTransactionFragment thisRef = this;
+
+        // Set click listener to amount EditText, present custom calculator popup dialog
+        view.findViewById(R.id.new_transaction_amount_text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Set the value, pass along this fragment to be delegate for updates
+                calcDialog.setValue(value)
+                        .setSignCanBeChanged(false, 1)
+                        .setTargetFragment(thisRef, 0);
+                calcDialog.show(getFragmentManager(), "calc_dialog");
+            }
+        });
+
+
 
         // Attach listeners
         view.findViewById(R.id.new_transaction_cancel_button).setOnClickListener(
@@ -294,6 +314,13 @@ public class AddNewTransactionFragment extends Fragment {
         );
 
         return view;
+    }
+
+    // Interface
+    @Override
+    public void onValueEntered(BigDecimal value) {
+        // The calculator dialog returned a value
+        amountText.setText(value.toPlainString());
     }
 
 
