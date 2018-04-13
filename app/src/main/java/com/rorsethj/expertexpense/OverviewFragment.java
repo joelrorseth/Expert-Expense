@@ -82,6 +82,7 @@ public class OverviewFragment extends Fragment
 
         // Conditionally load in elements into Overview screen based on preferences
         conditionallyLoadAllContent(view);
+        setupHideButtonListeners(view);
 
         // Configure Popup dialogs ahead of time
         accPopupFragment = new AccountPopupFragment();
@@ -89,6 +90,7 @@ public class OverviewFragment extends Fragment
 
         tranPopupFragment = new TransactionPopupFragment();
         tranPopupFragment.parentDelegate = this;
+
 
 
         // Configure floating action button listener
@@ -122,6 +124,71 @@ public class OverviewFragment extends Fragment
         });
 
         return view;
+    }
+
+
+    // Setup button listeners for hide icons
+    private void setupHideButtonListeners(final View view) {
+
+        view.findViewById(R.id.overviewMyAccountsHideButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide this module
+                PreferenceManager.getDefaultSharedPreferences(getContext())
+                        .edit().putBoolean("Accounts Overview", false).apply();
+                displayAccounts(view, false);
+            }
+        });
+
+        view.findViewById(R.id.overviewTransactionsHideButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide this module
+                PreferenceManager.getDefaultSharedPreferences(getContext())
+                        .edit().putBoolean("Latest Transactions", false).apply();
+                displayTransactions(view, false);
+            }
+        });
+
+        view.findViewById(R.id.overviewBillsHideButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide this module
+                PreferenceManager.getDefaultSharedPreferences(getContext())
+                        .edit().putBoolean("Upcoming Bills", false).apply();
+                displayUpcomingBills(view, false);
+            }
+        });
+
+//        view.findViewById(R.id.overviewMyAccountsHideButton).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Hide this module
+//                PreferenceManager.getDefaultSharedPreferences(getContext())
+//                        .edit().putBoolean("High Spending Alerts", false).apply();
+//                displayAccounts(view, false);
+//            }
+//        });
+
+        view.findViewById(R.id.overviewExpenseCatHideButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide this module
+                PreferenceManager.getDefaultSharedPreferences(getContext())
+                        .edit().putBoolean("Expense By Category", false).apply();
+                displayExpenseByCategory(view, false);
+            }
+        });
+
+        view.findViewById(R.id.overviewIncVsExpHideButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide this module
+                PreferenceManager.getDefaultSharedPreferences(getContext())
+                        .edit().putBoolean("Invome Vs Expense", false).apply();
+                displayIncomeVsExpense(view, false);
+            }
+        });
     }
 
 
@@ -318,36 +385,40 @@ public class OverviewFragment extends Fragment
 
         // Conditionally load in elements into Overview screen based on preferences
         if (prefs.getBoolean(resources.getString(R.string.prefs_accounts_overview), true)) {
-            displayAccounts(view);
+            displayAccounts(view, true);
         }
 
         if (prefs.getBoolean(resources.getString(R.string.prefs_latest_transactions), true)) {
-            displayTransactions(view);
+            displayTransactions(view, true);
         }
 
         if (prefs.getBoolean(resources.getString(R.string.prefs_upcoming_bills), true)) {
-            displayUpcomingBills(view);
+            displayUpcomingBills(view, true);
         }
 
         if (prefs.getBoolean(resources.getString(R.string.prefs_high_spending), true)) {
-            displayHighSpending(view);
+            displayHighSpending(view, true);
         }
 
         if (prefs.getBoolean(resources.getString(R.string.prefs_expense_category), true)) {
-            displayExpenseByCategory(view);
+            displayExpenseByCategory(view, true);
         }
 
         if (prefs.getBoolean(resources.getString(R.string.prefs_income_expense), true)) {
-            displayIncomeVsExpense(view);
+            displayIncomeVsExpense(view, true);
         }
     }
 
-    private void displayAccounts(View view) {
+    private void displayAccounts(View view, boolean visible) {
 
         // Unhide the Accounts view
-        view.findViewById(R.id.overviewAccountsLayout).setVisibility(LinearLayout.VISIBLE);
+        int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
+        view.findViewById(R.id.overviewAccountsLayout).setVisibility(visibility);
         newBalanceTextView = view.findViewById(R.id.newBalanceTextView);
 
+        if (!visible) { return; }
+
+        // If un-hiding (on initial load), load accounts and setup
         // Add references and set listeners to buttons inside this fragment
         view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
                 new View.OnClickListener() {
@@ -366,10 +437,13 @@ public class OverviewFragment extends Fragment
 
     }
 
-    private void displayTransactions(View view) {
+    private void displayTransactions(View view, boolean visible) {
 
-        // Unhide
-        view.findViewById(R.id.overviewTransactionsLayout).setVisibility(LinearLayout.VISIBLE);
+        // Hide or un-hide view
+        int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
+        view.findViewById(R.id.overviewTransactionsLayout).setVisibility(visibility);
+
+        if (!visible) { return; }
 
         view.findViewById(R.id.overviewTransactionsAddButton).setOnClickListener(
                 new View.OnClickListener() {
@@ -386,10 +460,12 @@ public class OverviewFragment extends Fragment
         loadTransactionsFromDB();
     }
 
-    private void displayUpcomingBills(View view) {
+    private void displayUpcomingBills(View view, boolean visible) {
 
-        // Unhide
-        view.findViewById(R.id.overviewBillsLayout).setVisibility(LinearLayout.VISIBLE);
+        int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
+        view.findViewById(R.id.overviewBillsLayout).setVisibility(visibility);
+
+        if (!visible) { return; }
 
         view.findViewById(R.id.overviewBillsAddButton).setOnClickListener(
                 new View.OnClickListener() {
@@ -406,20 +482,30 @@ public class OverviewFragment extends Fragment
         loadBillsFromDB();
     }
 
-    private void displayHighSpending(View view) {
+    private void displayHighSpending(View view, boolean visible) {
 
     }
 
-    private  void displayExpenseByCategory(View view) {
+    private void displayExpenseByCategory(View view, boolean visible) {
 
         // Unhide
-        view.findViewById(R.id.overviewExpenseCatLayout).setVisibility(LinearLayout.VISIBLE);
+        int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
+        view.findViewById(R.id.overviewExpenseCatLayout).setVisibility(visibility);
+
+        if (!visible) { return; }
+
+        // TODO
     }
 
-    private void displayIncomeVsExpense(View view) {
+    private void displayIncomeVsExpense(View view, boolean visible) {
 
         // Unhide
-        view.findViewById(R.id.overviewIncVsExpLayout).setVisibility(LinearLayout.VISIBLE);
+        int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
+        view.findViewById(R.id.overviewIncVsExpLayout).setVisibility(visibility);
+
+        if (!visible) { return; }
+
+        // TODO
     }
 
 

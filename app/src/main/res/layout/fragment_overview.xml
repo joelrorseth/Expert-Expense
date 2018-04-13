@@ -63,14 +63,14 @@
                         android:textStyle="bold"/>
 
                     <Button
-                        android:id="@+id/overviewMyAccountsMoreButton"
+                        android:id="@+id/overviewMyAccountsHideButton"
                         android:layout_width="@dimen/more_vert_width"
                         android:layout_height="@dimen/more_vert_height"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/button_margin"
                         android:layout_marginStart="@dimen/button_margin"
-                        android:background="@drawable/ic_more_vert"/>
+                        android:background="@drawable/ic_hide"/>
 
                 </RelativeLayout>
 
@@ -133,14 +133,14 @@
 
 
                     <Button
-                        android:id="@+id/overviewTransactionsMoreButton"
+                        android:id="@+id/overviewTransactionsHideButton"
                         android:layout_width="@dimen/more_vert_width"
                         android:layout_height="@dimen/more_vert_height"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/button_margin"
                         android:layout_marginStart="@dimen/button_margin"
-                        android:background="@drawable/ic_more_vert"/>
+                        android:background="@drawable/ic_hide"/>
 
                 </RelativeLayout>
 
@@ -194,14 +194,14 @@
 
 
                     <Button
-                        android:id="@+id/overviewBillsMoreButton"
+                        android:id="@+id/overviewBillsHideButton"
                         android:layout_width="@dimen/more_vert_width"
                         android:layout_height="@dimen/more_vert_height"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/button_margin"
                         android:layout_marginStart="@dimen/button_margin"
-                        android:background="@drawable/ic_more_vert"/>
+                        android:background="@drawable/ic_hide"/>
 
                 </RelativeLayout>
 
@@ -246,14 +246,14 @@
 
 
                     <Button
-                        android:id="@+id/overviewExpenseCatMoreButton"
+                        android:id="@+id/overviewExpenseCatHideButton"
                         android:layout_width="@dimen/more_vert_width"
                         android:layout_height="@dimen/more_vert_height"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/button_margin"
                         android:layout_marginStart="@dimen/button_margin"
-                        android:background="@drawable/ic_more_vert"/>
+                        android:background="@drawable/ic_hide"/>
 
                 </RelativeLayout>
 
@@ -264,7 +264,6 @@
 
 
             </LinearLayout>
-
 
 
             <LinearLayout
@@ -296,14 +295,14 @@
 
 
                     <Button
-                        android:id="@+id/overviewIncVsExpMoreButton"
+                        android:id="@+id/overviewIncVsExpHideButton"
                         android:layout_width="@dimen/more_vert_width"
                         android:layout_height="@dimen/more_vert_height"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/button_margin"
                         android:layout_marginStart="@dimen/button_margin"
-                        android:background="@drawable/ic_more_vert"/>
+                        android:background="@drawable/ic_hide"/>
 
                 </RelativeLayout>
 
