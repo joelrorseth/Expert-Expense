@@ -74,7 +74,7 @@
     <string name="save_button">SAVE</string>
     <string name="cancel_button">CANCEL</string>
 
-    <string name="net_balance_amount">Net Balance (CAD): $%1$.2f</string>
+    <string name="net_balance_amount">Net Balance: $%1$.2f</string>
     <string name="money_amount">$%1$.2f</string>
     <string name="money_amount_negative">-$%1$.2f</string>
 

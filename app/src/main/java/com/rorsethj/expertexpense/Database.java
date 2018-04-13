@@ -391,6 +391,44 @@ public class Database {
     }
 
 
+    // Get user accounts with the specified currency
+    public void getUserAccountsOfCurrency(String currency, final DBGetAccountsInterface callback) {
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("accounts")
+                .orderByChild("currency")
+                .equalTo(currency)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        ArrayList<String> accountIDs = new ArrayList<>();
+                        ArrayList<Account> accounts = new ArrayList<>();
+
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+                            Log.d(TAG, child.getKey() + " => " + child.getValue());
+
+                            Account account = child.getValue(Account.class);
+                            accountIDs.add(child.getKey());
+                            accounts.add(account);
+                        }
+
+                        callback.didGet(accounts, accountIDs, null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
+
+
+
 
     // MARK: DELETE OPERATIONS
     public void deleteAccount(String existingAccountID, final DBDeletionInterface callback) {
