@@ -3,6 +3,7 @@ package com.rorsethj.expertexpense;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,15 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AccountsFragment extends Fragment
-        implements AccountsAccountsRecyclerAdapter.ItemClickListener {
+public class AccountsFragment extends Fragment implements
+        AccountPopupFragment.AccountPopupInterface {
 
 
-    public interface AccountsInterface {
-        void didSelectAddAccount();
-    }
-
-    public AccountsInterface parentDelegate;
+    // Reuse interface defined in OverviewFragment
+    public OverviewFragment.OverviewInterface parentDelegate;
 
     private AccountsAccountsRecyclerAdapter accountsCADAdapter;
     private AccountsAccountsRecyclerAdapter accountsUSDAdapter;
@@ -49,6 +47,11 @@ public class AccountsFragment extends Fragment
     private LinearLayout gbpLayout;
     private LinearLayout eurLayout;
 
+    private AccountPopupFragment accPopupFragment;
+    private Account currentlySelectedAccount = null;
+    private String currentlySelectedAccountID = "";
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -56,6 +59,11 @@ public class AccountsFragment extends Fragment
 
         // Inflate XML resource for this fragment
         View view = inflater.inflate(R.layout.fragment_accounts, container, false);
+
+        // Configure popup
+        accPopupFragment = new AccountPopupFragment();
+        accPopupFragment.parentDelegate = this;
+
 
         cadLayout = view.findViewById(R.id.accountsCADLinearLayout);
         usdLayout = view.findViewById(R.id.accountsUSDLinearLayout);
@@ -97,7 +105,7 @@ public class AccountsFragment extends Fragment
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        parentDelegate.didSelectAddAccount();
+                        parentDelegate.didSelectAddAccountIcon(false, null, null);
                     }
                 }
         );
@@ -112,7 +120,7 @@ public class AccountsFragment extends Fragment
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
                 populateRecycler(accountsCADAdapter, accountsCADRecyclerView,
-                        accountsCADNewBalanceTextView, cadLayout, accounts);
+                        accountsCADNewBalanceTextView, cadLayout, accounts, accountIDs);
             }
         });
 
@@ -120,7 +128,7 @@ public class AccountsFragment extends Fragment
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
                 populateRecycler(accountsUSDAdapter, accountsUSDRecyclerView,
-                        accountsUSDNewBalanceTextView, usdLayout, accounts);
+                        accountsUSDNewBalanceTextView, usdLayout, accounts, accountIDs);
             }
         });
 
@@ -128,7 +136,7 @@ public class AccountsFragment extends Fragment
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
                 populateRecycler(accountsGBPAdapter, accountsGBPRecyclerView,
-                        accountsGBPNewBalanceTextView, gbpLayout, accounts);
+                        accountsGBPNewBalanceTextView, gbpLayout, accounts, accountIDs);
             }
         });
 
@@ -136,7 +144,7 @@ public class AccountsFragment extends Fragment
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
                 populateRecycler(accountsEURAdapter, accountsEURRecyclerView,
-                        accountsEURNewBalanceTextView, eurLayout, accounts);
+                        accountsEURNewBalanceTextView, eurLayout, accounts, accountIDs);
             }
         });
     }
@@ -144,7 +152,8 @@ public class AccountsFragment extends Fragment
 
     // Populate a recycler
     private void populateRecycler(AccountsAccountsRecyclerAdapter adapter, RecyclerView recycler,
-                                  TextView textView, LinearLayout layout, List<Account> accounts) {
+                                  TextView textView, LinearLayout layout, final List<Account> accounts,
+                                  final List<String> accountIDs) {
 
         if (accounts.isEmpty()) {
             layout.setVisibility(View.GONE);
@@ -152,7 +161,22 @@ public class AccountsFragment extends Fragment
         }
 
         adapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
-        adapter.setClickListener(this);
+        adapter.setClickListener(new AccountsAccountsRecyclerAdapter.ItemClickListener() {
+
+            @Override
+            public void onItemClick(View view, int position) {
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) { ft.remove(prev); }
+                ft.addToBackStack(null);
+
+                // Prompt popup menu and potentially edit the selected account
+                currentlySelectedAccount = accounts.get(position);
+                currentlySelectedAccountID = accountIDs.get(position);
+                accPopupFragment.show(ft, "dialog");
+            }
+        });
 
         // Set adapters to recycler views
         recycler.setAdapter(adapter);
@@ -168,7 +192,56 @@ public class AccountsFragment extends Fragment
 
 
 
+    // MARK: AccountPopupFragment interface
     @Override
-    public void onItemClick(View view, int position) {
+    public void acDidSelectShowTransactions() {
+        accPopupFragment.dismiss();
+        parentDelegate.didRequestTransactionsFrag();
+    }
+
+    @Override
+    public void acDidSelectAddTransaction() {
+        accPopupFragment.dismiss();
+        parentDelegate.didSelectAddTransactionIcon(false, null, null);
+    }
+
+    @Override
+    public void acDidSelectDeleteAccount() {
+        accPopupFragment.dismiss();
+
+        db.deleteAccount(currentlySelectedAccountID, new Database.DBDeletionInterface() {
+            @Override
+            public void didSuccessfullyDelete(boolean success) {
+
+                if (success) {
+                    Toast.makeText(getContext(), "Account has been deleted",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "An error occurred while deleting the account",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                // TODO: Refresh
+            }
+        });
+    }
+
+    @Override
+    public void acDidSelectEditAccount() {
+
+        // Tell parent to show Add Account screen, but set up for editing
+        accPopupFragment.dismiss();
+        parentDelegate.didSelectAddAccountIcon(true,
+                currentlySelectedAccount, currentlySelectedAccountID);
+    }
+
+    @Override
+    public void acDidSelectHide() {
+        accPopupFragment.dismiss();
+    }
+
+    @Override
+    public void acDidSelectTransfer() {
+        accPopupFragment.dismiss();
     }
 }

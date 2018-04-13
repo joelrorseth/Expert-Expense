@@ -127,7 +127,7 @@ public class OverviewFragment extends Fragment
     }
 
 
-    // Setup button listeners for hide icons
+
     private void setupHideButtonListeners(final View view) {
 
         view.findViewById(R.id.overviewMyAccountsHideButton).setOnClickListener(new View.OnClickListener() {

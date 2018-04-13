@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements OverviewFragment.OverviewInterface, AccountsFragment.AccountsInterface,
+        implements OverviewFragment.OverviewInterface,
         TransactionsFragment.TransactionsInterface {
 
     private DrawerLayout mDrawerLayout;
@@ -142,13 +142,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-
-    // MARK: AccountsFragment Interface
-    @Override
-    public void didSelectAddAccount() {
-        switchToFragment(new AddNewAccountFragment());
-    }
 
     @Override
     public void didSelectAddTransaction() {
