@@ -114,6 +114,7 @@ public class AccountsFragment extends Fragment implements
     }
 
 
+    // Load all accounts currency by currency
     private void loadAccountsForAllCurrencies(final View view) {
 
         db.getUserAccountsOfCurrency("CAD", new Database.DBGetAccountsInterface() {
@@ -158,6 +159,9 @@ public class AccountsFragment extends Fragment implements
         if (accounts.isEmpty()) {
             layout.setVisibility(View.GONE);
             return;
+
+        } else {
+            layout.setVisibility(View.VISIBLE);
         }
 
         adapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
@@ -221,7 +225,8 @@ public class AccountsFragment extends Fragment implements
                             Toast.LENGTH_SHORT).show();
                 }
 
-                // TODO: Refresh
+                // Refresh
+                loadAccountsForAllCurrencies(getView());
             }
         });
     }

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +28,16 @@ import java.util.Set;
 
 
 public class TransactionsFragment extends Fragment implements
-        TransactionsTransactionsRecyclerAdapter.ItemClickListener {
+        TransactionPopupFragment.TransactionPopupInterface {
 
     public interface TransactionsInterface {
         void didSelectAddTransaction();
     }
 
-    public TransactionsInterface parentDelegate;
-
+    public OverviewFragment.OverviewInterface parentDelegate;
+    private TransactionPopupFragment tranPopupFragment;
+    private Transaction currentlySelectedTransaction = null;
+    private String currentlySelectedTransactionID = "";
 
     private Set<String> selectedAccountNames;
     private Map<String, String> accountIDToNameLookup;
@@ -64,6 +68,9 @@ public class TransactionsFragment extends Fragment implements
         allPeriodNames = new ArrayList<String>(
                 Arrays.asList( getResources().getStringArray(R.array.time_periods)) );
         currentlySelectedPeriod = allPeriodNames.get(0);
+
+        tranPopupFragment = new TransactionPopupFragment();
+        tranPopupFragment.parentDelegate = this;
 
 
 
@@ -127,28 +134,20 @@ public class TransactionsFragment extends Fragment implements
 
 
 
-    // Configure floating action button listener
+        // Configure floating action button listener
         FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.transactionsAddButton);
         addButton.setOnClickListener(
 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        parentDelegate.didSelectAddTransaction();
+                        parentDelegate.didSelectAddTransactionIcon(false, null, null);
                     }
                 }
         );
 
         return view;
     }
-
-
-    // MARK: Interface implementation
-    @Override
-    public void onItemClick(View view, int position) {
-
-    }
-
 
 
     // MARK: DB Interaction
@@ -209,7 +208,7 @@ public class TransactionsFragment extends Fragment implements
         // Get the transactions that happened between the two dates established
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
-            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
+            public void didGet(final List<Transaction> transactions, final List<String> transactionIDs, Exception e) {
 
                 // Populate the transaction list
 
@@ -223,10 +222,25 @@ public class TransactionsFragment extends Fragment implements
                     }
                 }
 
-
+                // Set a new adapter and onClick, which sets currently selected transaction
                 transAdapter = new TransactionsTransactionsRecyclerAdapter(
                         getContext(), filteredTransactions);
-                transAdapter.setClickListener(thisRef);
+                transAdapter.setClickListener(new TransactionsTransactionsRecyclerAdapter.ItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                        if (prev != null) { ft.remove(prev); }
+                        ft.addToBackStack(null);
+
+                        // Prompt popup menu and potentially edit the selected account
+                        currentlySelectedTransaction = transactions.get(position);
+                        currentlySelectedTransactionID = transactionIDs.get(position);
+                        tranPopupFragment.show(ft, "dialog");
+                    }
+                });
 
                 // Set adapters to recycler views
                 transactionsRecyclerView.setAdapter(transAdapter);
@@ -234,5 +248,60 @@ public class TransactionsFragment extends Fragment implements
                 // TODO: Show sum somewhere?
             }
         });
+    }
+
+
+
+
+    // MARK: TransactionPopupFragment interface
+    @Override
+    public void trDidSelectEdit() {
+
+        // Tell parent to show Add Account screen, but set up for editing
+        tranPopupFragment.dismiss();
+        parentDelegate.didSelectAddTransactionIcon(true,
+                currentlySelectedTransaction, currentlySelectedTransactionID);
+    }
+
+    @Override
+    public void trDidSelectDelete() {
+        tranPopupFragment.dismiss();
+
+        db.deleteTransaction(currentlySelectedTransactionID, new Database.DBDeletionInterface() {
+            @Override
+            public void didSuccessfullyDelete(boolean success) {
+
+                if (success) {
+                    Toast.makeText(getContext(), "Transaction has been deleted",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "An error occurred while deleting the transaction",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                // Refresh
+                populateTransactions();
+            }
+        });
+    }
+
+    @Override
+    public void trDidSelectCopy() {
+        trDidSelectEdit();
+    }
+
+    @Override
+    public void trDidSelectMove() {
+        trDidSelectEdit();
+    }
+
+    @Override
+    public void trDidSelectNewStatus() {
+        trDidSelectEdit();
+    }
+
+    @Override
+    public void trDidSelectSetProj() {
+        trDidSelectEdit();
     }
 }
