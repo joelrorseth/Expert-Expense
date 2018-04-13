@@ -449,9 +449,13 @@ public class OverviewFragment extends Fragment
     private void loadTransactionsFromDB() {
 
         final OverviewFragment thisRef = this;
+        DateRange.DatePair dateRange = DateRange.getDatesForRange("Last 30 Days");
+        long oldDate = dateRange.getOld();
+        long newDate = dateRange.getNew();
 
-        // Load transactions
-        db.getUserTransactions(new Database.DBGetTransactionsInterface() {
+
+        // Load RECENT transactions
+        db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
             public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
