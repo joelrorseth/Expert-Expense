@@ -17,12 +17,15 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -48,12 +51,17 @@ public class ReportChartFragment extends Fragment {
     public static final String DEPOSIT = "Deposit";
     public static final String DAILY = "Daily";
     public static final String MONTHLY = "Monthly";
+    public static final String DATE_FORMAT_DAILY = "dd/MM/yyyy";
+    public static final String DATE_FORMAT_MONTHLY = "MM/yyyy";
+    public static final String DATE_FORMAT_DAILY_SHORT = "dd";
+    public static final String DATE_FORMAT_MONTHLY_SHORT = "MMM";
 
     private Spinner accountsSpinner;
     private Spinner periodsSpinner;
 
     private PieChart pieChart = null;
     private BarChart barChart = null;
+    private LineChart lineChart = null;
 
     private List<String> allPeriodNames;
     private String currentlySelectedPeriod;
@@ -64,7 +72,9 @@ public class ReportChartFragment extends Fragment {
 
     private Database db;
     private AlertDialog dialog;
+
     private boolean hasErroneousSpinnerClickOccured = false;
+    private boolean isFirstChart = true;
 
     private List<Transaction> allTransactions = new ArrayList<>();
 
@@ -222,11 +232,13 @@ public class ReportChartFragment extends Fragment {
             case "Daily Expense":
 
                 // Get expense last 7 days in bar chart
+                if (isFirstChart) { periodsSpinner.setSelection(4); isFirstChart = false; }
                 plotTransactionTypeForIncrement(view, chartType, WITHDRAWAL, DAILY);
                 break;
 
             case "Monthly Expense":
                 // Show total expenses each month since january, show average over those months
+                if (isFirstChart) { periodsSpinner.setSelection(8); isFirstChart = false; }
                 plotTransactionTypeForIncrement(view, chartType, WITHDRAWAL, MONTHLY);
                 break;
 
@@ -238,12 +250,14 @@ public class ReportChartFragment extends Fragment {
             case "Daily Income":
 
                 // Bar chart shows total income for each of last 7 days
+                if (isFirstChart) { periodsSpinner.setSelection(4); isFirstChart = false; }
                 plotTransactionTypeForIncrement(view, chartType, DEPOSIT, DAILY);
                 break;
 
             case "Monthly Income":
 
                 // Bar chart shows YTD each months income, display average also
+                if (isFirstChart) { periodsSpinner.setSelection(8); isFirstChart = false; }
                 plotTransactionTypeForIncrement(view, chartType, DEPOSIT, MONTHLY);
                 break;
 
@@ -268,7 +282,7 @@ public class ReportChartFragment extends Fragment {
     // MARK: Logic of What to Plot
     // Entry point for pie chart logic
     // Plot expense / income by category, by obtaining transactions of that type between 2 dates
-    private void plotByCategory(final View view, final String type) {
+    private void plotByCategory(final View view, final String category) {
 
         // Pull currently selected period
         DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
@@ -280,8 +294,8 @@ public class ReportChartFragment extends Fragment {
             public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
                 // Pie charts might plot Income vs Expense for example, so call separate method
-                if (type.equals("vs")) { plotIncomeVsExpense(view, transactions); }
-                else { plotTransactionWithType(view, transactions, type); }
+                if (category.equals("vs")) { plotIncomeVsExpense(view, transactions); }
+                else { plotTransactionWithType(view, transactions, category); }
             }
         });
     }
@@ -292,52 +306,15 @@ public class ReportChartFragment extends Fragment {
     private void plotTransactionTypeForIncrement(final View view, final String title,
                                                  final String type, String chartIncrement) {
 
-        // Get current period
         DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
         long oldDate = range.getOld();
         long newDate = range.getNew();
 
-
         // Increments gathers ALL x-axis values eg. [Nov, Dec, Jan, Feb] or ["29","30","31","01"]
-        final ArrayList<String> increments = new ArrayList<>();
-        int CAL_INCREMENT = -1;
-        String INCREMENT_KEY = "";
+        final ArrayList<String> increments = interpolateValuesForIncrement(chartIncrement);
+        final String INCREMENT_KEY = chartIncrement.equals(MONTHLY) ?
+            DATE_FORMAT_MONTHLY_SHORT : DATE_FORMAT_DAILY_SHORT;
 
-        if (chartIncrement.equals(MONTHLY)) {
-            CAL_INCREMENT = Calendar.MONTH;
-            INCREMENT_KEY = "MMM";
-
-        } else if (chartIncrement.equals(DAILY)) {
-            CAL_INCREMENT = Calendar.DATE;
-            INCREMENT_KEY = "dd";
-        }
-
-
-        // Start temp calendar at "old date", we will increment until "new date"
-        Calendar oldCal = Calendar.getInstance();
-        Calendar tempCal = Calendar.getInstance();
-        oldCal.setTimeInMillis(oldDate);
-        tempCal.setTimeInMillis(oldDate);
-
-        // Get string for "new date" for stopping point eg. May
-        String newDateString = (String) DateFormat.format(INCREMENT_KEY, (new Date(newDate)).getTime());
-
-        while (true) {
-
-            // Store the next key for month/day (eg. Jan for monthly, "27" if daily)
-            String tempDateString = (String) DateFormat.format(INCREMENT_KEY, tempCal);
-            increments.add(tempDateString);
-
-            // If temp, the counter, has reach the new date, then we are finished
-            // Otherwise, advance temp to next month/day and add that increment
-
-            if (tempDateString.equals(newDateString)) { break; }
-            else { tempCal.add(CAL_INCREMENT, 1); }
-        }
-
-
-
-        final String kINCREMENT_KEY = INCREMENT_KEY;
 
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
@@ -360,7 +337,7 @@ public class ReportChartFragment extends Fragment {
                     // Get corresponding increment depending, eg. get Jun if monthly, or get 27 if daily
                     Double amount = t.getAmount();
                     Date date = new Date(t.getDate());
-                    String increment = (String) DateFormat.format(kINCREMENT_KEY, date);
+                    String increment = (String) DateFormat.format(INCREMENT_KEY, date);
 
 
                     // Add to other totals from that category if multiple
@@ -392,6 +369,24 @@ public class ReportChartFragment extends Fragment {
     }
 
 
+//    private void plotDailyBalance(View view) {
+//
+//        // Pull currently selected period
+//        DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
+//        long oldDate = range.getOld();
+//        long newDate = range.getNew();
+//
+//        db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
+//            @Override
+//            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
+//
+//                formatForLineChart(view, transactions);
+//                // Pie charts might plot Income vs Expense for example, so call separate method
+//                if (category.equals("vs")) { plotIncomeVsExpense(view, transactions); }
+//                else { plotTransactionWithType(view, transactions, category); }
+//            }
+//        });
+//    }
 
 
     // MARK: Data formatting for plotting (only PieCharts right now)
@@ -505,6 +500,7 @@ public class ReportChartFragment extends Fragment {
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.TRANSPARENT);
         pieChart.setHoleRadius(50);
+        pieChart.getDescription().setEnabled(false);
         pieChart.setTransparentCircleRadius(50);
 
         // Animate the chart appearing
@@ -520,10 +516,11 @@ public class ReportChartFragment extends Fragment {
 
         // Dynamically load in the chart
         layout.addView(pieChart);
+        pieData.setValueTextSize(36f);
     }
 
 
-    // Plot a bar chart
+    // Plot a Bar Chart
     private void plotBarChart(View view, String title, List<String> labels, float[] values) {
 
         RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.reportChartLinearLayout);
@@ -537,7 +534,6 @@ public class ReportChartFragment extends Fragment {
 
         // Create Entry for each label,value pair
         for (int i = 0; i < labels.size(); ++i) {
-            System.out.println(labels.get(i) + ": " + values[i]);
             entries.add(new BarEntry(i, values[i]));
         }
 
@@ -550,6 +546,7 @@ public class ReportChartFragment extends Fragment {
         barChart = new BarChart(getContext());
         barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
         barChart.setData(data);
+        barChart.getDescription().setEnabled(false);
         barChart.animateY(1000);
 
         // Create layout parameters to force the chart to be full screen
@@ -561,5 +558,100 @@ public class ReportChartFragment extends Fragment {
 
         // Dynamically load in the chart
         layout.addView(barChart);
+    }
+
+
+    // Plot a Line Chart
+    private void plotLineChart(View view, String title, List<String> labels, float[] values) {
+
+        RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.reportChartLinearLayout);
+
+        if (lineChart != null) {
+            lineChart.clear();
+            layout.removeView(lineChart);
+        }
+
+        List<Entry> entries = new ArrayList<>();
+
+        // Create Entry for each label,value pair
+        for (int i = 0; i < labels.size(); ++i) {
+            entries.add(new Entry(i, values[i]));
+        }
+
+        LineDataSet dataset = new LineDataSet(entries, title);
+        dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        LineData data = new LineData(dataset);
+
+        // Create the chart view
+        lineChart = new LineChart(getContext());
+        lineChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        lineChart.setData(data);
+        lineChart.getDescription().setEnabled(false);
+        lineChart.animateY(1000);
+
+        // Create layout parameters to force the chart to be full screen
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
+
+        lineChart.setLayoutParams(lp);
+
+        // Dynamically load in the chart
+        layout.addView(lineChart);
+    }
+
+
+
+
+    // MARK: Utility
+    // Return list of interpolated x-axis values such as [Nov, Dec, Jan, Feb]
+    private ArrayList<String> interpolateValuesForIncrement(String chartIncrement) {
+
+        // Get current period
+        DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
+        long oldDate = range.getOld();
+        long newDate = range.getNew();
+
+        // Increments gathers ALL x-axis values eg. [Nov, Dec, Jan, Feb] or ["29","30","31","01"]
+        final ArrayList<String> increments = new ArrayList<>();
+        int CAL_INCREMENT = -1;
+        String INCREMENT_KEY = "";          // Longer key to make sure year is correct etc
+        String INCREMENT_KEY_SHORT = "";  // Actual nice key for x-axis
+
+        if (chartIncrement.equals(MONTHLY)) {
+            CAL_INCREMENT = Calendar.MONTH;
+            INCREMENT_KEY = DATE_FORMAT_MONTHLY;
+            INCREMENT_KEY_SHORT = DATE_FORMAT_MONTHLY_SHORT;
+
+        } else if (chartIncrement.equals(DAILY)) {
+            CAL_INCREMENT = Calendar.DATE;
+            INCREMENT_KEY = DATE_FORMAT_DAILY;
+            INCREMENT_KEY_SHORT = DATE_FORMAT_DAILY_SHORT;
+        }
+
+
+        // Start temp calendar at "old date", we will increment until "new date"
+        Calendar oldCal = Calendar.getInstance();
+        Calendar tempCal = Calendar.getInstance();
+        oldCal.setTimeInMillis(oldDate);
+        tempCal.setTimeInMillis(oldDate);
+
+        // Get string for "new date" for stopping point eg. May
+        String newDateString = (String) DateFormat.format(INCREMENT_KEY, (new Date(newDate)).getTime());
+
+        while (true) {
+
+            // Store the next key for month/day (eg. Jan for monthly, "27" if daily)
+            String tempDateString = (String) DateFormat.format(INCREMENT_KEY, tempCal);
+            increments.add( (String) DateFormat.format(INCREMENT_KEY_SHORT, tempCal) );
+
+            // If temp, the counter, has reach the new date, then we are finished
+            // Otherwise, advance temp to next month/day and add that increment
+
+            if (tempDateString.equals(newDateString)) { break; }
+            else { tempCal.add(CAL_INCREMENT, 1); }
+        }
+
+        return increments;
     }
 }
