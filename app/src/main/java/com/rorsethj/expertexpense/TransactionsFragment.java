@@ -154,7 +154,7 @@ public class TransactionsFragment extends Fragment implements
     private void setupSelectAccountsDialog(final List<String> accountNames) {
 
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
         builder.setTitle("Select Accounts to Include");
 
         // Use the account names as items to select in the dialog
@@ -190,6 +190,15 @@ public class TransactionsFragment extends Fragment implements
                 });
 
         dialog = builder.create();
+        dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+            int c = getResources().getColor(R.color.colorPrimaryDark, null);
+            @Override
+            public void onShow(DialogInterface arg0) {
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(c);
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(c);
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(c);
+            }
+        });
     }
 
 

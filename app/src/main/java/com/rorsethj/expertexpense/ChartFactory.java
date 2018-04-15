@@ -1,44 +1,19 @@
 package com.rorsethj.expertexpense;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.text.format.DateFormat;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 public class ChartFactory {
@@ -84,100 +59,6 @@ public class ChartFactory {
 
         return null;
     }
-
-
-
-
-
-
-
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//
-//        // Inflate the layout for this fragment
-//        View view =  inflater.inflate(R.layout.fragment_report_chart, container, false);
-//        final View viewRef = view;
-//
-//        // Find spinners
-//        accountsSpinner = view.findViewById(R.id.reportAccountsSpinner);
-//        periodsSpinner = view.findViewById(R.id.reportPeriodSpinner);
-//
-//        // Initialize lists etc, initialize currently SELECTED PERIOD
-//        db = Database.getCurrentUserDatabase();
-//        selectedAccountNames = new HashSet<>();
-//        accountIDToNameLookup = new HashMap<>();
-//        allAccounts = new ArrayList<>();
-//        allAccountNames = new ArrayList<>();
-//        allPeriodNames = new ArrayList<String>(
-//                Arrays.asList( getResources().getStringArray(R.array.time_periods)) );
-//        currentlySelectedPeriod = allPeriodNames.get(0);
-//
-//
-//        // Retrieve all accounts from the DB, initialize currently SELECTED ACCOUNTS
-//        db.getUserAccounts(new Database.DBGetAccountsInterface() {
-//            @Override
-//            public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
-//
-//                allAccounts.clear();
-//                allAccountNames.clear();
-//                int i = 0;
-//
-//                // Add accounts to all accounts, all names, and all selected names initially
-//                allAccounts = accounts;
-//                for (Account a: accounts) {
-//                    allAccountNames.add(a.getAccountName());
-//                    selectedAccountNames.add(a.getAccountName());
-//                    accountIDToNameLookup.put(accountIDs.get(i++), a.getAccountName());
-//                }
-//
-//                // Initialize the alert dialog for choosing accounts, now we have info to PLOT
-//                setupSelectAccountsDialog(viewRef, allAccountNames);
-//                System.out.println("#### Got accounts from db, should be only one triggering");
-//                plotCorrectGraph(viewRef);
-//            }
-//        });
-//
-//
-//        // Set touch handler for accounts filter spinner, prompting dialog to choose many
-//        Spinner accountsSpinner = ((Spinner) view.findViewById(R.id.reportAccountsSpinner));
-//        accountsSpinner.setClickable(false);
-//        accountsSpinner.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//
-//                if (dialog != null) { dialog.show(); }
-//                return false;
-//            }
-//        });
-//
-//
-//        ((Spinner) view.findViewById(R.id.reportPeriodSpinner))
-//                .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//
-//                    @Override
-//                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                        currentlySelectedPeriod = allPeriodNames.get(i);
-//
-//                        // NOTE: Known bug is occurring where this onItemSelected is fired once for
-//                        // each spinner BEFORE the view is loaded. Account for this here
-//                        if (hasErroneousSpinnerClickOccured) {
-//
-//                            // REDRAW the chart when NEW PERIOD is selected
-//                            System.out.println("#### Period spinner was selected, triggering");
-//                            plotCorrectGraph(viewRef);
-//
-//                        } else { hasErroneousSpinnerClickOccured = true; }
-//                    }
-//
-//                    @Override
-//                    public void onNothingSelected(AdapterView<?> adapterView) {}
-//                });
-//
-//
-//        db = Database.getCurrentUserDatabase();
-//        return view;
-//    }
 
 
 

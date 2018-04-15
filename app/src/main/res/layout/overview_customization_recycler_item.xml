@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp"
-    android:background="@color/colorMainBackground">
+    android:background="@color/cardview_light_background">
 
     <ImageView
         android:id="@+id/overviewCustomizationItemIcon"
@@ -29,6 +29,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
-        />
+        android:checked="true"
+        android:textOff="Hidden"
+        android:textOn="Visible"
+        android:thumbTint="@color/colorPrimary"
+        android:trackTint="@android:color/darker_gray"/>
 
 </LinearLayout>
