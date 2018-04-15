@@ -127,7 +127,6 @@ public class ReportChartFragment extends Fragment {
 
                 // Initialize the alert dialog for choosing accounts, now we have info to PLOT
                 setupSelectAccountsDialog(viewRef, allAccountNames);
-                System.out.println("#### Got accounts from db, should be only one triggering");
                 plotCorrectGraph(viewRef);
             }
         });
@@ -158,7 +157,6 @@ public class ReportChartFragment extends Fragment {
                         if (hasErroneousSpinnerClickOccured) {
 
                             // REDRAW the chart when NEW PERIOD is selected
-                            System.out.println("#### Period spinner was selected, triggering");
                             plotCorrectGraph(viewRef);
 
                         } else { hasErroneousSpinnerClickOccured = true; }
@@ -202,7 +200,6 @@ public class ReportChartFragment extends Fragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int id) {
                         // REDRAW chart when NEW ACCOUNT(S) are selected
-                        System.out.println("#### Selected new accounts, triggered");
                         plotCorrectGraph(view);
                     }
                 })

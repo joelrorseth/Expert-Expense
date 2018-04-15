@@ -17,8 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.PieChart;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,6 +57,9 @@ public class OverviewFragment extends Fragment
     private RecyclerView accountsRecyclerView;
     private RecyclerView transRecyclerView;
     private RecyclerView billsRecyclerView;
+
+    private RelativeLayout expenseCatLayout;
+    private RelativeLayout incomeExpenseLayout;
 
     private AccountPopupFragment accPopupFragment;
     private TransactionPopupFragment tranPopupFragment;
@@ -90,6 +97,12 @@ public class OverviewFragment extends Fragment
 
         tranPopupFragment = new TransactionPopupFragment();
         tranPopupFragment.parentDelegate = this;
+
+        //expenseCategoryPieChart = view.findViewById(R.id.overviewExpenseCatChart);
+        ///expenseCategoryPieChart = new Pi
+
+        expenseCatLayout = view.findViewById(R.id.overviewExpenseCatChartLayout);
+        incomeExpenseLayout = view.findViewById(R.id.overviewIncVsExpChartLayout);
 
 
 
@@ -541,8 +554,8 @@ public class OverviewFragment extends Fragment
 
         final OverviewFragment thisRef = this;
         DateRange.DatePair dateRange = DateRange.getDatesForRange("Last 30 Days");
-        long oldDate = dateRange.getOld();
-        long newDate = dateRange.getNew();
+        final long oldDate = dateRange.getOld();
+        final long newDate = dateRange.getNew();
 
 
         // Load RECENT transactions
@@ -556,6 +569,14 @@ public class OverviewFragment extends Fragment
                 recentTransactionsAdapter = new RecentTransactionsRecyclerAdapter(getContext(), transactions);
                 recentTransactionsAdapter.setClickListener(thisRef);
                 transRecyclerView.setAdapter(recentTransactionsAdapter);
+
+
+                // Use the recent transactions to populate charts
+                // Ask the Chart Factory to produce the charts given the loaded transactions
+                expenseCatLayout.addView(ChartFactory.newPieChart(getContext(),
+                        ChartFactory.PieChartTypes.ExpenseByCategory, transactions ));
+                incomeExpenseLayout.addView(ChartFactory.newPieChart( getContext(),
+                        ChartFactory.PieChartTypes.IncomeVsExpense, transactions ));
             }
         });
     }

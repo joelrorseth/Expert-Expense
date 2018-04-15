@@ -228,13 +228,14 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/overviewExpenseCatHeaderLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/title_margin_top">
 
 
                     <TextView
-                        android:id="@+id/overviewExpenseCatTextView"
+                        android:id="@+id/overviewExpenseCatHeaderTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
@@ -257,11 +258,21 @@
 
                 </RelativeLayout>
 
-                <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/overviewExpenseCatChart"
+                <TextView
+                    android:id="@+id/overviewExpenseCatSubtitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:text="Last 30 Days"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="20sp"/>
 
+                <RelativeLayout
+                    android:id="@+id/overviewExpenseCatChartLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_margin="16dp"/>
 
             </LinearLayout>
 
@@ -306,10 +317,21 @@
 
                 </RelativeLayout>
 
-                <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/overviewIncVsExpChart"
+                <TextView
+                    android:id="@+id/overviewIncVsExpSubtitleTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:text="Last 30 Days"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="20sp"/>
+
+                <RelativeLayout
+                    android:id="@+id/overviewIncVsExpChartLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_margin="16dp"/>
 
 
             </LinearLayout>
