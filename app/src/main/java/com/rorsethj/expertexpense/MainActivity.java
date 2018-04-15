@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity
         // Start app on the Overview fragment
         OverviewFragment frag = new OverviewFragment();
         frag.parentDelegate = MainActivity.this;
-        switchToFragment(frag);
+        replaceCurrentFragment(frag);
 
         final MainActivity thisRef = this;
 
@@ -57,23 +57,23 @@ public class MainActivity extends AppCompatActivity
                             case R.id.nav_overview:
                                 OverviewFragment frag = new OverviewFragment();
                                 frag.parentDelegate = thisRef;
-                                switchToFragment(frag);
+                                replaceCurrentFragment(frag);
                                 break;
 
                             case R.id.nav_accounts:
                                 AccountsFragment accFrag = new AccountsFragment();
                                 accFrag.parentDelegate = thisRef;
-                                switchToFragment(accFrag);
+                                replaceCurrentFragment(accFrag);
                                 break;
 
                             case R.id.nav_transactions:
                                 TransactionsFragment transFrag = new TransactionsFragment();
                                 transFrag.parentDelegate = thisRef;
-                                switchToFragment(transFrag);
+                                replaceCurrentFragment(transFrag);
                                 break;
 
                             case R.id.nav_reports:
-                                switchToFragment(new ReportsFragment());
+                                replaceCurrentFragment(new ReportsFragment());
                                 break;
 
                         }
@@ -97,12 +97,7 @@ public class MainActivity extends AppCompatActivity
     // MARK: OverviewFragment interface implementation
     @Override
     public void didSelectCustomizationIcon() {
-
-        // Customization icon should push OverviewCustomizationFragment on top of OverviewFragment
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContainer, new OverviewCustomizationFragment());
-        transaction.addToBackStack(null);
-        transaction.commit();
+        pushFragment(new OverviewCustomizationFragment());
     }
 
     @Override
@@ -114,7 +109,7 @@ public class MainActivity extends AppCompatActivity
             f.populateAccountBeingEdited(accountID, existingAccount);
         }
 
-        switchToFragment(f);
+        pushFragment(f);
     }
 
     @Override
@@ -126,37 +121,44 @@ public class MainActivity extends AppCompatActivity
             f.populateTransactionBeingEdited(transID, existingTrans);
         }
 
-        switchToFragment(f);
+        pushFragment(f);
     }
 
     @Override
     public void didSelectAddBillIcon() {
-        switchToFragment(new AddNewBillFragment());
+        pushFragment(new AddNewBillFragment());
     }
 
     @Override
     public void didRequestTransactionsFrag() {
         TransactionsFragment transFrag = new TransactionsFragment();
         transFrag.parentDelegate = this;
-        switchToFragment(transFrag);
+        replaceCurrentFragment(transFrag);
 
     }
 
 
     @Override
     public void didSelectAddTransaction() {
-        switchToFragment(new AddNewTransactionFragment());
+        pushFragment(new AddNewTransactionFragment());
     }
 
 
 
     // MARK: Utility
     // Perform a FragmentTransaction to replace current hosted fragment with new one
-    private void switchToFragment(Fragment destFragment) {
+    private void pushFragment(Fragment destFragment) {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentContainer, destFragment);
         transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void replaceCurrentFragment(Fragment destFragment) {
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainer, destFragment);
         transaction.commit();
     }
 }
