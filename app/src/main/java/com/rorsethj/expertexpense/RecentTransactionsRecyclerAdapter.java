@@ -1,6 +1,7 @@
 package com.rorsethj.expertexpense;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,9 +74,24 @@ public class RecentTransactionsRecyclerAdapter
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         Transaction trans = myTransactions.get(position);
-
         holder.titleTextView.setText(trans.getPayee());
-        holder.descTextView.setText(trans.getCategory());
+
+        // Conditionally show high spending alerts when warranted
+        boolean highSpendingAlertsEnabled = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getResources().getString(
+                        R.string.prefs_high_spending), true);
+
+
+        // Account for high spending notifications
+        if (trans.getAmount() > 500.0 && trans.getType().equals("Withdrawal")
+                &&  highSpendingAlertsEnabled) {
+
+            holder.descTextView.setText(context.getResources().getText(R.string.high_spending));
+            holder.descTextView.setTextColor(context.getResources().getColor(R.color.colorErrorRed, null));
+        } else {
+            holder.descTextView.setText(trans.getCategory());
+        }
+        
 
         // Determine color of amount text based on type
         if (trans.getType().equals("Withdrawal")) {

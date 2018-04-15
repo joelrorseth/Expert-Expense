@@ -83,6 +83,8 @@
 
     <string name="calc_answer">Ans</string>
 
+    <string name="high_spending">OVER BUDGET</string>
+
     <string-array name="calc_dialog_errors">
         <item>Division by zero</item>
         <item>Out of bounds</item>
