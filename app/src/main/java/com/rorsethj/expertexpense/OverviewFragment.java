@@ -2,11 +2,13 @@ package com.rorsethj.expertexpense;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,10 +22,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import uk.co.markormesher.android_fab.FloatingActionButton;
 import uk.co.markormesher.android_fab.SpeedDialMenuAdapter;
 import uk.co.markormesher.android_fab.SpeedDialMenuItem;
@@ -31,6 +36,7 @@ import uk.co.markormesher.android_fab.SpeedDialMenuItem;
 
 public class OverviewFragment extends Fragment
         implements MyAccountsRecyclerAdapter.ItemClickListener,
+        AccountsAccountsRecyclerAdapter.ItemClickListener,
         RecentTransactionsRecyclerAdapter.ItemClickListener,
         UpcomingBillsRecyclerAdapter.ItemClickListener,
         AccountPopupFragment.AccountPopupInterface,
@@ -40,9 +46,13 @@ public class OverviewFragment extends Fragment
     // Define interface to containing Activity to respond to events taking place here
     public interface OverviewInterface {
         void didSelectCustomizationIcon();
+
         void didSelectAddAccountIcon(boolean isEdit, Account existingAccount, String accountID);
+
         void didSelectAddTransactionIcon(boolean isEdit, Transaction existingTrans, String transID);
+
         void didSelectAddBillIcon();
+
         void didRequestTransactionsFrag();
     }
 
@@ -60,7 +70,7 @@ public class OverviewFragment extends Fragment
     private AccountPopupFragment accPopupFragment;
     private TransactionPopupFragment tranPopupFragment;
 
-    private MyAccountsRecyclerAdapter myAccountsAdapter;
+    private RecyclerView.Adapter myAccountsAdapter;
     private RecentTransactionsRecyclerAdapter recentTransactionsAdapter;
     private UpcomingBillsRecyclerAdapter upcomingBillsAdapter;
 
@@ -70,7 +80,6 @@ public class OverviewFragment extends Fragment
     private List<String> currentTransactionIDs = new ArrayList<>();
     private int currentlySelectedAccountIndex = -1;
     private int currentlySelectedTransIndex = -1;
-
 
 
     @Override
@@ -94,12 +103,8 @@ public class OverviewFragment extends Fragment
         tranPopupFragment = new TransactionPopupFragment();
         tranPopupFragment.parentDelegate = this;
 
-        //expenseCategoryPieChart = view.findViewById(R.id.overviewExpenseCatChart);
-        ///expenseCategoryPieChart = new Pi
-
         expenseCatLayout = view.findViewById(R.id.overviewExpenseCatChartLayout);
         incomeExpenseLayout = view.findViewById(R.id.overviewIncVsExpChartLayout);
-
 
 
         // Configure floating action button listener
@@ -134,7 +139,6 @@ public class OverviewFragment extends Fragment
 
         return view;
     }
-
 
 
     private void setupHideButtonListeners(final View view) {
@@ -229,7 +233,6 @@ public class OverviewFragment extends Fragment
     }
 
 
-
     // MARK: Popup Logic and interface implementations
     @Override
     public void onItemClick(View view, int position) {
@@ -250,24 +253,23 @@ public class OverviewFragment extends Fragment
 
 
         // Determine which View was clicked -- Several subviews implement onItemClick
-        if (tag.equals(getResources().getString(R.string.tag_overview_accounts_view))) {
+        if (tag.equals(getResources().getString(R.string.tag_account))) {
 
             // Update index corresponding to which Account was clicked, show popup
             currentlySelectedAccountIndex = position;
             accPopupFragment.show(ft, "dialog");
 
-        } else if (tag.equals(getResources().getString(R.string.tag_overview_transactions_view))) {
+        } else if (tag.equals(getResources().getString(R.string.tag_transaction))) {
 
             // Update index for selected Transaction, show popup
             currentlySelectedTransIndex = position;
             tranPopupFragment.show(ft, "dialog");
 
-        } else if (tag.equals(getResources().getString(R.string.tag_overview_bills_view))) {
+        } else if (tag.equals(getResources().getString(R.string.tag_bill))) {
 
             // TODO: Transition directly to edit bill screen
         }
     }
-
 
 
     // MARK: AccountPopupFragment interface
@@ -326,7 +328,6 @@ public class OverviewFragment extends Fragment
     public void acDidSelectTransfer() {
         accPopupFragment.dismiss();
     }
-
 
 
     // MARK: TransactionPopupFragment interface
@@ -425,14 +426,36 @@ public class OverviewFragment extends Fragment
         view.findViewById(R.id.overviewAccountsLayout).setVisibility(visibility);
         newBalanceTextView = view.findViewById(R.id.newBalanceTextView);
 
-        if (!visible) { return; }
-
         // If un-hiding (on initial load), load accounts and setup
         // Add references and set listeners to buttons inside this fragment
         view.findViewById(R.id.overviewMyAccountsAddButton).setOnClickListener(
                 new View.OnClickListener() {
-                    @Override public void onClick(View view) {
+                    @Override
+                    public void onClick(View view) {
                         parentDelegate.didSelectAddAccountIcon(false, null, null);
+                    }
+                }
+        );
+
+        // Hook up button to dynamically change layout orientation
+        view.findViewById(R.id.overviewMyAccountsCompactButton).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        LinearLayoutManager manager = (LinearLayoutManager) accountsRecyclerView.getLayoutManager();
+
+                        // Swap orientation
+                        if (manager.getOrientation() == LinearLayout.VERTICAL) {
+                            manager.setOrientation(LinearLayout.HORIZONTAL);
+                        } else {
+                            manager.setOrientation(LinearLayout.VERTICAL);
+                        }
+
+                        accountsRecyclerView.setLayoutManager(manager);
+                        accountsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                        loadAccountsFromDB(isAccountsLayoutHorizontal());
                     }
                 }
         );
@@ -442,7 +465,7 @@ public class OverviewFragment extends Fragment
         accountsRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        loadAccountsFromDB();
+        loadAccountsFromDB(isAccountsLayoutHorizontal());
 
     }
 
@@ -452,11 +475,14 @@ public class OverviewFragment extends Fragment
         int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
         view.findViewById(R.id.overviewTransactionsLayout).setVisibility(visibility);
 
-        if (!visible) { return; }
+        if (!visible) {
+            return;
+        }
 
         view.findViewById(R.id.overviewTransactionsAddButton).setOnClickListener(
                 new View.OnClickListener() {
-                    @Override public void onClick(View view) {
+                    @Override
+                    public void onClick(View view) {
                         parentDelegate.didSelectAddTransactionIcon(false, null, null);
                     }
                 }
@@ -474,11 +500,14 @@ public class OverviewFragment extends Fragment
         int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
         view.findViewById(R.id.overviewBillsLayout).setVisibility(visibility);
 
-        if (!visible) { return; }
+        if (!visible) {
+            return;
+        }
 
         view.findViewById(R.id.overviewBillsAddButton).setOnClickListener(
                 new View.OnClickListener() {
-                    @Override public void onClick(View view) {
+                    @Override
+                    public void onClick(View view) {
                         parentDelegate.didSelectAddBillIcon();
                     }
                 }
@@ -501,9 +530,9 @@ public class OverviewFragment extends Fragment
         int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
         view.findViewById(R.id.overviewExpenseCatLayout).setVisibility(visibility);
 
-        if (!visible) { return; }
-
-        // TODO
+        if (!visible) {
+            return;
+        }
     }
 
     private void displayIncomeVsExpense(View view, boolean visible) {
@@ -512,15 +541,15 @@ public class OverviewFragment extends Fragment
         int visibility = visible ? LinearLayout.VISIBLE : LinearLayout.GONE;
         view.findViewById(R.id.overviewIncVsExpLayout).setVisibility(visibility);
 
-        if (!visible) { return; }
-
-        // TODO
+        if (!visible) {
+            return;
+        }
     }
 
 
     // MARK: DB Content update only
     // Refresh the accounts, transactions, bills etc from the database and update views
-    private void loadAccountsFromDB() {
+    private void loadAccountsFromDB(final boolean isHorizontal) {
 
         final OverviewFragment thisRef = this;
 
@@ -534,13 +563,23 @@ public class OverviewFragment extends Fragment
 
                 // Calculate total across all accounts to display
                 double sum = 0.0;
-                for (Account a: accounts) { sum += a.getBalance(); }
+                for (Account a : accounts) {
+                    sum += a.getBalance();
+                }
                 newBalanceTextView.setText(
                         String.format(getResources().getString(R.string.net_balance_amount), sum)
                 );
 
-                myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), accounts);
-                myAccountsAdapter.setClickListener(thisRef);
+
+                // Conditionally load the correct layout
+                if (isAccountsLayoutHorizontal()) {
+                    myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), accounts);
+                    ((MyAccountsRecyclerAdapter) myAccountsAdapter).setClickListener(thisRef);
+                } else {
+                    myAccountsAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
+                    ((AccountsAccountsRecyclerAdapter) myAccountsAdapter).setClickListener(thisRef);
+                }
+
                 accountsRecyclerView.setAdapter(myAccountsAdapter);
             }
         });
@@ -570,9 +609,9 @@ public class OverviewFragment extends Fragment
                 // Use the recent transactions to populate charts
                 // Ask the Chart Factory to produce the charts given the loaded transactions
                 expenseCatLayout.addView(ChartFactory.newPieChart(getContext(),
-                        ChartFactory.PieChartTypes.ExpenseByCategory, transactions ));
-                incomeExpenseLayout.addView(ChartFactory.newPieChart( getContext(),
-                        ChartFactory.PieChartTypes.IncomeVsExpense, transactions ));
+                        ChartFactory.PieChartTypes.ExpenseByCategory, transactions));
+                incomeExpenseLayout.addView(ChartFactory.newPieChart(getContext(),
+                        ChartFactory.PieChartTypes.IncomeVsExpense, transactions));
             }
         });
     }
@@ -593,8 +632,16 @@ public class OverviewFragment extends Fragment
         });
     }
 
+
+
+    // MARK: Utility Methods
+    private boolean isAccountsLayoutHorizontal() {
+        return ((LinearLayoutManager) accountsRecyclerView.getLayoutManager())
+                .getOrientation() == LinearLayout.HORIZONTAL;
+    }
+
     private void refreshDBContent() {
-        loadAccountsFromDB();
+        loadAccountsFromDB(isAccountsLayoutHorizontal());
         loadTransactionsFromDB();
         loadBillsFromDB();
     }

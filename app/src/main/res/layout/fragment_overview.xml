@@ -63,6 +63,16 @@
                         android:textStyle="bold"/>
 
                     <Button
+                        android:id="@+id/overviewMyAccountsCompactButton"
+                        android:layout_width="@dimen/more_vert_width"
+                        android:layout_height="@dimen/more_vert_height"
+                        android:layout_alignEnd="@id/overviewMyAccountsHideButton"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginStart="@dimen/button_margin"
+                        android:background="@drawable/ic_compact"/>
+
+                    <Button
                         android:id="@+id/overviewMyAccountsHideButton"
                         android:layout_width="@dimen/more_vert_width"
                         android:layout_height="@dimen/more_vert_height"

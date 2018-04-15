@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:tag="@string/tag_overview_accounts_view"
+    android:tag="@string/tag_account"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -11,18 +11,26 @@
         android:id="@+id/myAccountsItemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="ACCOUNT"
         android:textSize="20sp"/>
 
     <ImageView
         android:id="@+id/myAccountsItemIcon"
         android:layout_width="@dimen/icon_regular_size"
         android:layout_height="@dimen/icon_regular_size"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:src="@drawable/ic_accounts"/>
 
     <TextView
         android:id="@+id/myAccountsItemAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="$0.00"
         android:textSize="20sp"/>
 
 </LinearLayout>

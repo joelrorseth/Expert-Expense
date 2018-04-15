@@ -66,14 +66,46 @@ public class MyAccountsRecyclerAdapter extends RecyclerView.Adapter<MyAccountsRe
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.titleTextView.setText(myAccounts.get(position).getAccountName());
-        holder.amountTextView.setText(
+        Account account = myAccounts.get(position);
+        holder.titleTextView.setText(account.getAccountName());
 
-                String.format(
-                        context.getResources().getString(R.string.money_amount),
-                        myAccounts.get(position).getBalance()
-                )
-        );
+        // Determine color of amount text based on possibility of negative balance
+        if (account.getBalance() <= 0.0) {
+
+            // New accounts with 0 balance are black text, otherwise red for negative
+            if (account.getBalance() == 0.0) {
+                holder.amountTextView.setTextColor(
+                        context.getResources().getColor(R.color.colorErrorRed)
+                );
+            } else {
+                holder.amountTextView.setTextColor(
+                        context.getResources().getColor(R.color.colorErrorRed)
+                );
+            }
+
+            // Add minus sign when displaying amount
+            holder.amountTextView.setText(
+                    String.format(
+                            context.getResources().getString(R.string.money_amount_negative),
+                            account.getBalance()
+                    )
+            );
+
+        } else {
+
+            // Set green
+            holder.amountTextView.setTextColor(
+                    context.getResources().getColor(R.color.colorValidGreen)
+            );
+
+            holder.amountTextView.setText(
+
+                    String.format(
+                            context.getResources().getString(R.string.money_amount),
+                            account.getBalance()
+                    )
+            );
+        }
     }
 
 

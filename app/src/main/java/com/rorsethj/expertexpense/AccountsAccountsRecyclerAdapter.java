@@ -106,8 +106,6 @@ public class AccountsAccountsRecyclerAdapter
                     )
             );
         }
-
-        // TODO: Set icon
     }
 
 

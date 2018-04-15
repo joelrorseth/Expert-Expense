@@ -17,7 +17,7 @@
         android:paddingRight="6dp"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
-        android:tag="@string/tag_accounts_accounts_view">
+        android:tag="@string/tag_transaction">
 
         <ImageView
             android:id="@+id/transactionsTransactionsItemIcon"
@@ -28,7 +28,7 @@
             android:adjustViewBounds="true"
             android:padding="6dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_accounts"/>
+            android:src="@drawable/ic_money_sign"/>
 
         <LinearLayout
             android:layout_width="0dp"

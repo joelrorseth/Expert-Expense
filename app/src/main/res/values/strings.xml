@@ -14,11 +14,10 @@
     <string name="setup_cash_hint">Cash (Optional)</string>
     <string name="setup_bank_hint">Bank (Optional)</string>
 
-    <string name="tag_overview_accounts_view">TAG_MY_ACCOUNTS</string>
-    <string name="tag_overview_transactions_view">TAG_TRANSACTIONS</string>
-    <string name="tag_overview_bills_view">TAG_BILLS</string>
+    <string name="tag_account">TAG_ACCOUNT</string>
+    <string name="tag_transaction">TAG_TRANSACTION</string>
+    <string name="tag_bill">TAG_BILL</string>
 
-    <string name="tag_accounts_accounts_view">TAG_ACCOUNTS_ACCOUNTS</string>
 
     <string name="nav_overview">Overview</string>
     <string name="nav_accounts">Accounts</string>
