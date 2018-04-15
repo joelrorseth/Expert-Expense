@@ -49,7 +49,7 @@ public class Database {
     }
 
     public interface DBGetBillsInterface {
-        void didGet(List<Bill> bills, Exception e);
+        void didGet(List<Bill> bills, List<String> billIDs, Exception e);
     }
 
     public interface DBDeletionInterface {
@@ -212,6 +212,28 @@ public class Database {
                 });
     }
 
+    public void updateExistingBill(String existingBillID, Bill bill,
+                                          final AddNewBillFragment.AddBillCallback callback) {
+
+        store.child("users")
+                .child(currentUser.getUid())
+                .child("bills")
+                .child(existingBillID)
+                .setValue(bill)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        callback.didAddBill(true, null);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.didAddBill(false, e);
+                    }
+                });
+    }
+
 
 
 
@@ -296,16 +318,18 @@ public class Database {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         ArrayList<Bill> bills = new ArrayList<>();
+                        ArrayList<String> billIDs = new ArrayList<>();
 
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
 
                             Log.d(TAG, child.getKey() + " => " + child.getValue());
 
                             Bill bill = child.getValue(Bill.class);
+                            billIDs.add(child.getKey());
                             bills.add(bill);
                         }
 
-                        callback.didGet(bills, null);
+                        callback.didGet(bills, billIDs, null);
                     }
 
                     @Override
@@ -330,6 +354,7 @@ public class Database {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
+                        ArrayList<String> billIDs = new ArrayList<>();
                         ArrayList<Bill> bills = new ArrayList<>();
 
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
@@ -337,10 +362,11 @@ public class Database {
                             Log.d(TAG, child.getKey() + " => " + child.getValue());
 
                             Bill bill = child.getValue(Bill.class);
+                            billIDs.add(child.getKey());
                             bills.add(bill);
                         }
 
-                        callback.didGet(bills, null);
+                        callback.didGet(bills, billIDs, null);
                     }
 
                     @Override
@@ -424,7 +450,6 @@ public class Database {
                     }
                 });
     }
-
 
 
 

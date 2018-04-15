@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void didSelectAddAccountIcon(boolean isEdit, Account existingAccount, String accountID) {
+    public void didSelectAddAccount(boolean isEdit, Account existingAccount, String accountID) {
         AddNewAccountFragment f = new AddNewAccountFragment();
 
         // If this is an edit, setup the fragment for the edit process instead
@@ -113,20 +113,29 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void didSelectAddTransactionIcon(boolean isEdit, Transaction existingTrans, String transID) {
+    public void didSelectAddTransaction(boolean isEdit, boolean isExpense, Transaction existingTrans, String transID) {
         AddNewTransactionFragment f = new AddNewTransactionFragment();
 
         // If this is an edit, setup the fragment for the edit process instead
         if (isEdit) {
             f.populateTransactionBeingEdited(transID, existingTrans);
+        } else {
+            f.setIsExpense(isExpense);
         }
 
         pushFragment(f);
     }
 
     @Override
-    public void didSelectAddBillIcon() {
-        pushFragment(new AddNewBillFragment());
+    public void didSelectAddBill(boolean isEdit, Bill existingBill, String billID) {
+        AddNewBillFragment f = new AddNewBillFragment();
+
+        // If this is an edit, setup the fragment for the edit process instead
+        if (isEdit) {
+            f.populateBillBeingEdited(billID, existingBill);
+        }
+
+        pushFragment(f);
     }
 
     @Override
@@ -134,7 +143,6 @@ public class MainActivity extends AppCompatActivity
         TransactionsFragment transFrag = new TransactionsFragment();
         transFrag.parentDelegate = this;
         replaceCurrentFragment(transFrag);
-
     }
 
 

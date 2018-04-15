@@ -47,11 +47,11 @@ public class OverviewFragment extends Fragment
     public interface OverviewInterface {
         void didSelectCustomizationIcon();
 
-        void didSelectAddAccountIcon(boolean isEdit, Account existingAccount, String accountID);
+        void didSelectAddAccount(boolean isEdit, Account existingAccount, String accountID);
 
-        void didSelectAddTransactionIcon(boolean isEdit, Transaction existingTrans, String transID);
+        void didSelectAddTransaction(boolean isEdit, boolean isExpense, Transaction existingTrans, String transID);
 
-        void didSelectAddBillIcon();
+        void didSelectAddBill(boolean isEdit, Bill existingBill, String billID);
 
         void didRequestTransactionsFrag();
     }
@@ -78,6 +78,8 @@ public class OverviewFragment extends Fragment
     private List<String> currentAccountIDs = new ArrayList<>();
     private List<Transaction> currentTransactions = new ArrayList<>();
     private List<String> currentTransactionIDs = new ArrayList<>();
+    private List<Bill> currentBills = new ArrayList<>();
+    private List<String> currentBillIDs = new ArrayList<>();
     private int currentlySelectedAccountIndex = -1;
     private int currentlySelectedTransIndex = -1;
 
@@ -132,7 +134,7 @@ public class OverviewFragment extends Fragment
             public boolean onMenuItemClick(int position) {
 
                 // Ask parent delegate to begin a new transaction
-                parentDelegate.didSelectAddTransactionIcon(false, null, null);
+                parentDelegate.didSelectAddTransaction(false, position != 0, null, null);
                 return super.onMenuItemClick(position);
             }
         });
@@ -267,7 +269,10 @@ public class OverviewFragment extends Fragment
 
         } else if (tag.equals(getResources().getString(R.string.tag_bill))) {
 
-            // TODO: Transition directly to edit bill screen
+            Bill bill = currentBills.get(position);
+            String billID = currentBillIDs.get(position);
+
+            parentDelegate.didSelectAddBill(true, bill, billID);
         }
     }
 
@@ -282,7 +287,7 @@ public class OverviewFragment extends Fragment
     @Override
     public void acDidSelectAddTransaction() {
         accPopupFragment.dismiss();
-        parentDelegate.didSelectAddTransactionIcon(false, null, null);
+        parentDelegate.didSelectAddTransaction(false, true, null, null);
     }
 
     @Override
@@ -316,7 +321,7 @@ public class OverviewFragment extends Fragment
 
         // Tell parent to show Add Account screen, but set up for editing
         accPopupFragment.dismiss();
-        parentDelegate.didSelectAddAccountIcon(true, accountToBeEdited, accountIDToBeEdited);
+        parentDelegate.didSelectAddAccount(true, accountToBeEdited, accountIDToBeEdited);
     }
 
     @Override
@@ -348,7 +353,7 @@ public class OverviewFragment extends Fragment
 
         // Tell parent to show Add Account screen, but set up for editing
         tranPopupFragment.dismiss();
-        parentDelegate.didSelectAddTransactionIcon(true, transToBeEdited, transIDToBeEdited);
+        parentDelegate.didSelectAddTransaction(true, true, transToBeEdited, transIDToBeEdited);
     }
 
     @Override
@@ -440,7 +445,7 @@ public class OverviewFragment extends Fragment
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        parentDelegate.didSelectAddAccountIcon(false, null, null);
+                        parentDelegate.didSelectAddAccount(false, null, null);
                     }
                 }
         );
@@ -491,7 +496,7 @@ public class OverviewFragment extends Fragment
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        parentDelegate.didSelectAddTransactionIcon(false, null, null);
+                        parentDelegate.didSelectAddTransaction(false, true, null, null);
                     }
                 }
         );
@@ -516,7 +521,7 @@ public class OverviewFragment extends Fragment
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        parentDelegate.didSelectAddBillIcon();
+                        parentDelegate.didSelectAddBill(false, null, null);
                     }
                 }
         );
@@ -631,7 +636,10 @@ public class OverviewFragment extends Fragment
         // Load bills
         db.getBillsAfterDate((new Date()).getTime(), new Database.DBGetBillsInterface() {
             @Override
-            public void didGet(List<Bill> bills, Exception e) {
+            public void didGet(List<Bill> bills, List<String> billIDs, Exception e) {
+
+                currentBills = bills;
+                currentBillIDs = billIDs;
 
                 upcomingBillsAdapter = new UpcomingBillsRecyclerAdapter(getContext(), bills);
                 upcomingBillsAdapter.setClickListener(thisRef);

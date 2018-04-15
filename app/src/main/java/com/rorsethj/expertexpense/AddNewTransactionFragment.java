@@ -49,6 +49,8 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
     private List<Account> currentUserAccounts;
 
     private boolean isBeingEdited = false;
+    private boolean isExpense = false;
+
     private String currentTransactionIDBeingEdited;
     private Transaction currentTransactionBeingEdited;
 
@@ -75,6 +77,9 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
         categorySpinner = view.findViewById(R.id.new_transaction_category_spinner);
         statusSpinner = view.findViewById(R.id.new_transaction_status_spinner);
 
+        // Type of expense / income can be specified externally
+        // EDIT mode will overwrite this in the block below, so all is good
+        typeSpinner.setSelection(isExpense ? 1 : 0);
 
 
         // EDIT mode ONLY
@@ -331,5 +336,10 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
         currentTransactionIDBeingEdited = id;
         currentTransactionBeingEdited = transactionBeingEdited;
         isBeingEdited = true;
+    }
+
+    // Allow for external setup for choosing default type config (eg. deposit or withdrawal)
+    public void setIsExpense(boolean isExpense) {
+        this.isExpense = isExpense;
     }
 }

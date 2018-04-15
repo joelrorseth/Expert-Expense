@@ -106,7 +106,7 @@ public class AccountsFragment extends Fragment implements
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        parentDelegate.didSelectAddAccountIcon(false, null, null);
+                        parentDelegate.didSelectAddAccount(false, null, null);
                     }
                 }
         );
@@ -211,7 +211,7 @@ public class AccountsFragment extends Fragment implements
     @Override
     public void acDidSelectAddTransaction() {
         accPopupFragment.dismiss();
-        parentDelegate.didSelectAddTransactionIcon(false, null, null);
+        parentDelegate.didSelectAddTransaction(false, true, null, null);
     }
 
     @Override
@@ -241,7 +241,7 @@ public class AccountsFragment extends Fragment implements
 
         // Tell parent to show Add Account screen, but set up for editing
         accPopupFragment.dismiss();
-        parentDelegate.didSelectAddAccountIcon(true,
+        parentDelegate.didSelectAddAccount(true,
                 currentlySelectedAccount, currentlySelectedAccountID);
     }
 

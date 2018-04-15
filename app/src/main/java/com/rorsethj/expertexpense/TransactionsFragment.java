@@ -141,7 +141,7 @@ public class TransactionsFragment extends Fragment implements
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        parentDelegate.didSelectAddTransactionIcon(false, null, null);
+                        parentDelegate.didSelectAddTransaction(false, true, null, null);
                     }
                 }
         );
@@ -268,7 +268,7 @@ public class TransactionsFragment extends Fragment implements
 
         // Tell parent to show Add Account screen, but set up for editing
         tranPopupFragment.dismiss();
-        parentDelegate.didSelectAddTransactionIcon(true,
+        parentDelegate.didSelectAddTransaction(true, false,
                 currentlySelectedTransaction, currentlySelectedTransactionID);
     }
 
