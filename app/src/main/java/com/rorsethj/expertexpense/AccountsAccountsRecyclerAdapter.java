@@ -77,6 +77,7 @@ public class AccountsAccountsRecyclerAdapter
 
         // Determine color of amount text based on possibility of negative balance
         if (account.getBalance() < 0.0) {
+            double tempBalance = -1* account.getBalance();
 
             // Set color to red
             holder.amountTextView.setTextColor(
@@ -87,7 +88,7 @@ public class AccountsAccountsRecyclerAdapter
             holder.amountTextView.setText(
                     String.format(
                             context.getResources().getString(R.string.money_amount_negative),
-                            account.getBalance()
+                            tempBalance
                     )
             );
 
@@ -95,7 +96,7 @@ public class AccountsAccountsRecyclerAdapter
 
             // Set green
             holder.amountTextView.setTextColor(
-                    context.getResources().getColor(R.color.colorTextBlack)
+                    context.getResources().getColor(R.color.colorValidGreen)
             );
 
             holder.amountTextView.setText(

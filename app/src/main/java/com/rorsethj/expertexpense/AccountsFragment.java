@@ -157,46 +157,73 @@ public class AccountsFragment extends Fragment implements
 
 
     // Populate a recycler
-    private void populateRecycler(AccountsAccountsRecyclerAdapter adapter, RecyclerView recycler,
-                                  TextView textView, LinearLayout layout, final List<Account> accounts,
+    private void populateRecycler(final AccountsAccountsRecyclerAdapter adapter, final RecyclerView recycler,
+                                  final TextView textView, final LinearLayout layout, final List<Account> accounts,
                                   final List<String> accountIDs) {
 
+        // Set proper visibility
         if (accounts.isEmpty()) {
             layout.setVisibility(View.GONE);
             return;
-
         } else {
             layout.setVisibility(View.VISIBLE);
         }
 
-        adapter.setClickListener(new AccountsAccountsRecyclerAdapter.ItemClickListener() {
-
+        // Query all transactions to calculate the balance for the accounts
+        db.getUserTransactions(new Database.DBGetTransactionsInterface() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) { ft.remove(prev); }
-                ft.addToBackStack(null);
+                for (Transaction t: transactions) {
 
-                // Prompt popup menu and potentially edit the selected account
-                currentlySelectedAccount = accounts.get(position);
-                currentlySelectedAccountID = accountIDs.get(position);
-                currentlySelectedAccountPosition = position;
-                accPopupFragment.show(ft, "dialog");
+                    for (int i = 0; i < accountIDs.size(); ++i) {
+                        if (accountIDs.get(i).equals(t.getAccount())) {
+                            if (t.getType().equals("Withdrawal")) {
+                                accounts.get(i).setBalance(
+                                        accounts.get(i).getBalance() - t.getAmount()
+                                );
+                            } else {
+                                accounts.get(i).setBalance(
+                                        accounts.get(i).getBalance() + t.getAmount()
+                                );
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                // Calculate total across all accounts to display
+                double sum = 0.0;
+                for (Account a : accounts) {
+                    sum += a.getBalance();
+                }
+                textView.setText(
+                        String.format(getResources().getString(R.string.net_balance_amount), sum)
+                );
+
+                adapter.setClickListener(new AccountsAccountsRecyclerAdapter.ItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                        if (prev != null) { ft.remove(prev); }
+                        ft.addToBackStack(null);
+
+                        // Prompt popup menu and potentially edit the selected account
+                        currentlySelectedAccount = accounts.get(position);
+                        currentlySelectedAccountID = accountIDs.get(position);
+                        currentlySelectedAccountPosition = position;
+                        accPopupFragment.show(ft, "dialog");
+                    }
+                });
+
+                // Set adapters to recycler views
+                recycler.setAdapter(adapter);
             }
         });
-
-        // Set adapters to recycler views
-        recycler.setAdapter(adapter);
-
-        // Update total balance label
-        // Calculate total across all accounts to display
-        double sum = 0.0;
-        for (Account a: accounts) { sum += a.getBalance(); }
-        textView.setText(
-                String.format(getResources().getString(R.string.net_balance_amount), sum)
-        );
     }
 
 

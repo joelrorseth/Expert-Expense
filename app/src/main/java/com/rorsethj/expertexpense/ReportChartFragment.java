@@ -264,7 +264,7 @@ public class ReportChartFragment extends Fragment {
             case "Monthly Income":
 
                 // Bar chart shows YTD each months income, display average also
-                if (isFirstChart) { periodsSpinner.setSelection(8); isFirstChart = false; }
+                if (isFirstChart) { periodsSpinner.setSelection(7); isFirstChart = false; }
                 plotTransactionTypeForIncrement(view, chartType, DEPOSIT, MONTHLY);
                 break;
 
@@ -302,7 +302,7 @@ public class ReportChartFragment extends Fragment {
 
                 // Pie charts might plot Income vs Expense for example, so call separate method
                 if (type.equals("vs")) { plotIncomeVsExpense(view, transactions); }
-                if (type.equals("balance")) { plotDailyBalance(view, transactions); }
+                else if (type.equals("balance")) { plotDailyBalance(view, transactions); }
                 else { plotTransactionWithType(view, transactions, type); }
             }
         });
@@ -312,16 +312,17 @@ public class ReportChartFragment extends Fragment {
     // Entry point for bar chart logic
     // Plot expenses / incomes for daily / monthly basis
     private void plotTransactionTypeForIncrement(final View view, final String title,
-                                                 final String type, String chartIncrement) {
+                                                 final String type, final String chartIncrement) {
 
         DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
         long oldDate = range.getOld();
         long newDate = range.getNew();
 
         // Increments gathers ALL x-axis values eg. [Nov, Dec, Jan, Feb] or ["29","30","31","01"]
-        final ArrayList<String> increments = interpolateValuesForIncrement(chartIncrement, true);
+        final ArrayList<String> increments = interpolateValuesForIncrement(chartIncrement, false);
+        final ArrayList<String> shortIncrements = interpolateValuesForIncrement(chartIncrement, true);
         final String INCREMENT_KEY = chartIncrement.equals(MONTHLY) ?
-            DATE_FORMAT_MONTHLY_SHORT : DATE_FORMAT_DAILY_SHORT;
+            DATE_FORMAT_MONTHLY : DATE_FORMAT_DAILY;
 
 
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
@@ -371,7 +372,11 @@ public class ReportChartFragment extends Fragment {
                     } else { values[i++] = 0.0f; }
                 }
 
-                plotBarChart(view, title, increments, values);
+                // POTENTIAL BUG: Not sure but this might fail
+                if (increments.size() != shortIncrements.size()) { return; }
+
+                // Get the short version of the increments for charting
+                plotBarChart(view, title, shortIncrements, values);
             }
         });
     }

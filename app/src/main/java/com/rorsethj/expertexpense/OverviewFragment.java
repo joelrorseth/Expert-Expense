@@ -569,31 +569,56 @@ public class OverviewFragment extends Fragment
         // Asynchronously get accounts from DB, update UI when downloaded
         db.getUserAccounts(new Database.DBGetAccountsInterface() {
             @Override
-            public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
+            public void didGet(final List<Account> accounts, final List<String> accountIDs, Exception e) {
 
                 currentAccounts = accounts;
                 currentAccountIDs = accountIDs;
 
-                // Calculate total across all accounts to display
-                double sum = 0.0;
-                for (Account a : accounts) {
-                    sum += a.getBalance();
-                }
-                newBalanceTextView.setText(
-                        String.format(getResources().getString(R.string.net_balance_amount), sum)
-                );
+                // Query all transactions to calculate the balance for the accounts
+                db.getUserTransactions(new Database.DBGetTransactionsInterface() {
+                    @Override
+                    public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
+                        for (Transaction t: transactions) {
 
-                // Conditionally load the correct layout
-                if (isAccountsLayoutHorizontal()) {
-                    myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), accounts);
-                    ((MyAccountsRecyclerAdapter) myAccountsAdapter).setClickListener(thisRef);
-                } else {
-                    myAccountsAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
-                    ((AccountsAccountsRecyclerAdapter) myAccountsAdapter).setClickListener(thisRef);
-                }
+                            for (int i = 0; i < accountIDs.size(); ++i) {
+                                if (accountIDs.get(i).equals(t.getAccount())) {
+                                    if (t.getType().equals("Withdrawal")) {
+                                        accounts.get(i).setBalance(
+                                                accounts.get(i).getBalance() - t.getAmount()
+                                        );
+                                    } else {
+                                        accounts.get(i).setBalance(
+                                                accounts.get(i).getBalance() + t.getAmount()
+                                        );
+                                    }
 
-                accountsRecyclerView.setAdapter(myAccountsAdapter);
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Calculate total across all accounts to display
+                        double sum = 0.0;
+                        for (Account a : accounts) {
+                            sum += a.getBalance();
+                        }
+                        newBalanceTextView.setText(
+                                String.format(getResources().getString(R.string.net_balance_amount), sum)
+                        );
+
+                        // Conditionally load the correct layout
+                        if (isAccountsLayoutHorizontal()) {
+                            myAccountsAdapter = new MyAccountsRecyclerAdapter(getContext(), accounts);
+                            ((MyAccountsRecyclerAdapter) myAccountsAdapter).setClickListener(thisRef);
+                        } else {
+                            myAccountsAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
+                            ((AccountsAccountsRecyclerAdapter) myAccountsAdapter).setClickListener(thisRef);
+                        }
+
+                        accountsRecyclerView.setAdapter(myAccountsAdapter);
+                    }
+                });
             }
         });
     }
@@ -606,7 +631,7 @@ public class OverviewFragment extends Fragment
         final long newDate = dateRange.getNew();
 
 
-        // Load RECENT transactions
+        // Load RECENT transactions for recent transactions screen
         db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
             @Override
             public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
