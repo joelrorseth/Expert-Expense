@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -232,7 +233,7 @@ public class ReportChartFragment extends Fragment {
 
             case "Expense By Category":
 
-                plotByCategory(view, WITHDRAWAL);
+                plotCurrentPeriod(view, WITHDRAWAL);
                 break;
 
             case "Daily Expense":
@@ -250,7 +251,7 @@ public class ReportChartFragment extends Fragment {
 
             case "Income By Category":
 
-                plotByCategory(view, DEPOSIT);
+                plotCurrentPeriod(view, DEPOSIT);
                 break;
 
             case "Daily Income":
@@ -271,14 +272,14 @@ public class ReportChartFragment extends Fragment {
                 // Show pie chart with income and expense labels, values are this months amount
                 // for each. Should be income vs expense totals for the month
 
-                plotByCategory(view, "vs");
+                plotCurrentPeriod(view, "vs");
                 break;
 
             case "Daily Balance":
 
                 // Show, for each day, a +/- standing in a line graph
-                // TODO
-                plotTransactionTypeForIncrement(view, chartType, WITHDRAWAL, DAILY);
+                if (isFirstChart) { periodsSpinner.setSelection(0); isFirstChart = false; }
+                plotCurrentPeriod(view, "balance");
                 break;
         }
     }
@@ -288,7 +289,7 @@ public class ReportChartFragment extends Fragment {
     // MARK: Logic of What to Plot
     // Entry point for pie chart logic
     // Plot expense / income by category, by obtaining transactions of that type between 2 dates
-    private void plotByCategory(final View view, final String category) {
+    private void plotCurrentPeriod(final View view, final String type) {
 
         // Pull currently selected period
         DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
@@ -300,8 +301,9 @@ public class ReportChartFragment extends Fragment {
             public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
 
                 // Pie charts might plot Income vs Expense for example, so call separate method
-                if (category.equals("vs")) { plotIncomeVsExpense(view, transactions); }
-                else { plotTransactionWithType(view, transactions, category); }
+                if (type.equals("vs")) { plotIncomeVsExpense(view, transactions); }
+                if (type.equals("balance")) { plotDailyBalance(view, transactions); }
+                else { plotTransactionWithType(view, transactions, type); }
             }
         });
     }
@@ -317,7 +319,7 @@ public class ReportChartFragment extends Fragment {
         long newDate = range.getNew();
 
         // Increments gathers ALL x-axis values eg. [Nov, Dec, Jan, Feb] or ["29","30","31","01"]
-        final ArrayList<String> increments = interpolateValuesForIncrement(chartIncrement);
+        final ArrayList<String> increments = interpolateValuesForIncrement(chartIncrement, true);
         final String INCREMENT_KEY = chartIncrement.equals(MONTHLY) ?
             DATE_FORMAT_MONTHLY_SHORT : DATE_FORMAT_DAILY_SHORT;
 
@@ -375,24 +377,45 @@ public class ReportChartFragment extends Fragment {
     }
 
 
-//    private void plotDailyBalance(View view) {
-//
-//        // Pull currently selected period
-//        DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
-//        long oldDate = range.getOld();
-//        long newDate = range.getNew();
-//
-//        db.getTransactionsBetweenDates(oldDate, newDate, new Database.DBGetTransactionsInterface() {
-//            @Override
-//            public void didGet(List<Transaction> transactions, List<String> transactionIDs, Exception e) {
-//
-//                formatForLineChart(view, transactions);
-//                // Pie charts might plot Income vs Expense for example, so call separate method
-//                if (category.equals("vs")) { plotIncomeVsExpense(view, transactions); }
-//                else { plotTransactionWithType(view, transactions, category); }
-//            }
-//        });
-//    }
+    // Format data for plotting the Daily Balance, then hand off to drawing algorithm
+    private void plotDailyBalance(View view, List<Transaction> transactions) {
+
+        // Increments gathers ALL x-axis values eg. [Nov, Dec, Jan, Feb] or ["29","30","31","01"]
+        final ArrayList<String> days = interpolateValuesForIncrement(DAILY, false);
+
+        // Create ORDERED map, mapping $ balance for each day in the period
+        LinkedHashMap<String, Double> balanceForDate = new LinkedHashMap<>();
+        for (String day: days) {
+            balanceForDate.put(day, 0.0);
+        }
+
+
+        // For each transaction, add/subtract from total on that day depending on type
+        // Deposits increase the balance, withdrawals subtract from it
+
+        for (Transaction trans: transactions) {
+
+            String transactionDay = (String) DateFormat.format(
+                    DATE_FORMAT_DAILY, new Date(trans.getDate()));
+
+            // For this day, add/subtract from the current amount stored for this day
+            if (trans.getType().equals("Deposit")) {
+                balanceForDate.put(transactionDay, balanceForDate.get(transactionDay) + trans.getAmount());
+            } else {
+                balanceForDate.put(transactionDay, balanceForDate.get(transactionDay) - trans.getAmount());
+            }
+        }
+
+        float values[] = new float[days.size()];
+        int i = 0;
+
+        // Convert to array of floats
+        for (Double amount: balanceForDate.values()) {
+            values[i++] = amount.floatValue();
+        }
+
+        plotLineChart(view, chartType, days, values);
+    }
 
 
     // MARK: Data formatting for plotting (only PieCharts right now)
@@ -588,9 +611,14 @@ public class ReportChartFragment extends Fragment {
         dataset.setColors(ColorTemplate.COLORFUL_COLORS);
         LineData data = new LineData(dataset);
 
+        // Take only first and last dates for this chart for simplicity
+        ArrayList<String> reducedLabels = new ArrayList<>();
+        reducedLabels.add(labels.get(0));
+        reducedLabels.add(labels.get(labels.size()-1));
+
         // Create the chart view
         lineChart = new LineChart(getContext());
-        lineChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        lineChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(reducedLabels));
         lineChart.setData(data);
         lineChart.getDescription().setEnabled(false);
         lineChart.animateY(1000);
@@ -611,7 +639,7 @@ public class ReportChartFragment extends Fragment {
 
     // MARK: Utility
     // Return list of interpolated x-axis values such as [Nov, Dec, Jan, Feb]
-    private ArrayList<String> interpolateValuesForIncrement(String chartIncrement) {
+    private ArrayList<String> interpolateValuesForIncrement(String chartIncrement, boolean useShort) {
 
         // Get current period
         DateRange.DatePair range = DateRange.getDatesForRange(currentlySelectedPeriod);
@@ -649,7 +677,13 @@ public class ReportChartFragment extends Fragment {
 
             // Store the next key for month/day (eg. Jan for monthly, "27" if daily)
             String tempDateString = (String) DateFormat.format(INCREMENT_KEY, tempCal);
-            increments.add( (String) DateFormat.format(INCREMENT_KEY_SHORT, tempCal) );
+
+            // Method call allows you to choose long format or short increment values
+            if (useShort) {
+                increments.add((String) DateFormat.format(INCREMENT_KEY_SHORT, tempCal));
+            } else {
+                increments.add((String) DateFormat.format(INCREMENT_KEY, tempCal));
+            }
 
             // If temp, the counter, has reach the new date, then we are finished
             // Otherwise, advance temp to next month/day and add that increment
