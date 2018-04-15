@@ -321,6 +321,14 @@ public class OverviewFragment extends Fragment
 
     @Override
     public void acDidSelectHide() {
+
+        // Remove Account item from the adapter currently being used
+        if (isAccountsLayoutHorizontal()) {
+            ((MyAccountsRecyclerAdapter) myAccountsAdapter).removeItem(currentlySelectedAccountIndex);
+
+        } else {
+            ((AccountsAccountsRecyclerAdapter) myAccountsAdapter).removeItem(currentlySelectedAccountIndex);
+        }
         accPopupFragment.dismiss();
     }
 

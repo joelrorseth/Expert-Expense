@@ -120,6 +120,12 @@ public class MyAccountsRecyclerAdapter extends RecyclerView.Adapter<MyAccountsRe
         return myAccounts.get(id);
     }
 
+    public void removeItem(int position) {
+        myAccounts.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, myAccounts.size());
+    }
+
     // Handle item clicks
     public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;

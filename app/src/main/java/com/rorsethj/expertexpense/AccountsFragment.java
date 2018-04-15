@@ -50,6 +50,7 @@ public class AccountsFragment extends Fragment implements
     private AccountPopupFragment accPopupFragment;
     private Account currentlySelectedAccount = null;
     private String currentlySelectedAccountID = "";
+    private int currentlySelectedAccountPosition = 0;
 
 
     @Override
@@ -120,6 +121,7 @@ public class AccountsFragment extends Fragment implements
         db.getUserAccountsOfCurrency("CAD", new Database.DBGetAccountsInterface() {
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
+                accountsCADAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
                 populateRecycler(accountsCADAdapter, accountsCADRecyclerView,
                         accountsCADNewBalanceTextView, cadLayout, accounts, accountIDs);
             }
@@ -128,6 +130,7 @@ public class AccountsFragment extends Fragment implements
         db.getUserAccountsOfCurrency("USD", new Database.DBGetAccountsInterface() {
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
+                accountsUSDAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
                 populateRecycler(accountsUSDAdapter, accountsUSDRecyclerView,
                         accountsUSDNewBalanceTextView, usdLayout, accounts, accountIDs);
             }
@@ -136,6 +139,7 @@ public class AccountsFragment extends Fragment implements
         db.getUserAccountsOfCurrency("GBP", new Database.DBGetAccountsInterface() {
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
+                accountsGBPAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
                 populateRecycler(accountsGBPAdapter, accountsGBPRecyclerView,
                         accountsGBPNewBalanceTextView, gbpLayout, accounts, accountIDs);
             }
@@ -144,6 +148,7 @@ public class AccountsFragment extends Fragment implements
         db.getUserAccountsOfCurrency("EUR", new Database.DBGetAccountsInterface() {
             @Override
             public void didGet(List<Account> accounts, List<String> accountIDs, Exception e) {
+                accountsEURAdapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
                 populateRecycler(accountsEURAdapter, accountsEURRecyclerView,
                         accountsEURNewBalanceTextView, eurLayout, accounts, accountIDs);
             }
@@ -164,7 +169,6 @@ public class AccountsFragment extends Fragment implements
             layout.setVisibility(View.VISIBLE);
         }
 
-        adapter = new AccountsAccountsRecyclerAdapter(getContext(), accounts);
         adapter.setClickListener(new AccountsAccountsRecyclerAdapter.ItemClickListener() {
 
             @Override
@@ -178,6 +182,7 @@ public class AccountsFragment extends Fragment implements
                 // Prompt popup menu and potentially edit the selected account
                 currentlySelectedAccount = accounts.get(position);
                 currentlySelectedAccountID = accountIDs.get(position);
+                currentlySelectedAccountPosition = position;
                 accPopupFragment.show(ft, "dialog");
             }
         });
@@ -242,6 +247,21 @@ public class AccountsFragment extends Fragment implements
 
     @Override
     public void acDidSelectHide() {
+
+        switch (currentlySelectedAccount.getCurrency()) {
+            case "CAD":
+                accountsCADAdapter.removeItem(currentlySelectedAccountPosition);
+                break;
+            case "USD":
+                accountsUSDAdapter.removeItem(currentlySelectedAccountPosition);
+                break;
+            case "GBP":
+                accountsGBPAdapter.removeItem(currentlySelectedAccountPosition);
+                break;
+            case "EUR":
+                accountsEURAdapter.removeItem(currentlySelectedAccountPosition);
+                break;
+        }
         accPopupFragment.dismiss();
     }
 
