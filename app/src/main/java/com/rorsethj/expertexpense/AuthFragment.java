@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -76,10 +77,10 @@ public class AuthFragment extends Fragment {
 
             public void onClick(View v) {
 
+                progressBar.setVisibility(View.VISIBLE);
+
                 signInExistingUser(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
-
-                progressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -87,10 +88,10 @@ public class AuthFragment extends Fragment {
 
             public void onClick(View v) {
 
+                progressBar.setVisibility(View.VISIBLE);
+
                 createNewUser(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
-
-                progressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -101,6 +102,13 @@ public class AuthFragment extends Fragment {
     // MARK: com.rorsethj.expertexpense.Database Auth
     // Attempt to create a new user in the database
     private void signInExistingUser(String email, String password) {
+
+        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "Please fill all fields",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         authManager.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -127,6 +135,13 @@ public class AuthFragment extends Fragment {
 
     // Attempt to create a new user in the database
     private void createNewUser(String email, String password) {
+
+        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "Please fill all fields",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         authManager.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {

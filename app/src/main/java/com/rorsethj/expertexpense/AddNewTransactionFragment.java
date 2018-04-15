@@ -50,6 +50,7 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
 
     private boolean isBeingEdited = false;
     private boolean isExpense = false;
+    private boolean userHasAccounts = false;
 
     private String currentTransactionIDBeingEdited;
     private Transaction currentTransactionBeingEdited;
@@ -76,6 +77,12 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
         typeSpinner = view.findViewById(R.id.new_transaction_type_spinner);
         categorySpinner = view.findViewById(R.id.new_transaction_category_spinner);
         statusSpinner = view.findViewById(R.id.new_transaction_status_spinner);
+
+        // By default, date is today
+        myCalendar.setTime(new Date());
+        dateText.setText(
+                dateFormatter.format(myCalendar.getTime())
+        );
 
         // Type of expense / income can be specified externally
         // EDIT mode will overwrite this in the block below, so all is good
@@ -133,6 +140,8 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
 
                 currentUserAccountIDs = accountIDs;
                 currentUserAccounts = accounts;
+
+                if (!accounts.isEmpty()) { userHasAccounts = true; }
 
                 // If an error occurred loading accounts, print exception
                 if (e != null) {
@@ -209,7 +218,7 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
             @Override
             public void onClick(View v) {
 
-                new DatePickerDialog(getContext(), dateListener, myCalendar
+                new DatePickerDialog(getContext(), R.style.TimePickerTheme, dateListener, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -250,7 +259,15 @@ public class AddNewTransactionFragment extends Fragment implements CalcDialog.Ca
                     @Override
                     public void onClick(View view) {
 
-                        // TODO: Validate fields
+                        // Validate fields
+                        if (payeeText.getText().toString().isEmpty() ||
+                                amountText.getText().toString().isEmpty() ||
+                                !userHasAccounts) {
+
+                            Toast.makeText(getContext(), "Please fill all required fields",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         int selectedAccountIndex = accountSpinner.getSelectedItemPosition();
 

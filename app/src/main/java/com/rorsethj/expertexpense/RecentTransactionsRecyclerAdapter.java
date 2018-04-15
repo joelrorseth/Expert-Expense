@@ -91,7 +91,7 @@ public class RecentTransactionsRecyclerAdapter
         } else {
             holder.descTextView.setText(trans.getCategory());
         }
-        
+
 
         // Determine color of amount text based on type
         if (trans.getType().equals("Withdrawal")) {

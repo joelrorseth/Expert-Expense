@@ -36,8 +36,8 @@
     <string name="new_account_currency">CURRENCY</string>
     <string name="new_account_icon">ICON</string>
 
-    <string name="new_account_account_name_hint">Enter Account Name</string>
-    <string name="new_account_starting_balance_hint">0.00</string>
+    <string name="new_account_account_name_hint">Enter Account Name (required)</string>
+    <string name="new_account_starting_balance_hint">Enter starting balance (required)</string>
     <string name="new_account_description_hint">Enter Description</string>
 
     <!-- New Transaction -->
@@ -50,11 +50,11 @@
     <string name="new_transaction_notes">NOTES</string>
     <string name="new_transaction_date">DATE</string>
 
-    <string name="new_transaction_account_hint">Choose Account</string>
-    <string name="new_transaction_payee_hint">Enter Payee / Item</string>
-    <string name="new_transaction_amount_hint">0.00</string>
+    <string name="new_transaction_account_hint">Choose Account (required)</string>
+    <string name="new_transaction_payee_hint">Enter Payee / Item (required)</string>
+    <string name="new_transaction_amount_hint">Enter Amount (required)</string>
     <string name="new_transaction_notes_hint">Notes (Eg: Cheque #)</string>
-    <string name="new_transaction_date_hint">25/01/2000</string>
+    <string name="new_transaction_date_hint">18/04/2018</string>
 
 
     <string name="new_bill_payee">PAYEE</string>
@@ -65,10 +65,10 @@
     <string name="new_bill_notes">NOTES</string>
     <string name="new_bill_due_date">DUE DATE</string>
 
-    <string name="new_bill_payee_hint">Enter Payee / Item</string>
-    <string name="new_bill_amount_hint">0.00</string>
+    <string name="new_bill_payee_hint">Enter Payee / Item (required)</string>
+    <string name="new_bill_amount_hint">Enter Amount (required)</string>
     <string name="new_bill_notes_hint">Notes (Eg: Cheque #)</string>
-    <string name="new_bill_due_date_hint">25/01/2000</string>
+    <string name="new_bill_due_date_hint">18/04/2018</string>
 
     <string name="save_button">SAVE</string>
     <string name="cancel_button">CANCEL</string>

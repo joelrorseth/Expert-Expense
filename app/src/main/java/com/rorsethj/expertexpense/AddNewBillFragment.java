@@ -64,6 +64,11 @@ public class AddNewBillFragment extends Fragment implements CalcDialog.CalcDialo
 
         dateFormatter =  new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
 
+        // By default, date is today
+        myCalendar.setTime(new Date());
+        dueDateText.setText(
+                dateFormatter.format(myCalendar.getTime())
+        );
 
 
         // EDIT mode ONLY
@@ -130,7 +135,7 @@ public class AddNewBillFragment extends Fragment implements CalcDialog.CalcDialo
             @Override
             public void onClick(View v) {
 
-                new DatePickerDialog(getContext(), dateListener, myCalendar
+                new DatePickerDialog(getContext(), R.style.TimePickerTheme, dateListener, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -171,7 +176,14 @@ public class AddNewBillFragment extends Fragment implements CalcDialog.CalcDialo
                     @Override
                     public void onClick(View view) {
 
-                        // TODO: Validate fields
+                        // Validate fields
+                        if (payeeText.getText().toString().isEmpty() ||
+                                amountText.getText().toString().isEmpty()) {
+
+                            Toast.makeText(getContext(), "Please fill all required fields",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         Bill newBill = new Bill(
                                 payeeText.getText().toString(),

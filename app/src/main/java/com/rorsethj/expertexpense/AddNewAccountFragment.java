@@ -77,7 +77,14 @@ public class AddNewAccountFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
-                        // TODO: Validate fields
+                        // Validate fields
+                        if (nameText.getText().toString().isEmpty() ||
+                                balanceText.getText().toString().isEmpty()) {
+
+                            Toast.makeText(getContext(), "Please fill all required fields",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         // Create Account object
                         Account newAccount = new Account(

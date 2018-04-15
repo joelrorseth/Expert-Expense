@@ -31,7 +31,7 @@
         android:textSize="18sp"
         android:gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:text="CASH (CAD)"/>
+        android:text="CASH"/>
 
     <EditText
         android:id="@+id/setupCashEditText"
@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/setup_cash_hint"
         android:textSize="16sp"
+        android:backgroundTint="@color/colorAccent"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -52,7 +53,7 @@
         android:textSize="18sp"
         android:gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:text="BANK (CAD)"/>
+        android:text="BANK"/>
 
     <EditText
         android:id="@+id/setupBankEditText"
@@ -60,6 +61,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/setup_bank_hint"
         android:textSize="16sp"
+        android:backgroundTint="@color/colorAccent"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
