@@ -46,7 +46,7 @@ public class ReportsExpenseFragment extends Fragment {
 
                 FragmentManager manager = getFragmentManager();
                 manager.beginTransaction()
-                        .replace(R.id.fragmentContainer, frag)
+                        .add(R.id.fragmentContainer, frag)
                         .addToBackStack(null)
                         .commit();
             }
