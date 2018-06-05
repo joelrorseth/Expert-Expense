@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="uk.co.markormesher:android-fab-2.2.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-fab-2.2.2.aar/b7983589527f53f28e41430648ee9944/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/android-fab-2.2.2.aar/b7983589527f53f28e41430648ee9944/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/uk.co.markormesher/android-fab/2.2.2/44cd0354d2256df8e416f02f90e6fea860456e12/android-fab-2.2.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
